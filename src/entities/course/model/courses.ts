@@ -12,8 +12,8 @@ export type Course = {
 export const courses: Course[] = [
   {
     id: 1,
-    title: 'Data Storytelling',
-    category: 'Analytics',
+    title: 'Test 1',
+    category: 'A',
     lessons: 12,
     duration: '4h 20m',
     progress: 76,
@@ -22,8 +22,8 @@ export const courses: Course[] = [
   },
   {
     id: 2,
-    title: 'Product Strategy Lab',
-    category: 'Management',
+    title: 'Test 2',
+    category: 'B',
     lessons: 9,
     duration: '3h 15m',
     progress: 52,
@@ -32,8 +32,8 @@ export const courses: Course[] = [
   },
   {
     id: 3,
-    title: 'Product Design Systems',
-    category: 'UX',
+    title: 'Test 3',
+    category: 'C',
     lessons: 15,
     duration: '5h 05m',
     progress: 64,

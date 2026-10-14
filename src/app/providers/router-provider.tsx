@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import type { QueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/features/auth/model/auth-store'
