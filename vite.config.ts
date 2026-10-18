@@ -16,6 +16,16 @@ export default defineConfig({
     tailwindcss(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  server: {
+    // Dev only: same-origin /api avoids backend CORS for any local port.
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_URL ?? 'https://aerospeak-be.onrender.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, './src'),

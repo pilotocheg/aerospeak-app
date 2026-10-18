@@ -1,0 +1,45 @@
+import { create } from 'zustand'
+
+import type { AttemptResult } from '@/entities/attempt'
+
+export type StepAttempt = {
+  result: AttemptResult
+  recordingUrl: string
+}
+
+type PracticeState = {
+  scenarioId: string | null
+  stepIndex: number
+  attemptsByStep: Record<string, StepAttempt[]>
+  isFinished: boolean
+  start: (scenarioId: string) => void
+  goToStep: (stepIndex: number) => void
+  addAttempt: (stepId: string, attempt: StepAttempt) => void
+  finish: () => void
+}
+
+const revokeRecordings = (attemptsByStep: Record<string, StepAttempt[]>) =>
+  Object.values(attemptsByStep)
+    .flat()
+    .forEach((attempt) => URL.revokeObjectURL(attempt.recordingUrl))
+
+// Lives only while the practice screen is open: a reload starts the scenario again.
+export const usePracticeStore = create<PracticeState>()((set, get) => ({
+  scenarioId: null,
+  stepIndex: 0,
+  attemptsByStep: {},
+  isFinished: false,
+  start: (scenarioId) => {
+    revokeRecordings(get().attemptsByStep)
+    set({ scenarioId, stepIndex: 0, attemptsByStep: {}, isFinished: false })
+  },
+  goToStep: (stepIndex) => set({ stepIndex }),
+  addAttempt: (stepId, attempt) =>
+    set((state) => ({
+      attemptsByStep: {
+        ...state.attemptsByStep,
+        [stepId]: [...(state.attemptsByStep[stepId] ?? []), attempt],
+      },
+    })),
+  finish: () => set({ isFinished: true }),
+}))
