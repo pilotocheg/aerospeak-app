@@ -2,12 +2,13 @@ import { Bell, BookOpenText, LogOut, Search, UserCircle2 } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
-import { useAuthStore } from '@/features/auth/model/auth-store'
+import { useLogout } from '@/features/auth/model/actions'
+import { useUser } from '@/features/auth/model/selectors'
 
-export function DashboardHeader() {
+export const DashboardHeader = () => {
   const navigate = useNavigate()
-  const user = useAuthStore((state) => state.user)
-  const logout = useAuthStore((state) => state.logout)
+  const user = useUser()
+  const logout = useLogout()
 
   const handleLogout = () => {
     logout()

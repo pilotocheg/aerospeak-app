@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
 export type UserRole = 'Student' | 'Mentor'
 
@@ -30,49 +29,32 @@ type AuthState = {
   logout: () => void
 }
 
-const createDefaultUser = (email: string, name?: string): User => ({
-  id: crypto.randomUUID(),
-  name: name ?? email.split('@')[0],
-  email,
-  role: 'Student',
-})
+// Local mock until the backend has auth endpoints: any non-empty credentials log in.
+// Not persisted on purpose, so a reload returns to the login screen.
+export const useAuthStore = create<AuthState>()((set) => ({
+  user: null,
+  isAuthenticated: false,
+  login: ({ email, password }) => {
+    if (!email || !password) {
+      return
+    }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      isAuthenticated: false,
-      login: ({ email, password }) => {
-        if (!email || !password) {
-          return
-        }
+    set({
+      user: { id: crypto.randomUUID(), name: email.split('@')[0], email, role: 'Student' },
+      isAuthenticated: true,
+    })
+  },
+  register: ({ name, email, password, role }) => {
+    if (!name || !email || !password) {
+      return
+    }
 
-        set({
-          user: createDefaultUser(email),
-          isAuthenticated: true,
-        })
-      },
-      register: ({ name, email, password, role }) => {
-        if (!name || !email || !password) {
-          return
-        }
-
-        set({
-          user: {
-            id: crypto.randomUUID(),
-            name,
-            email,
-            role,
-          },
-          isAuthenticated: true,
-        })
-      },
-      logout: () => {
-        set({ user: null, isAuthenticated: false })
-      },
-    }),
-    {
-      name: 'aerospeak-auth',
-    },
-  ),
-)
+    set({
+      user: { id: crypto.randomUUID(), name, email, role },
+      isAuthenticated: true,
+    })
+  },
+  logout: () => {
+    set({ user: null, isAuthenticated: false })
+  },
+}))

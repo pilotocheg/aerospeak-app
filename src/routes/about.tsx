@@ -1,15 +1,7 @@
-/* eslint-disable react-refresh/only-export-components */
-
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/about')({
-  component: AboutComponent,
-})
+import { AboutPage } from '@/pages/about/about-page'
 
-function AboutComponent() {
-  return (
-    <div className="p-2">
-      <h3>About</h3>
-    </div>
-  )
-}
+export const Route = createFileRoute('/about')({
+  component: AboutPage,
+})

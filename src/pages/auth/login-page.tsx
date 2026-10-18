@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Plane } from 'lucide-react'
 import { LoginForm } from '@/features/auth/ui/login-form'
-import { useAuthStore } from '@/features/auth/model/auth-store'
+import { useLogin } from '@/features/auth/model/actions'
 
-export function LoginPage() {
+export const LoginPage = () => {
   const navigate = useNavigate()
-  const login = useAuthStore((state) => state.login)
+  const login = useLogin()
   const [email, setEmail] = useState('student@aerospeak.io')
   const [password, setPassword] = useState('password123')
 
@@ -35,12 +35,12 @@ export function LoginPage() {
           onPasswordChange={setPassword}
           onSubmit={handleSubmit}
           footer={
-            <div className="flex items-center justify-center gap-1">
-              <span>New here?</span>
+            <>
+              New here?{' '}
               <Link to="/register" className="font-medium text-primary underline-offset-4 hover:underline">
                 Create an account
               </Link>
-            </div>
+            </>
           }
         />
       </div>

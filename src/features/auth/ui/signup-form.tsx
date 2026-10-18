@@ -19,7 +19,7 @@ type SignupFormProps = {
   footer?: ReactNode
 }
 
-export function SignupForm({
+export const SignupForm = ({
   className,
   name,
   email,
@@ -32,7 +32,7 @@ export function SignupForm({
   onSubmit,
   footer,
   ...props
-}: Omit<React.ComponentProps<'div'>, 'onSubmit'> & SignupFormProps) {
+}: Omit<React.ComponentProps<'div'>, 'onSubmit'> & SignupFormProps) => {
   return (
     <div className={cn('flex w-full flex-col gap-6', className)} {...props}>
       <Card className="border-border/60 shadow-sm">

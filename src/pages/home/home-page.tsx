@@ -4,7 +4,7 @@ import { Button } from '@/shared/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { courses, stats } from '@/entities/course/model/courses'
 
-export function HomePage() {
+export const HomePage = () => {
   return (
     <div className="mx-auto max-w-6xl space-y-8 px-4 py-8 md:px-6">
       <section className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">

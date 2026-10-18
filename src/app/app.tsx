@@ -1,15 +1,14 @@
-import { useMemo, useState } from 'react'
 import { QueryClient } from '@tanstack/react-query'
+import { RouterProvider } from '@tanstack/react-router'
+
 import { QueryProvider } from './providers/query-provider'
-import { AppRouterProvider, createAppRouter } from './providers/router-provider'
+import { createAppRouter } from './providers/router'
 
-export function App() {
-  const [queryClient] = useState(() => new QueryClient())
-  const router = useMemo(() => createAppRouter(queryClient), [queryClient])
+const queryClient = new QueryClient()
+const router = createAppRouter(queryClient)
 
-  return (
-    <QueryProvider client={queryClient}>
-      <AppRouterProvider router={router} />
-    </QueryProvider>
-  )
-}
+export const App = () => (
+  <QueryProvider client={queryClient}>
+    <RouterProvider router={router} />
+  </QueryProvider>
+)

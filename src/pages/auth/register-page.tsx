@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Plane } from 'lucide-react'
 import { SignupForm } from '@/features/auth/ui/signup-form'
-import { useAuthStore } from '@/features/auth/model/auth-store'
+import { useRegister } from '@/features/auth/model/actions'
 
-export function RegisterPage() {
+export const RegisterPage = () => {
   const navigate = useNavigate()
-  const register = useAuthStore((state) => state.register)
+  const register = useRegister()
   const [name, setName] = useState('Maya Green')
   const [email, setEmail] = useState('maya@aerospeak.io')
   const [password, setPassword] = useState('password123')

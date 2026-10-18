@@ -15,7 +15,7 @@ type LoginFormProps = {
   footer?: ReactNode
 }
 
-export function LoginForm({
+export const LoginForm = ({
   className,
   email,
   password,
@@ -24,7 +24,7 @@ export function LoginForm({
   onSubmit,
   footer,
   ...props
-}: Omit<React.ComponentProps<'div'>, 'onSubmit'> & LoginFormProps) {
+}: Omit<React.ComponentProps<'div'>, 'onSubmit'> & LoginFormProps) => {
   return (
     <div className={cn('flex w-full flex-col gap-6', className)} {...props}>
       <Card className="border-border/60 shadow-sm">
