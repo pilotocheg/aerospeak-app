@@ -37,16 +37,16 @@
       "type": "pilot_readback",
       "speaker": "atc",
       "prompt": "After landing, Tower tells you how to vacate. Read back.",
-      "atcText": "SP-TFA, vacate left via Alpha, contact Ground 124.140.",
+      "atcText": "SP-TFA, vacate left via Bravo, contact Ground 124.140.",
       "atcAudio": "/audio/atc/lnd-ctrl-vacate-taxi/vacate-readback.mp3",
-      "expectedPilotResponse": "Vacate left via Alpha, contact Ground 124.140, SP-TFA.",
+      "expectedPilotResponse": "Vacate left via Bravo, contact Ground 124.140, SP-TFA.",
       "requiredElements": [
         {
           "id": "vacate",
-          "label": "Vacate left via Alpha",
+          "label": "Vacate left via Bravo",
           "acceptedVariants": [
-            "vacate left via Alpha",
-            "vacating left via Alpha"
+            "vacate left via Bravo",
+            "vacating left via Bravo"
           ],
           "weight": 30,
           "critical": true
@@ -90,8 +90,8 @@
       "id": "call-ground",
       "type": "pilot_request",
       "speaker": "pilot",
-      "prompt": "You have vacated via Alpha. Call Ground and request taxi to the general aviation apron.",
-      "expectedPilotResponse": "Poznań Ground, SP-TFA, runway vacated via Alpha, request taxi to the general aviation apron.",
+      "prompt": "You have vacated via Bravo. Call Ground and request taxi to the general aviation apron.",
+      "expectedPilotResponse": "Poznań Ground, SP-TFA, runway vacated via Bravo, request taxi to the general aviation apron.",
       "requiredElements": [
         {
           "id": "station",
@@ -113,10 +113,10 @@
         },
         {
           "id": "vacated",
-          "label": "Runway vacated via Alpha",
+          "label": "Runway vacated via Bravo",
           "acceptedVariants": [
-            "runway vacated via Alpha",
-            "vacated via Alpha"
+            "runway vacated via Bravo",
+            "vacated via Bravo"
           ],
           "weight": 30
         },
@@ -137,9 +137,9 @@
       "type": "pilot_readback",
       "speaker": "atc",
       "prompt": "Read back the taxi-in route.",
-      "atcText": "SP-TFA, taxi to the general aviation apron via Alpha.",
+      "atcText": "SP-TFA, taxi to the general aviation apron via Bravo.",
       "atcAudio": "/audio/atc/lnd-ctrl-vacate-taxi/taxi-readback.mp3",
-      "expectedPilotResponse": "Taxi to the general aviation apron via Alpha, SP-TFA.",
+      "expectedPilotResponse": "Taxi to the general aviation apron via Bravo, SP-TFA.",
       "requiredElements": [
         {
           "id": "taxi",
@@ -153,9 +153,9 @@
         },
         {
           "id": "route",
-          "label": "Via Alpha",
+          "label": "Via Bravo",
           "acceptedVariants": [
-            "via Alpha"
+            "via Bravo"
           ],
           "weight": 35
         },

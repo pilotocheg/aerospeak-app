@@ -55,10 +55,9 @@ re-fetch from the OSM API (bbox `16.78,52.405,16.86,52.44` and `16.68,53.15,16.7
 
 ## Scenario text that conflicts with OSM
 
-- **EPPO `lnd-ctrl-vacate-taxi`**: "vacate left via Alpha" after landing runway 28. In OSM,
-  Alpha is at the runway 28 threshold (east end), where the landing roll starts, so you
-  cannot vacate there after a normal landing. The mid-runway exits on the left (south) are
-  B, D1 and F. Suggest "vacate left via Bravo" or another exit once the AIP is checked.
+- **EPPO `lnd-ctrl-vacate-taxi`** (fixed 2026-10-18): was "vacate left via Alpha", but in OSM
+  Alpha is at the runway 28 threshold where the landing roll starts. Changed to "vacate left via
+  Bravo" (a mid-runway exit on the south side in OSM); still to check against the AIP.
 - **EPPO `ground-ctrl-taxi-clearance` / `dep-ctrl-ready-take-off`**: "taxi to holding point
   runway 28 via Alpha" fits OSM (Alpha joins the runway 28 threshold), but the route from
   the GA apron probably also uses H1 or H2. Fine for practice; check the AIP.
