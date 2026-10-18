@@ -1,0 +1,5 @@
+src/routeTree.gen.ts
+src/shared/api/schema.d.ts
+src/shared/lib/local-scoring
+package-lock.json
+dist
