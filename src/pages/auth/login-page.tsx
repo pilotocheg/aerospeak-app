@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { Plane } from 'lucide-react'
 import { LoginForm } from '@/features/auth/ui/login-form'
 import { useLogin } from '@/features/auth/model/actions'
+import { Logo } from '@/shared/ui/logo'
 
 export const LoginPage = () => {
   const navigate = useNavigate()
@@ -20,9 +20,9 @@ export const LoginPage = () => {
     <div className="flex min-h-dvh items-center justify-center bg-background px-4 py-6 sm:px-6">
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border bg-secondary px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-            <Plane className="h-3.5 w-3.5" />
-            AeroSpeak
+          <div className="mb-4 flex flex-col items-center gap-2">
+            <Logo className="size-14" />
+            <span className="text-sm font-semibold tracking-[0.2em] text-muted-foreground uppercase">AeroSpeak</span>
           </div>
           <h1 className="text-3xl font-semibold tracking-tight">Welcome back</h1>
           <p className="mt-2 text-sm text-muted-foreground">Sign in to continue your communication training.</p>

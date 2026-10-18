@@ -1,0 +1,33 @@
+import { useId } from 'react'
+
+type LogoProps = {
+  className?: string
+}
+
+/** AeroSpeak mark: aviation headset with an aircraft inside. Same artwork as public/favicon.svg. */
+export const Logo = ({ className }: LogoProps) => {
+  const gradientId = useId()
+
+  return (
+    <svg viewBox="0 0 64 64" className={className} role="img" aria-label="AeroSpeak">
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#3b82f6" />
+          <stop offset="1" stopColor="#1d4ed8" />
+        </linearGradient>
+      </defs>
+      <rect width="64" height="64" rx="14" fill={`url(#${gradientId})`} />
+      <g fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M13 37v-4a19 19 0 0 1 38 0v4" strokeWidth="4.5" />
+        <path d="M13.5 48c0 5.5 4 8.5 10 8.5h3" strokeWidth="3" />
+      </g>
+      <rect x="7.5" y="33" width="11" height="17" rx="4.5" fill="#fff" />
+      <rect x="45.5" y="33" width="11" height="17" rx="4.5" fill="#fff" />
+      <circle cx="29" cy="56.5" r="2.6" fill="#fff" />
+      <path
+        fill="#fff"
+        d="M32 19.5c1.3 0 2.2 1.4 2.2 3.1v6.3l8.6 5v3l-8.6-2.4v5.6l2.8 2.1v2.3l-5-1.4-5 1.4v-2.3l2.8-2.1v-5.6l-8.6 2.4v-3l8.6-5v-6.3c0-1.7.9-3.1 2.2-3.1z"
+      />
+    </svg>
+  )
+}
