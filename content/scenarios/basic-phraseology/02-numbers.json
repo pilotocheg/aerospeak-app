@@ -1,0 +1,78 @@
+{
+  "id": "basic-numbers",
+  "title": "Runway, heading and altitude",
+  "packId": "basic-phraseology",
+  "difficulty": "easy",
+  "estimatedDurationSec": 60,
+  "objective": "Read numbers the ICAO way: digits one by one, altitudes in thousands and hundreds.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "SP-TFA"
+    },
+    {
+      "label": "Aircraft",
+      "value": "Cessna 172"
+    }
+  ],
+  "phraseologyNote": {
+    "id": "numbers",
+    "title": "Numbers on the radio",
+    "shortExplanation": "Runways, headings, QNH and frequencies are read digit by digit. Altitudes use thousands and hundreds.",
+    "example": "Runway two eight. Heading two seven zero. Two thousand five hundred feet.",
+    "whyItMatters": "Digit-by-digit numbers are harder to mishear than whole numbers."
+  },
+  "steps": [
+    {
+      "id": "runway",
+      "type": "basic_drill",
+      "speaker": "pilot",
+      "prompt": "Read out loud: runway 28.",
+      "expectedPilotResponse": "Runway 28.",
+      "requiredElements": [
+        {
+          "id": "runway",
+          "label": "Runway 28",
+          "acceptedVariants": [
+            "runway 28"
+          ],
+          "weight": 100
+        }
+      ]
+    },
+    {
+      "id": "heading",
+      "type": "basic_drill",
+      "speaker": "pilot",
+      "prompt": "Read out loud: heading 270.",
+      "expectedPilotResponse": "Heading 270.",
+      "requiredElements": [
+        {
+          "id": "heading",
+          "label": "Heading 270",
+          "acceptedVariants": [
+            "heading 270"
+          ],
+          "weight": 100
+        }
+      ]
+    },
+    {
+      "id": "altitude",
+      "type": "basic_drill",
+      "speaker": "pilot",
+      "prompt": "Read out loud: 2500 feet.",
+      "expectedPilotResponse": "2500 feet.",
+      "requiredElements": [
+        {
+          "id": "altitude",
+          "label": "2500 feet",
+          "acceptedVariants": [
+            "2500 feet"
+          ],
+          "weight": 100
+        }
+      ]
+    }
+  ]
+}
