@@ -32,7 +32,9 @@ export const RegisterPage = () => {
             AeroSpeak
           </div>
           <h1 className="text-3xl font-semibold tracking-tight">Create your account</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Start improving your aviation communication skills today.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Start improving your aviation communication skills today.
+          </p>
         </div>
 
         <SignupForm

@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# TanStack Router CLI temp
+.tanstack
+
+# Claude Code local settings
+.claude/settings.local.json
