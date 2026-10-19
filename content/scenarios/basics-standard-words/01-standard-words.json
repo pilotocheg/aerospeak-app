@@ -1,7 +1,7 @@
 {
   "id": "basic-standard-words",
   "title": "Standard words",
-  "packId": "basic-phraseology",
+  "packId": "basics-standard-words",
   "difficulty": "easy",
   "estimatedDurationSec": 90,
   "objective": "Answer short ATC calls with the right standard word and your callsign.",

@@ -46,3 +46,11 @@ repo), mirrored in `scripts/content-schema.ts`, so files can be copied to the ba
 ## After editing
 
 Run `npm run content:check`. Fix every error it lists before finishing.
+
+## Sections and visuals (frontend-only)
+
+- Every pack must be listed in exactly one section in `content/sections.json`.
+- Drills get `"visual": { "kind": "text", "text": "RWY 28", "caption": "optional" }` so the
+  practice screen shows the item. Circuit steps get
+  `"visual": { "kind": "pattern", "side": "left|right", "position": "upwind|crosswind|downwind|base|final", "runway": "21" }`.
+  Steps without `visual` show the aerodrome chart from the "Airport" briefing value.

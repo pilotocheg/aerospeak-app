@@ -17,6 +17,28 @@ export const requiredElementSchema = z.object({
   critical: z.boolean().optional(),
 })
 
+/** Frontend-only extension: what the practice screen shows for a step. The backend ignores it. */
+export const stepVisualSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('text'), text: z.string().min(1), caption: z.string().optional() }),
+  z.object({
+    kind: z.literal('pattern'),
+    side: z.enum(['left', 'right']),
+    position: z.enum(['upwind', 'crosswind', 'downwind', 'base', 'final']),
+    runway: z.string().min(1),
+  }),
+])
+
+export const sectionsFileSchema = z.array(
+  z.object({
+    id,
+    title: z.string().min(1),
+    icon: z.string().min(1),
+    description: z.string().min(1),
+    packIds: z.array(id),
+    comingSoon: z.boolean().optional(),
+  }),
+)
+
 export const scenarioStepSchema = z
   .object({
     id,
@@ -29,6 +51,7 @@ export const scenarioStepSchema = z
     requiredElements: z.array(requiredElementSchema).min(1),
     criticalElements: z.array(id).optional(),
     phraseologyReferenceId: z.string().optional(),
+    visual: stepVisualSchema.optional(),
   })
   .superRefine((step, ctx) => {
     const elementIds = new Set(step.requiredElements.map((e) => e.id))

@@ -4,6 +4,10 @@
   "/audio/atc/arr-unc-inbound/information-readback.mp3",
   "/audio/atc/basic-frequencies-and-qnh/frequency-readback.mp3",
   "/audio/atc/basic-frequencies-and-qnh/qnh-readback.mp3",
+  "/audio/atc/basic-more-standard-words/negative.mp3",
+  "/audio/atc/basic-more-standard-words/roger.mp3",
+  "/audio/atc/basic-more-standard-words/standby.mp3",
+  "/audio/atc/basic-more-standard-words/unable.mp3",
   "/audio/atc/basic-standard-words/affirm.mp3",
   "/audio/atc/basic-standard-words/traffic.mp3",
   "/audio/atc/basic-standard-words/wilco.mp3",
@@ -22,5 +26,11 @@
   "/audio/atc/ground-unc-information-taxi/information-readback.mp3",
   "/audio/atc/lnd-ctrl-landing-clearance/clearance-readback.mp3",
   "/audio/atc/lnd-ctrl-vacate-taxi/taxi-readback.mp3",
-  "/audio/atc/lnd-ctrl-vacate-taxi/vacate-readback.mp3"
+  "/audio/atc/lnd-ctrl-vacate-taxi/vacate-readback.mp3",
+  "/audio/atc/pattern-ctrl-circuit/sequence-readback.mp3",
+  "/audio/atc/pattern-ctrl-circuit/take-off-readback.mp3",
+  "/audio/atc/pattern-ctrl-circuit/touch-and-go-readback.mp3",
+  "/audio/atc/pattern-ctrl-extend-go-around/base-readback.mp3",
+  "/audio/atc/pattern-ctrl-extend-go-around/extend-readback.mp3",
+  "/audio/atc/pattern-ctrl-extend-go-around/go-around-readback.mp3"
 ]

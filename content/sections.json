@@ -1,0 +1,58 @@
+[
+  {
+    "id": "basics",
+    "title": "Basics",
+    "icon": "list-ordered",
+    "description": "The fundamentals of radio communication: the phonetic alphabet, numbers, frequencies and standard words.",
+    "packIds": [
+      "basics-alphabet",
+      "basics-numbers",
+      "basics-frequencies",
+      "basics-standard-words"
+    ]
+  },
+  {
+    "id": "traffic-pattern",
+    "title": "Traffic Pattern",
+    "icon": "route",
+    "description": "Learn the circuit legs and make the radio calls of a circuit, with and without ATC.",
+    "packIds": [
+      "pattern-basics",
+      "traffic-pattern-uncontrolled",
+      "pattern-controlled"
+    ]
+  },
+  {
+    "id": "vfr-uncontrolled",
+    "title": "VFR — Uncontrolled",
+    "icon": "sun",
+    "description": "VFR flight from an uncontrolled airfield (Piła): self-announcing, A/G radio and FIS en route.",
+    "packIds": [
+      "ground-uncontrolled",
+      "departure-uncontrolled",
+      "enroute-fis",
+      "arrival-uncontrolled",
+      "landing-uncontrolled"
+    ]
+  },
+  {
+    "id": "vfr-controlled",
+    "title": "VFR — Controlled",
+    "icon": "radio-tower",
+    "description": "VFR flight at a controlled aerodrome (Poznań): clearances and readbacks with Ground and Tower.",
+    "packIds": [
+      "ground-controlled",
+      "departure-controlled",
+      "arrival-controlled",
+      "landing-controlled"
+    ]
+  },
+  {
+    "id": "ifr",
+    "title": "IFR",
+    "icon": "cloud",
+    "description": "Instrument flight communications: clearances, departures, approaches.",
+    "packIds": [],
+    "comingSoon": true
+  }
+]
