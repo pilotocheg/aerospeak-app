@@ -21,7 +21,7 @@ type UseRecorderOptions = {
   onError: (error: Error) => void
 }
 
-const MIN_DURATION_MS = 400
+const MIN_DURATION_MS = 1000
 
 // Chrome/Firefox record webm/opus, Safari only mp4/aac. The backend accepts both.
 const pickMimeType = () =>
@@ -29,7 +29,7 @@ const pickMimeType = () =>
     MediaRecorder.isTypeSupported(type),
   )
 
-export const useRecorder = ({ maxDurationMs = 15_000, withTranscript, onRecorded, onError }: UseRecorderOptions) => {
+export const useRecorder = ({ maxDurationMs = 120_000, withTranscript, onRecorded, onError }: UseRecorderOptions) => {
   const [status, setStatus] = useState<RecorderStatus>('idle')
   const [elapsedMs, setElapsedMs] = useState(0)
 
@@ -153,5 +153,14 @@ export const useRecorder = ({ maxDurationMs = 15_000, withTranscript, onRecorded
     }
   }
 
-  return { status, elapsedMs, start, stop }
+  /** Starts recording when idle, stops it when recording. */
+  const toggle = () => {
+    if (statusRef.current === 'idle') {
+      start()
+    } else {
+      stop()
+    }
+  }
+
+  return { status, elapsedMs, start, stop, toggle }
 }

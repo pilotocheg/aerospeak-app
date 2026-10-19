@@ -4,6 +4,7 @@ export {
   useAttemptsByStep,
   useIsFinished,
   usePracticeScenarioId,
+  useRunId,
   useStepAttempts,
   useStepIndex,
 } from './model/selectors'

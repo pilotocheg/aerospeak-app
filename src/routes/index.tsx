@@ -1,13 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { z } from 'zod'
 
-import { TrainerPage } from '@/pages/trainer/trainer-page'
-
-const searchSchema = z.object({
-  scenario: z.string().optional(),
-})
+import { LandingPage } from '@/pages/landing/landing-page'
 
 export const Route = createFileRoute('/')({
-  validateSearch: searchSchema,
-  component: TrainerPage,
+  component: LandingPage,
 })

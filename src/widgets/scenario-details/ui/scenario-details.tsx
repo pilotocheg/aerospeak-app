@@ -11,10 +11,11 @@ import { ScoreRing } from '@/shared/ui/score-ring'
 import { Stat } from './stat'
 
 type ScenarioDetailsProps = {
+  sectionId: string
   scenarioId: string
 }
 
-export const ScenarioDetails = ({ scenarioId }: ScenarioDetailsProps) => {
+export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps) => {
   const { data: scenario, isPending, isError } = useQuery(scenarioQueryOptions(scenarioId))
   const progress = useScenarioProgress(scenarioId)
 
@@ -38,7 +39,12 @@ export const ScenarioDetails = ({ scenarioId }: ScenarioDetailsProps) => {
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="border-b bg-card px-4 py-4 sm:px-6">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon-sm" render={<Link to="/" search={{}} />} aria-label="Back to scenarios">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            render={<Link to="/lessons/$sectionId" params={{ sectionId }} search={{}} />}
+            aria-label="Back to scenarios"
+          >
             <ArrowLeft />
           </Button>
           <h1 className="flex-1 truncate text-lg font-semibold">{scenario.title}</h1>

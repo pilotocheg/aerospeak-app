@@ -1,9 +1,14 @@
 import packsFile from '../../../content/packs.json'
-import type { PracticePackDto, ScenarioDto } from '@/shared/api'
+import sectionsFile from '../../../content/sections.json'
+import type { PracticePackDto } from '@/shared/api'
+
+import type { Scenario, Section } from './types'
+
+export type * from './types'
 
 type PackMeta = Omit<PracticePackDto, 'scenarios'>
 
-const scenarioModules = import.meta.glob<ScenarioDto>('../../../content/scenarios/**/*.json', {
+const scenarioModules = import.meta.glob<Scenario>('../../../content/scenarios/**/*.json', {
   eager: true,
   import: 'default',
 })
@@ -32,3 +37,5 @@ export const localPacks: PracticePackDto[] = (packsFile as PackMeta[])
   }))
 
 export const findLocalScenario = (id: string) => scenarios.find((scenario) => scenario.id === id)
+
+export const sections = sectionsFile as Section[]

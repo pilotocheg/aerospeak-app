@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { submitAttempt } from '@/entities/attempt'
+import { SttFailedError, submitAttempt } from '@/entities/attempt'
 import { guestQueryOptions } from '@/entities/guest'
 import { useRecordScenarioResult } from '@/entities/progress'
 import { getBriefingValue, scenarioDeployedQueryOptions } from '@/entities/scenario'
+import { findSectionByPackId } from '@/entities/section'
 import {
   buildSummary,
   useAddAttempt,
@@ -15,29 +16,36 @@ import {
   useFinishPractice,
   useGoToStep,
   useIsFinished,
+  useRunId,
   useStartPractice,
   useStepIndex,
 } from '@/features/practice-session'
-import { PttButton, usePushToTalkKey, useRecorder, type Recording } from '@/features/record-transmission'
-import type { ScenarioDto } from '@/shared/api'
+import {
+  PttButton,
+  TooShortError,
+  useRecordToggleKey,
+  useRecorder,
+  type Recording,
+} from '@/features/record-transmission'
 import { LOCAL_SCORING_FALLBACK } from '@/shared/config/features'
+import type { Scenario } from '@/shared/content'
 import { useAudioPlayer } from '@/shared/lib/audio'
 import { stopSpeaking } from '@/shared/lib/speech'
 import { Button } from '@/shared/ui/button'
 
-import { AerodromeChart } from './aerodrome-chart'
 import { AtcButton } from './atc-button'
 import { BriefingStrip } from './briefing-strip'
 import { FeedbackDialog } from './feedback-dialog'
 import { HelpDialog } from './help-dialog'
 import { PracticeHeader } from './practice-header'
 import { ScoreBar } from './score-bar'
+import { StepVisual } from './step-visual'
 import { SummaryDialog } from './summary-dialog'
 import { ToggleEye } from './toggle-eye'
 import { TranscriptLine, type TextMode } from './transcript-line'
 
 type PracticePlayerProps = {
-  scenario: ScenarioDto
+  scenario: Scenario
 }
 
 type OpenDialog = 'help' | 'feedback' | null
@@ -45,6 +53,7 @@ type OpenDialog = 'help' | 'feedback' | null
 export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   const navigate = useNavigate()
   const stepIndex = useStepIndex()
+  const runId = useRunId()
   const attemptsByStep = useAttemptsByStep()
   const isFinished = useIsFinished()
   const goToStep = useGoToStep()
@@ -61,6 +70,9 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   const attempts = attemptsByStep[step.id] ?? []
   const lastAttempt = attempts.at(-1)
   const isLastStep = stepIndex === scenario.steps.length - 1
+  // A step counts as done after any scored attempt; only then can the user move on.
+  const isStepDone = attempts.length > 0
+  const sectionId = findSectionByPackId(scenario.packId)?.id
 
   const { data: guestId } = useQuery(guestQueryOptions())
   const { data: isDeployed } = useQuery(scenarioDeployedQueryOptions(scenario.id))
@@ -68,7 +80,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
 
   const attemptMutation = useMutation({
     mutationFn: submitAttempt,
-    onError: (error) => toast.error(error.message),
+    onError: (error) => (error instanceof SttFailedError ? toast.warning(error.message) : toast.error(error.message)),
   })
 
   const handleRecorded = (recording: Recording) => {
@@ -98,35 +110,47 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   const recorder = useRecorder({
     withTranscript: scoreLocally,
     onRecorded: handleRecorded,
-    onError: (error) => toast.error(error.message),
+    onError: (error) => (error instanceof TooShortError ? toast.warning(error.message) : toast.error(error.message)),
   })
 
   const canRecord = isDeployed !== undefined && (scoreLocally || Boolean(guestId)) && !attemptMutation.isPending
 
-  const pressTalk = () => {
-    if (!canRecord) {
-      return
+  const toggleRecording = () => {
+    if (recorder.status === 'idle') {
+      if (!canRecord) {
+        return
+      }
+      player.stop()
+      stopSpeaking()
     }
-    player.stop()
-    stopSpeaking()
-    recorder.start()
+    recorder.toggle()
   }
 
-  usePushToTalkKey(canRecord && openDialog === null && !isFinished, pressTalk, recorder.stop)
+  useRecordToggleKey(openDialog === null && !isFinished && (canRecord || recorder.status !== 'idle'), toggleRecording)
+
+  // ATC speaks first: play the step's call as soon as the step opens (also after "Repeat").
+  const { play, stop } = player
+  useEffect(() => {
+    if (step.atcAudio) {
+      play(step.atcAudio)
+    } else {
+      stop()
+    }
+  }, [runId, step.atcAudio, play, stop])
 
   const enterStep = (index: number) => {
-    const next = scenario.steps[index]
+    if (index > stepIndex && !isStepDone) {
+      return
+    }
     goToStep(index)
     setTextMode('prompt')
     setOpenDialog(null)
-    if (next.atcAudio) {
-      player.play(next.atcAudio)
-    } else {
-      player.stop()
-    }
   }
 
   const finish = () => {
+    if (!isStepDone) {
+      return
+    }
     player.stop()
     setOpenDialog(null)
     finishPractice()
@@ -154,19 +178,16 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   }
 
   return (
-    <div className="flex h-dvh flex-col bg-background">
+    <div className="flex min-h-0 flex-1 flex-col bg-background">
       <PracticeHeader
-        scenarioId={scenario.id}
+        sectionId={sectionId}
         title={scenario.title}
         stepIndex={stepIndex}
         stepCount={scenario.steps.length}
         onHelp={() => setOpenDialog('help')}
       />
       <BriefingStrip briefing={scenario.briefing ?? []} />
-      <AerodromeChart
-        airport={getBriefingValue(scenario, 'Airport')}
-        position={getBriefingValue(scenario, 'Position')}
-      />
+      <StepVisual scenario={scenario} step={step} />
 
       <div className="shrink-0 space-y-3 border-t bg-black px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-8">
         <ScoreBar score={lastAttempt?.result.score} />
@@ -196,8 +217,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
             elapsedMs={recorder.elapsedMs}
             disabled={!canRecord && !attemptMutation.isPending}
             busy={attemptMutation.isPending}
-            onPress={pressTalk}
-            onRelease={recorder.stop}
+            onToggle={toggleRecording}
           />
         </div>
 
@@ -224,6 +244,8 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
             variant="ghost"
             size="icon-lg"
             aria-label={isLastStep ? 'Finish scenario' : 'Next transmission'}
+            title={isStepDone ? undefined : 'Record a response first'}
+            disabled={!isStepDone}
             onClick={goNext}
           >
             <ArrowRight className="size-6" />
@@ -255,7 +277,11 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
         title={scenario.title}
         summary={buildSummary(scenario, attemptsByStep)}
         onRepeat={repeat}
-        onClose={() => navigate({ to: '/', search: { scenario: scenario.id } })}
+        onClose={() =>
+          sectionId
+            ? navigate({ to: '/lessons/$sectionId', params: { sectionId }, search: { scenario: scenario.id } })
+            : navigate({ to: '/lessons' })
+        }
       />
     </div>
   )

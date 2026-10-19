@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type AudioPlayer = {
   playingSrc: string | null
@@ -36,12 +36,12 @@ export const useAudioPlayer = (): AudioPlayer => {
     }
   }, [])
 
-  const stop = () => {
+  const stop = useCallback(() => {
     audioRef.current?.pause()
     setPlayingSrc(null)
-  }
+  }, [])
 
-  const play = async (src: string) => {
+  const play = useCallback(async (src: string) => {
     const audio = audioRef.current
     if (!audio) {
       return
@@ -56,7 +56,7 @@ export const useAudioPlayer = (): AudioPlayer => {
     } catch {
       setPlayingSrc(null)
     }
-  }
+  }, [])
 
   return { playingSrc, currentTime, duration, play, stop }
 }

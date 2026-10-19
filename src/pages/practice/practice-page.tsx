@@ -9,7 +9,7 @@ import { Button } from '@/shared/ui/button'
 import { PracticePlayer } from '@/widgets/practice-player'
 
 export const PracticePage = () => {
-  const { scenarioId } = useParams({ from: '/practice/$scenarioId' })
+  const { scenarioId } = useParams({ from: '/_app/practice/$scenarioId' })
   const { data: scenario, isPending, isError } = useQuery(scenarioQueryOptions(scenarioId))
   const activeScenarioId = usePracticeScenarioId()
   const startPractice = useStartPractice()
@@ -20,9 +20,9 @@ export const PracticePage = () => {
 
   if (isError) {
     return (
-      <div className="flex h-dvh flex-col items-center justify-center gap-4 text-muted-foreground">
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 text-muted-foreground">
         <p>Scenario not found.</p>
-        <Button variant="outline" render={<Link to="/" search={{}} />}>
+        <Button variant="outline" render={<Link to="/lessons" />}>
           Back to scenarios
         </Button>
       </div>
@@ -31,7 +31,7 @@ export const PracticePage = () => {
 
   if (isPending || activeScenarioId !== scenarioId) {
     return (
-      <div className="flex h-dvh items-center justify-center text-muted-foreground">
+      <div className="flex flex-1 items-center justify-center text-muted-foreground">
         <Loader2 className="animate-spin" />
       </div>
     )

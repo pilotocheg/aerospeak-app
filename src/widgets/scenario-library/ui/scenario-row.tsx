@@ -7,16 +7,18 @@ import { ScoreRing } from '@/shared/ui/score-ring'
 
 type ScenarioRowProps = {
   scenario: ScenarioSummaryDto
+  sectionId: string
   index: number
   isSelected: boolean
 }
 
-export const ScenarioRow = ({ scenario, index, isSelected }: ScenarioRowProps) => {
+export const ScenarioRow = ({ scenario, sectionId, index, isSelected }: ScenarioRowProps) => {
   const progress = useScenarioProgress(scenario.id)
 
   return (
     <Link
-      to="/"
+      to="/lessons/$sectionId"
+      params={{ sectionId }}
       search={{ scenario: scenario.id }}
       className={cn(
         'flex items-center gap-3 border-l-2 py-3 pr-3 pl-4 transition',

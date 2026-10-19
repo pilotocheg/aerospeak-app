@@ -8,12 +8,13 @@ import { ScenarioRow } from './scenario-row'
 
 type PackSectionProps = {
   pack: PracticePackDto
+  sectionId: string
   isOpen: boolean
   selectedScenarioId?: string
   onToggle: () => void
 }
 
-export const PackSection = ({ pack, isOpen, selectedScenarioId, onToggle }: PackSectionProps) => {
+export const PackSection = ({ pack, sectionId, isOpen, selectedScenarioId, onToggle }: PackSectionProps) => {
   const progress = useAllProgress()
   const practiced = pack.scenarios.filter((scenario) => progress[scenario.id]).length
 
@@ -45,6 +46,7 @@ export const PackSection = ({ pack, isOpen, selectedScenarioId, onToggle }: Pack
             <ScenarioRow
               key={scenario.id}
               scenario={scenario}
+              sectionId={sectionId}
               index={index}
               isSelected={scenario.id === selectedScenarioId}
             />

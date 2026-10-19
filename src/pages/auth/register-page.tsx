@@ -20,7 +20,7 @@ export const RegisterPage = () => {
     }
 
     register({ name, email, password, role: 'Student' })
-    navigate({ to: '/', replace: true })
+    navigate({ to: '/lessons', replace: true })
   }
 
   return (

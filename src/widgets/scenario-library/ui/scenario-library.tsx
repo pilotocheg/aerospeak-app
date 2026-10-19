@@ -3,16 +3,18 @@ import { useQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 
 import { packsQueryOptions } from '@/entities/scenario'
+import { getSectionPacks } from '@/entities/section'
 import { Button } from '@/shared/ui/button'
 
 import { PackSection } from './pack-section'
 
 type ScenarioLibraryProps = {
+  sectionId: string
   selectedScenarioId?: string
 }
 
-export const ScenarioLibrary = ({ selectedScenarioId }: ScenarioLibraryProps) => {
-  const { data: packs, isPending, isError, refetch } = useQuery(packsQueryOptions())
+export const ScenarioLibrary = ({ sectionId, selectedScenarioId }: ScenarioLibraryProps) => {
+  const { data, isPending, isError, refetch } = useQuery(packsQueryOptions())
   const [toggled, setToggled] = useState<Record<string, boolean>>({})
 
   if (isPending) {
@@ -34,6 +36,7 @@ export const ScenarioLibrary = ({ selectedScenarioId }: ScenarioLibraryProps) =>
     )
   }
 
+  const packs = getSectionPacks(sectionId, data)
   const selectedPackId = packs.find((pack) => pack.scenarios.some((s) => s.id === selectedScenarioId))?.id
   const defaultOpenId = selectedPackId ?? packs[0]?.id
 
@@ -45,6 +48,7 @@ export const ScenarioLibrary = ({ selectedScenarioId }: ScenarioLibraryProps) =>
           <PackSection
             key={pack.id}
             pack={pack}
+            sectionId={sectionId}
             isOpen={isOpen}
             selectedScenarioId={selectedScenarioId}
             onToggle={() => setToggled((state) => ({ ...state, [pack.id]: !isOpen }))}
