@@ -10,13 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
-import { Route as PracticeScenarioIdRouteImport } from './routes/practice/$scenarioId'
+import { Route as AppLessonsIndexRouteImport } from './routes/_app/lessons/index'
+import { Route as AppLessonsSectionIdRouteImport } from './routes/_app/lessons/$sectionId'
+import { Route as AppPracticeScenarioIdRouteImport } from './routes/_app/practice/$scenarioId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -29,44 +36,81 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PracticeScenarioIdRoute = PracticeScenarioIdRouteImport.update({
+const AppLessonsIndexRoute = AppLessonsIndexRouteImport.update({
+  id: '/lessons/',
+  path: '/lessons/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLessonsSectionIdRoute = AppLessonsSectionIdRouteImport.update({
+  id: '/lessons/$sectionId',
+  path: '/lessons/$sectionId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPracticeScenarioIdRoute = AppPracticeScenarioIdRouteImport.update({
   id: '/practice/$scenarioId',
   path: '/practice/$scenarioId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/practice/$scenarioId': typeof PracticeScenarioIdRoute
+  '/lessons/$sectionId': typeof AppLessonsSectionIdRoute
+  '/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
+  '/lessons/': typeof AppLessonsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/practice/$scenarioId': typeof PracticeScenarioIdRoute
+  '/lessons/$sectionId': typeof AppLessonsSectionIdRoute
+  '/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
+  '/lessons': typeof AppLessonsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/practice/$scenarioId': typeof PracticeScenarioIdRoute
+  '/_app/lessons/$sectionId': typeof AppLessonsSectionIdRoute
+  '/_app/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
+  '/_app/lessons/': typeof AppLessonsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/practice/$scenarioId'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/lessons/$sectionId'
+    | '/practice/$scenarioId'
+    | '/lessons/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/practice/$scenarioId'
-  id: '__root__' | '/' | '/login' | '/register' | '/practice/$scenarioId'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/lessons/$sectionId'
+    | '/practice/$scenarioId'
+    | '/lessons'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/login'
+    | '/register'
+    | '/_app/lessons/$sectionId'
+    | '/_app/practice/$scenarioId'
+    | '/_app/lessons/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
-  PracticeScenarioIdRoute: typeof PracticeScenarioIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -76,6 +120,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -92,21 +143,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/practice/$scenarioId': {
-      id: '/practice/$scenarioId'
+    '/_app/lessons/': {
+      id: '/_app/lessons/'
+      path: '/lessons'
+      fullPath: '/lessons/'
+      preLoaderRoute: typeof AppLessonsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/lessons/$sectionId': {
+      id: '/_app/lessons/$sectionId'
+      path: '/lessons/$sectionId'
+      fullPath: '/lessons/$sectionId'
+      preLoaderRoute: typeof AppLessonsSectionIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/practice/$scenarioId': {
+      id: '/_app/practice/$scenarioId'
       path: '/practice/$scenarioId'
       fullPath: '/practice/$scenarioId'
-      preLoaderRoute: typeof PracticeScenarioIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppPracticeScenarioIdRouteImport
+      parentRoute: typeof AppRoute
     }
   }
 }
 
+interface AppRouteChildren {
+  AppLessonsSectionIdRoute: typeof AppLessonsSectionIdRoute
+  AppPracticeScenarioIdRoute: typeof AppPracticeScenarioIdRoute
+  AppLessonsIndexRoute: typeof AppLessonsIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppLessonsSectionIdRoute: AppLessonsSectionIdRoute,
+  AppPracticeScenarioIdRoute: AppPracticeScenarioIdRoute,
+  AppLessonsIndexRoute: AppLessonsIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
-  PracticeScenarioIdRoute: PracticeScenarioIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -13,7 +13,7 @@ export const LoginPage = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     login({ email, password })
-    navigate({ to: '/', replace: true })
+    navigate({ to: '/lessons', replace: true })
   }
 
   return (

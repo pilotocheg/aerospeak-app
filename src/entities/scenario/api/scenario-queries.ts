@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query'
 
 import { apiClient } from '@/shared/api'
 import { CONTENT_SOURCE } from '@/shared/config/env'
-import { findLocalScenario, localPacks } from '@/shared/content'
+import { findLocalScenario, localPacks, type Scenario } from '@/shared/content'
 
 import { scenarioKeys } from './scenario-keys'
 
@@ -25,7 +25,7 @@ const fetchPacks = async () => {
   return data
 }
 
-const fetchScenario = async (id: string) => {
+const fetchScenario = async (id: string): Promise<Scenario> => {
   if (CONTENT_SOURCE === 'local') {
     const scenario = findLocalScenario(id)
     if (!scenario) {

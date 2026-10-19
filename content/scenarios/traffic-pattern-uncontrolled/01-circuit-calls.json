@@ -44,6 +44,12 @@
       "type": "self_announce",
       "speaker": "pilot",
       "prompt": "You are abeam the threshold on downwind. Report position and your intention: touch-and-go.",
+      "visual": {
+        "kind": "pattern",
+        "side": "left",
+        "position": "downwind",
+        "runway": "21"
+      },
       "expectedPilotResponse": "Piła Radio, SP-TFA, downwind runway 21, touch-and-go.",
       "requiredElements": [
         {
@@ -100,6 +106,12 @@
       "type": "self_announce",
       "speaker": "pilot",
       "prompt": "You turned base. Report it.",
+      "visual": {
+        "kind": "pattern",
+        "side": "left",
+        "position": "base",
+        "runway": "21"
+      },
       "expectedPilotResponse": "Piła Radio, SP-TFA, base runway 21.",
       "requiredElements": [
         {
@@ -147,6 +159,12 @@
       "type": "self_announce",
       "speaker": "pilot",
       "prompt": "You are on final. Report with your intention.",
+      "visual": {
+        "kind": "pattern",
+        "side": "left",
+        "position": "final",
+        "runway": "21"
+      },
       "expectedPilotResponse": "Piła Radio, SP-TFA, final runway 21, touch-and-go.",
       "requiredElements": [
         {

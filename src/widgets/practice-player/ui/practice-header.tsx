@@ -4,20 +4,20 @@ import { CircleHelp, X } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 
 type PracticeHeaderProps = {
-  scenarioId: string
+  sectionId?: string
   title: string
   stepIndex: number
   stepCount: number
   onHelp: () => void
 }
 
-export const PracticeHeader = ({ scenarioId, title, stepIndex, stepCount, onHelp }: PracticeHeaderProps) => (
+export const PracticeHeader = ({ sectionId, title, stepIndex, stepCount, onHelp }: PracticeHeaderProps) => (
   <header className="flex h-14 shrink-0 items-center gap-3 border-b bg-card px-3">
     <Button
       variant="ghost"
       size="icon"
       aria-label="Close practice"
-      render={<Link to="/" search={{ scenario: scenarioId }} />}
+      render={sectionId ? <Link to="/lessons/$sectionId" params={{ sectionId }} search={{}} /> : <Link to="/lessons" />}
     >
       <X />
     </Button>

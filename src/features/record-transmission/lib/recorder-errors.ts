@@ -7,7 +7,7 @@ export class MicrophoneError extends Error {
 
 export class TooShortError extends Error {
   constructor() {
-    super('Hold the button (or Space) while you speak, then release.')
+    super('Recording too short. Speak for at least a second, then tap again to stop.')
     this.name = 'TooShortError'
   }
 }

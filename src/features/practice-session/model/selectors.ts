@@ -4,6 +4,8 @@ const NO_ATTEMPTS: never[] = []
 
 export const usePracticeScenarioId = () => usePracticeStore((state) => state.scenarioId)
 
+export const useRunId = () => usePracticeStore((state) => state.runId)
+
 export const useStepIndex = () => usePracticeStore((state) => state.stepIndex)
 
 export const useIsFinished = () => usePracticeStore((state) => state.isFinished)

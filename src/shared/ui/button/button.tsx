@@ -6,6 +6,12 @@ import { buttonVariants } from './styles'
 
 type ButtonProps = ButtonPrimitive.Props & VariantProps<typeof buttonVariants>
 
-export const Button = ({ className, variant = 'default', size = 'default', ...props }: ButtonProps) => (
-  <ButtonPrimitive data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props} />
+// A custom `render` (e.g. a router Link) is not a native <button>, so nativeButton defaults to false then.
+export const Button = ({ className, variant = 'default', size = 'default', nativeButton, ...props }: ButtonProps) => (
+  <ButtonPrimitive
+    data-slot="button"
+    nativeButton={nativeButton ?? !props.render}
+    className={cn(buttonVariants({ variant, size, className }))}
+    {...props}
+  />
 )

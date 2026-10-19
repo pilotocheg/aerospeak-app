@@ -37,6 +37,12 @@
       "type": "self_announce",
       "speaker": "pilot",
       "prompt": "You are on final for a full-stop landing. Report.",
+      "visual": {
+        "kind": "pattern",
+        "side": "left",
+        "position": "final",
+        "runway": "21"
+      },
       "expectedPilotResponse": "Piła Radio, SP-TFA, final runway 21, full stop.",
       "requiredElements": [
         {
@@ -92,6 +98,12 @@
       "type": "self_announce",
       "speaker": "pilot",
       "prompt": "A deer crosses the runway. Announce a go-around.",
+      "visual": {
+        "kind": "pattern",
+        "side": "left",
+        "position": "upwind",
+        "runway": "21"
+      },
       "expectedPilotResponse": "Piła Radio, SP-TFA, going around.",
       "requiredElements": [
         {
@@ -133,6 +145,12 @@
       "type": "self_announce",
       "speaker": "pilot",
       "prompt": "You are back on downwind. Report with your intention.",
+      "visual": {
+        "kind": "pattern",
+        "side": "left",
+        "position": "downwind",
+        "runway": "21"
+      },
       "expectedPilotResponse": "Piła Radio, SP-TFA, downwind runway 21, full stop.",
       "requiredElements": [
         {

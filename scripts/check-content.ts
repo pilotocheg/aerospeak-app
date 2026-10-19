@@ -3,11 +3,11 @@
  * every expectedPilotResponse scores 100, atcAudio paths follow the convention and exist.
  * Usage: npm run content:check
  */
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { scoreTransmission } from '../src/shared/lib/local-scoring/index.ts'
-import { packsFileSchema, scenarioSchema } from './content-schema.ts'
+import { packsFileSchema, scenarioSchema, sectionsFileSchema } from './content-schema.ts'
 import { CONTENT_DIR, PUBLIC_DIR, readScenarioFiles } from './load-content.ts'
 
 const errors: string[] = []
@@ -18,6 +18,20 @@ if (!packs.success) {
   errors.push(...packs.error.issues.map((i) => `packs.json ${i.path.join('.')}: ${i.message}`))
 }
 const packIds = new Set(packs.success ? packs.data.map((p) => p.id) : [])
+const sections = sectionsFileSchema.safeParse(JSON.parse(readFileSync(join(CONTENT_DIR, 'sections.json'), 'utf8')))
+if (!sections.success) {
+  errors.push(...sections.error.issues.map((i) => `sections.json ${i.path.join('.')}: ${i.message}`))
+} else {
+  const sectionPackIds = sections.data.flatMap((section) => section.packIds)
+  for (const packId of packIds) {
+    const count = sectionPackIds.filter((id) => id === packId).length
+    if (count !== 1) errors.push(`sections.json: pack "${packId}" must be in exactly one section (found ${count})`)
+  }
+  for (const packId of sectionPackIds) {
+    if (!packIds.has(packId)) errors.push(`sections.json: unknown pack "${packId}"`)
+  }
+}
+
 const scenarioIds = new Set<string>()
 let stepCount = 0
 
@@ -58,6 +72,11 @@ for (const { name, raw } of readScenarioFiles()) {
       errors.push(`${where}: atcAudio without atcText`)
     }
   }
+}
+
+for (const dir of readdirSync(join(PUBLIC_DIR, 'audio/atc'), { withFileTypes: true })) {
+  if (dir.isDirectory() && !scenarioIds.has(dir.name))
+    warnings.push(`public/audio/atc/${dir.name}: no scenario with this id`)
 }
 
 for (const warning of warnings) console.warn(`warn  ${warning}`)
