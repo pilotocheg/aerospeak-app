@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { SignupForm } from '@/features/auth/ui/signup-form'
 import { useRegister } from '@/features/auth/model/actions'
 import { Logo } from '@/shared/ui/logo'
+import { useIsAuthenticated } from '@/features/auth/model/selectors'
 
 export const RegisterPage = () => {
   const navigate = useNavigate()
@@ -12,6 +13,14 @@ export const RegisterPage = () => {
   const [password, setPassword] = useState('password123')
   const [confirmPassword, setConfirmPassword] = useState('password123')
 
+  const isAuth = useIsAuthenticated()
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate({ to: '/lessons', replace: true })
+    }
+  }, [isAuth, navigate])
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
@@ -20,7 +29,6 @@ export const RegisterPage = () => {
     }
 
     register({ name, email, password, role: 'Student' })
-    navigate({ to: '/lessons', replace: true })
   }
 
   return (
@@ -60,3 +68,4 @@ export const RegisterPage = () => {
     </div>
   )
 }
+
