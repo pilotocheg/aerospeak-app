@@ -1,6 +1,6 @@
 /**
  * Generates placeholder ATC audio for every step with atcText:
- * macOS `say` -> ffmpeg (radio band-pass, compression, light noise) -> MP3.
+ * macOS `say` -> ffmpeg (radio band-pass, compression, radio hiss) -> MP3.
  * Only missing files are created; pass --force to rebuild placeholders.
  * Real voices (ElevenLabs / OpenAI TTS) replace these files later; files not listed
  * in public/audio/atc/placeholders.json are never overwritten.
@@ -22,9 +22,12 @@ const placeholders = new Set<string>(
   existsSync(placeholdersPath) ? JSON.parse(readFileSync(placeholdersPath, 'utf8')) : [],
 )
 
+// Voice: radio band-pass + compression, 0.2 s lead-in and 0.25 s tail of open-mic hiss.
+// Noise: band-limited white hiss with slight fading (tremolo); the mix is soft-clipped.
 const RADIO_FILTER =
-  '[0:a]highpass=f=300,lowpass=f=3400,acompressor=threshold=-20dB:ratio=4:makeup=6[v];' +
-  'anoisesrc=color=pink:amplitude=0.015:sample_rate=22050[n];[v][n]amix=inputs=2:duration=first:normalize=0[out]'
+  '[0:a]highpass=f=300,lowpass=f=3400,acompressor=threshold=-20dB:ratio=4:makeup=6,adelay=200,apad=pad_dur=0.25[v];' +
+  'anoisesrc=color=white:amplitude=0.05:sample_rate=22050,highpass=f=400,lowpass=f=3000,tremolo=f=6:d=0.25[n];' +
+  '[v][n]amix=inputs=2:duration=first:normalize=0,asoftclip=type=tanh,afade=t=in:d=0.01[out]'
 
 let created = 0
 let skipped = 0
