@@ -1,6 +1,7 @@
 import type { FormEvent, ReactNode } from 'react'
 import { cn } from 'cn'
 
+import { Link } from '@tanstack/react-router'
 import { Button } from '@/shared/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/shared/ui/field'
@@ -99,7 +100,7 @@ export const LoginForm = ({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our <Link to="/terms-and-conditions" target="_blank" rel="noreferrer">Terms of Service</Link> and <Link to="/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</Link>.
       </FieldDescription>
     </div>
   )

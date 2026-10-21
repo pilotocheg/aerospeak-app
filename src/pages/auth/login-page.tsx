@@ -1,19 +1,20 @@
 import { useState } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { LoginForm } from '@/features/auth/ui/login-form'
 import { useLogin } from '@/features/auth/model/actions'
 import { Logo } from '@/shared/ui/logo'
+import { useRedirectIfAuthenticated } from '@/features/auth/model/use-redirect-if-authenticated'
 
 export const LoginPage = () => {
-  const navigate = useNavigate()
   const login = useLogin()
   const [email, setEmail] = useState('student@aerospeak.io')
   const [password, setPassword] = useState('password123')
 
+  useRedirectIfAuthenticated('/lessons')
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     login({ email, password })
-    navigate({ to: '/lessons', replace: true })
   }
 
   return (

@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as AppLessonsIndexRouteImport } from './routes/_app/lessons/index'
 import { Route as AppLessonsSectionIdRouteImport } from './routes/_app/lessons/$sectionId'
 import { Route as AppPracticeScenarioIdRouteImport } from './routes/_app/practice/$scenarioId'
@@ -31,9 +33,19 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
+  id: '/terms-and-conditions',
+  path: '/terms-and-conditions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppLessonsIndexRoute = AppLessonsIndexRouteImport.update({
@@ -55,7 +67,9 @@ const AppPracticeScenarioIdRoute = AppPracticeScenarioIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/lessons/$sectionId': typeof AppLessonsSectionIdRoute
   '/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
   '/lessons/': typeof AppLessonsIndexRoute
@@ -63,7 +77,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/lessons/$sectionId': typeof AppLessonsSectionIdRoute
   '/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
   '/lessons': typeof AppLessonsIndexRoute
@@ -73,7 +89,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/_app/lessons/$sectionId': typeof AppLessonsSectionIdRoute
   '/_app/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
   '/_app/lessons/': typeof AppLessonsIndexRoute
@@ -83,7 +101,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/privacy-policy'
     | '/register'
+    | '/terms-and-conditions'
     | '/lessons/$sectionId'
     | '/practice/$scenarioId'
     | '/lessons/'
@@ -91,7 +111,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/privacy-policy'
     | '/register'
+    | '/terms-and-conditions'
     | '/lessons/$sectionId'
     | '/practice/$scenarioId'
     | '/lessons'
@@ -100,7 +122,9 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/login'
+    | '/privacy-policy'
     | '/register'
+    | '/terms-and-conditions'
     | '/_app/lessons/$sectionId'
     | '/_app/practice/$scenarioId'
     | '/_app/lessons/'
@@ -110,7 +134,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RegisterRoute: typeof RegisterRoute
+  TermsAndConditionsRoute: typeof TermsAndConditionsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -136,11 +162,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms-and-conditions': {
+      id: '/terms-and-conditions'
+      path: '/terms-and-conditions'
+      fullPath: '/terms-and-conditions'
+      preLoaderRoute: typeof TermsAndConditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/lessons/': {
@@ -185,7 +225,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   RegisterRoute: RegisterRoute,
+  TermsAndConditionsRoute: TermsAndConditionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

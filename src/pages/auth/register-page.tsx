@@ -1,16 +1,18 @@
 import { useState } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { SignupForm } from '@/features/auth/ui/signup-form'
 import { useRegister } from '@/features/auth/model/actions'
 import { Logo } from '@/shared/ui/logo'
+import { useRedirectIfAuthenticated } from '@/features/auth/model/use-redirect-if-authenticated'
 
 export const RegisterPage = () => {
-  const navigate = useNavigate()
   const register = useRegister()
   const [name, setName] = useState('Maya Green')
   const [email, setEmail] = useState('maya@aerospeak.io')
   const [password, setPassword] = useState('password123')
   const [confirmPassword, setConfirmPassword] = useState('password123')
+
+  useRedirectIfAuthenticated('/lessons')
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -20,7 +22,6 @@ export const RegisterPage = () => {
     }
 
     register({ name, email, password, role: 'Student' })
-    navigate({ to: '/lessons', replace: true })
   }
 
   return (
@@ -60,3 +61,4 @@ export const RegisterPage = () => {
     </div>
   )
 }
+
