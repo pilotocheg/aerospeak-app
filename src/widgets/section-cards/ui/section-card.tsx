@@ -6,13 +6,14 @@ import { useSectionProgress } from '@/features/section-progress'
 import type { Section } from '@/shared/content'
 import { Button } from '@/shared/ui/button'
 import { ScoreRing } from '@/shared/ui/score-ring'
+import { Skeleton } from '@/shared/ui/skeleton'
 
 type SectionCardProps = {
   section: Section
 }
 
 export const SectionCard = ({ section }: SectionCardProps) => {
-  const { total, practiced, averageBest } = useSectionProgress(section.id)
+  const { total, practiced, averageBest, isPending } = useSectionProgress(section.id)
 
   return (
     <article
@@ -29,12 +30,25 @@ export const SectionCard = ({ section }: SectionCardProps) => {
       >
         <SectionIcon name={section.icon} className="size-5" />
         <h2 className="flex-1 font-semibold tracking-wide uppercase">{section.title}</h2>
-        {!section.comingSoon && <ScoreRing value={averageBest} size={36} className="rounded-full bg-black/20" />}
+        {!section.comingSoon &&
+          (isPending ? (
+            <Skeleton className="size-9 rounded-full bg-black/20" />
+          ) : (
+            <ScoreRing value={averageBest} size={36} className="rounded-full bg-black/20" />
+          ))}
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4">
         <p className="flex-1 text-sm text-muted-foreground">{section.description}</p>
         {section.comingSoon ? (
           <p className="text-center text-sm font-medium">Coming soon</p>
+        ) : isPending ? (
+          <>
+            <div className="space-y-2">
+              <Skeleton className="h-1.5 w-full rounded-full" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+            <Skeleton className="h-9 w-28 self-center" />
+          </>
         ) : (
           <>
             <div className="space-y-1">

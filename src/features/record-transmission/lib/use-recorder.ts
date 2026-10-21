@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
+import { playCue } from '@/shared/lib/audio'
+
 import { MicrophoneError, TooShortError } from './recorder-errors'
 
 export type Recording = {
@@ -46,6 +48,13 @@ export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: Us
     }
   }
 
+  // The browser shows the "recording" indicator while any mic track is live,
+  // so the stream is opened per recording and released as soon as it ends.
+  const releaseStream = () => {
+    streamRef.current?.getTracks().forEach((track) => track.stop())
+    streamRef.current = null
+  }
+
   useEffect(
     () => () => {
       clearTimer()
@@ -53,7 +62,7 @@ export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: Us
         recorderRef.current.onstop = null
         recorderRef.current.stop()
       }
-      streamRef.current?.getTracks().forEach((track) => track.stop())
+      releaseStream()
     },
     [],
   )
@@ -76,7 +85,7 @@ export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: Us
     releasedEarlyRef.current = false
 
     try {
-      streamRef.current ??= await navigator.mediaDevices.getUserMedia({
+      streamRef.current = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true },
       })
     } catch {
@@ -90,6 +99,7 @@ export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: Us
     try {
       recorder = new MediaRecorder(streamRef.current, mimeType ? { mimeType } : undefined)
     } catch {
+      releaseStream()
       updateStatus('idle')
       onError(new MicrophoneError())
       return
@@ -105,6 +115,8 @@ export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: Us
 
     recorder.onstop = () => {
       clearTimer()
+      releaseStream()
+      playCue('stop')
       updateStatus('processing')
       const durationMs = Date.now() - startedAt
       const blob = new Blob(chunks, { type: recorder.mimeType })
@@ -122,11 +134,13 @@ export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: Us
     try {
       recorder.start()
     } catch {
+      releaseStream()
       updateStatus('idle')
       onError(new MicrophoneError())
       return
     }
     updateStatus('recording')
+    playCue('start')
 
     timerRef.current = window.setInterval(() => {
       const elapsed = Date.now() - startedAt

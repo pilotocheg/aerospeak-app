@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { ArrowLeft, BookOpen, Loader2 } from 'lucide-react'
+import { ArrowLeft, BookOpen } from 'lucide-react'
 
 import { useScenarioProgress } from '@/entities/progress'
 import { formatDuration, scenarioQueryOptions } from '@/entities/scenario'
@@ -8,6 +8,7 @@ import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { ScoreRing } from '@/shared/ui/score-ring'
 
+import { ScenarioDetailsSkeleton } from './scenario-details-skeleton'
 import { Stat } from './stat'
 
 type ScenarioDetailsProps = {
@@ -20,11 +21,7 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
   const progress = useScenarioProgress(scenarioId)
 
   if (isPending) {
-    return (
-      <div className="flex flex-1 items-center justify-center text-muted-foreground">
-        <Loader2 className="animate-spin" />
-      </div>
-    )
+    return <ScenarioDetailsSkeleton />
   }
 
   if (isError) {

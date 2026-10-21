@@ -9,9 +9,14 @@ export type SectionProgress = {
   practiced: number
   /** Mean best score over practiced scenarios, null before the first one. */
   averageBest: number | null
+  /** True until packs are loaded (from the network or the persisted cache). */
+  isPending: boolean
 }
 
-const summarize = (scenarioIds: string[], progress: ReturnType<typeof useAllProgress>): SectionProgress => {
+const summarize = (
+  scenarioIds: string[],
+  progress: ReturnType<typeof useAllProgress>,
+): Omit<SectionProgress, 'isPending'> => {
   const best = scenarioIds.map((id) => progress[id]?.bestScore).filter((score) => score !== undefined)
   return {
     total: scenarioIds.length,
@@ -22,11 +27,11 @@ const summarize = (scenarioIds: string[], progress: ReturnType<typeof useAllProg
 
 /** Progress of one section, or of all sections when sectionId is omitted. */
 export const useSectionProgress = (sectionId?: string): SectionProgress => {
-  const { data: packs = [] } = useQuery(packsQueryOptions())
+  const { data: packs = [], isPending } = useQuery(packsQueryOptions())
   const progress = useAllProgress()
   const packIds = sectionId ? (getSection(sectionId)?.packIds ?? []) : packs.map((pack) => pack.id)
   const scenarioIds = packs
     .filter((pack) => packIds.includes(pack.id))
     .flatMap((pack) => pack.scenarios.map((scenario) => scenario.id))
-  return summarize(scenarioIds, progress)
+  return { ...summarize(scenarioIds, progress), isPending }
 }
