@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 
-import type { AttemptResult } from '@/entities/attempt'
+import type { AttemptResultDto } from '@/shared/api'
 
 export type StepAttempt = {
-  result: AttemptResult
+  result: AttemptResultDto
   recordingUrl: string
 }
 

@@ -45,10 +45,7 @@ export const FeedbackDialog = ({
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Feedback</DialogTitle>
-          <DialogDescription>
-            Attempt {attemptNumber}
-            {result.source === 'local' && ' · local scoring (scenario not on the server yet)'}
-          </DialogDescription>
+          <DialogDescription>Attempt {attemptNumber}</DialogDescription>
         </DialogHeader>
 
         <div className="flex items-center gap-4">

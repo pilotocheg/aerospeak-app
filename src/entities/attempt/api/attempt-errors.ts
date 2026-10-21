@@ -12,11 +12,3 @@ export class RateLimitedError extends Error {
     this.name = 'RateLimitedError'
   }
 }
-
-/** The scenario is only in content/ and the browser cannot transcribe locally. */
-export class ScenarioNotDeployedError extends Error {
-  constructor() {
-    super('This scenario is not on the server yet. Try it in Chrome to use local scoring.')
-    this.name = 'ScenarioNotDeployedError'
-  }
-}

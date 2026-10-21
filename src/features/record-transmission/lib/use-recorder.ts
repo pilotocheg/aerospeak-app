@@ -1,22 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { startBrowserTranscriber, type BrowserTranscriber } from '@/shared/lib/speech'
-
 import { MicrophoneError, TooShortError } from './recorder-errors'
 
 export type Recording = {
   blob: Blob
   url: string
   durationMs: number
-  /** Browser transcript, only when requested (dev fallback); null otherwise. */
-  transcript: string | null
 }
 
 export type RecorderStatus = 'idle' | 'starting' | 'recording' | 'processing'
 
 type UseRecorderOptions = {
   maxDurationMs?: number
-  withTranscript: boolean
   onRecorded: (recording: Recording) => void
   onError: (error: Error) => void
 }
@@ -29,14 +24,13 @@ const pickMimeType = () =>
     MediaRecorder.isTypeSupported(type),
   )
 
-export const useRecorder = ({ maxDurationMs = 120_000, withTranscript, onRecorded, onError }: UseRecorderOptions) => {
+export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: UseRecorderOptions) => {
   const [status, setStatus] = useState<RecorderStatus>('idle')
   const [elapsedMs, setElapsedMs] = useState(0)
 
   const statusRef = useRef<RecorderStatus>('idle')
   const streamRef = useRef<MediaStream | null>(null)
   const recorderRef = useRef<MediaRecorder | null>(null)
-  const transcriberRef = useRef<BrowserTranscriber | null>(null)
   const timerRef = useRef<number | null>(null)
   const releasedEarlyRef = useRef(false)
 
@@ -55,7 +49,6 @@ export const useRecorder = ({ maxDurationMs = 120_000, withTranscript, onRecorde
   useEffect(
     () => () => {
       clearTimer()
-      transcriberRef.current?.abort()
       if (recorderRef.current?.state === 'recording') {
         recorderRef.current.onstop = null
         recorderRef.current.stop()
@@ -110,12 +103,10 @@ export const useRecorder = ({ maxDurationMs = 120_000, withTranscript, onRecorde
       }
     }
 
-    recorder.onstop = async () => {
+    recorder.onstop = () => {
       clearTimer()
       updateStatus('processing')
       const durationMs = Date.now() - startedAt
-      const transcript = transcriberRef.current ? await transcriberRef.current.stop() : null
-      transcriberRef.current = null
       const blob = new Blob(chunks, { type: recorder.mimeType })
       setElapsedMs(0)
       updateStatus('idle')
@@ -124,16 +115,13 @@ export const useRecorder = ({ maxDurationMs = 120_000, withTranscript, onRecorde
         onError(new TooShortError())
         return
       }
-      onRecorded({ blob, url: URL.createObjectURL(blob), durationMs, transcript })
+      onRecorded({ blob, url: URL.createObjectURL(blob), durationMs })
     }
 
     recorderRef.current = recorder
-    transcriberRef.current = withTranscript ? startBrowserTranscriber() : null
     try {
       recorder.start()
     } catch {
-      transcriberRef.current?.abort()
-      transcriberRef.current = null
       updateStatus('idle')
       onError(new MicrophoneError())
       return

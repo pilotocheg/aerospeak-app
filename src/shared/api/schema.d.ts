@@ -123,6 +123,28 @@ export interface components {
             example: string;
             whyItMatters?: string;
         };
+        TextVisualDto: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "text";
+            /** @description Text to read out, e.g. a frequency or registration */
+            text: string;
+            caption?: string;
+        };
+        PatternVisualDto: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "pattern";
+            /** @enum {string} */
+            side: "left" | "right";
+            /** @enum {string} */
+            position: "upwind" | "crosswind" | "downwind" | "base" | "final";
+            runway: string;
+        };
         RequiredElementDto: {
             id: string;
             label: string;
@@ -144,6 +166,8 @@ export interface components {
             requiredElements: components["schemas"]["RequiredElementDto"][];
             criticalElements?: string[];
             phraseologyReferenceId?: string;
+            /** @description UI metadata, does not affect scoring. Without it the practice screen shows the aerodrome chart. */
+            visual?: components["schemas"]["TextVisualDto"] | components["schemas"]["PatternVisualDto"];
         };
         ScenarioDto: {
             id: string;
