@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
 
 import { packsQueryOptions } from '@/entities/scenario'
 import { getSectionPacks } from '@/entities/section'
 import { Button } from '@/shared/ui/button'
 
 import { PackSection } from './pack-section'
+import { ScenarioLibrarySkeleton } from './scenario-library-skeleton'
 
 type ScenarioLibraryProps = {
   sectionId: string
@@ -18,11 +18,7 @@ export const ScenarioLibrary = ({ sectionId, selectedScenarioId }: ScenarioLibra
   const [toggled, setToggled] = useState<Record<string, boolean>>({})
 
   if (isPending) {
-    return (
-      <div className="flex justify-center p-8 text-muted-foreground">
-        <Loader2 className="animate-spin" />
-      </div>
-    )
+    return <ScenarioLibrarySkeleton />
   }
 
   if (isError) {
