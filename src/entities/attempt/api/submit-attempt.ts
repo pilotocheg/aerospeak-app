@@ -1,33 +1,25 @@
-import type { AttemptResultDto, ScenarioStepDto } from '@/shared/api'
+import type { AttemptResultDto } from '@/shared/api'
 import { API_URL } from '@/shared/config/env'
-import { scoreTransmission } from '@/shared/lib/local-scoring'
 
-import { RateLimitedError, ScenarioNotDeployedError, SttFailedError } from './attempt-errors'
-
-export type AttemptResult = AttemptResultDto & {
-  /** "server": backend STT + scoring; "local": dev fallback (browser STT + local engine). */
-  source: 'server' | 'local'
-}
+import { RateLimitedError, SttFailedError } from './attempt-errors'
 
 export type SubmitAttemptInput = {
   guestId: string
   scenarioId: string
-  step: ScenarioStepDto
+  stepId: string
   audio: Blob
-  /** Set when the scenario is not deployed: use local scoring with this transcript. */
-  localTranscript?: string | null
-  scoreLocally: boolean
 }
 
 const extensionFor = (mimeType: string) =>
   mimeType.includes('mp4') ? 'm4a' : mimeType.includes('ogg') ? 'ogg' : 'webm'
 
-const scoreOnServer = async ({ guestId, scenarioId, step, audio }: SubmitAttemptInput): Promise<AttemptResult> => {
+/** Sends the recording to the backend, which transcribes and scores it. */
+export const submitAttempt = async ({ guestId, scenarioId, stepId, audio }: SubmitAttemptInput) => {
   const form = new FormData()
   form.append('audio', audio, `attempt.${extensionFor(audio.type)}`)
   form.append('guestId', guestId)
   form.append('scenarioId', scenarioId)
-  form.append('stepId', step.id)
+  form.append('stepId', stepId)
 
   const response = await fetch(`${API_URL}/attempts`, { method: 'POST', body: form })
 
@@ -45,32 +37,5 @@ const scoreOnServer = async ({ guestId, scenarioId, step, audio }: SubmitAttempt
   if (!result.transcript.trim()) {
     throw new SttFailedError()
   }
-  return { ...result, source: 'server' }
+  return result
 }
-
-const scoreInBrowser = ({ step, localTranscript }: SubmitAttemptInput): AttemptResult => {
-  if (localTranscript === undefined || localTranscript === null) {
-    throw new ScenarioNotDeployedError()
-  }
-  if (!localTranscript.trim()) {
-    throw new SttFailedError()
-  }
-
-  const startedAt = performance.now()
-  const { normalizedTranscript, elements, ...result } = scoreTransmission(step, {
-    transcript: localTranscript,
-  })
-
-  return {
-    ...result,
-    attemptId: crypto.randomUUID(),
-    transcript: localTranscript,
-    expectedPilotResponse: step.expectedPilotResponse,
-    elements: elements.map(({ position, ...element }) => element),
-    feedbackProcessingMs: Math.round(performance.now() - startedAt),
-    source: 'local',
-  }
-}
-
-export const submitAttempt = async (input: SubmitAttemptInput) =>
-  input.scoreLocally ? scoreInBrowser(input) : scoreOnServer(input)

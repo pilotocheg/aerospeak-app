@@ -9,10 +9,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "api:types": "npx -y openapi-typescript@7 ${VITE_API_URL:-https://aerospeak-be.onrender.com}/api-json -o src/shared/api/schema.d.ts",
+    "api:types": "tsx scripts/generate-api-types.ts",
     "content:check": "tsx scripts/check-content.ts",
     "audio:atc": "tsx scripts/generate-atc-audio.ts",
-    "format": "prettier --write \"src/**/*.{ts,tsx}\" \"scripts/**/*.ts\" \"content/**/*.json\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\" \"scripts/**/*.ts\""
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

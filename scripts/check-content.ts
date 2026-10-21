@@ -1,79 +1,41 @@
 /**
- * Validates content/ the same way the backend does at startup, plus frontend checks:
- * every expectedPilotResponse scores 100, atcAudio paths follow the convention and exist.
+ * Checks the frontend side of the content against the backend (see fetch-content.ts):
+ * every pack is in exactly one section of sections.json, and every step's ATC audio file exists.
+ * The scenarios themselves are validated by the backend tests.
  * Usage: npm run content:check
  */
-import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { scoreTransmission } from '../src/shared/lib/local-scoring/index.ts'
-import { packsFileSchema, scenarioSchema, sectionsFileSchema } from './content-schema.ts'
-import { CONTENT_DIR, PUBLIC_DIR, readScenarioFiles } from './load-content.ts'
+import { sections } from '../src/shared/content/index.ts'
+import { API_URL, PUBLIC_DIR, fetchContent } from './fetch-content.ts'
 
 const errors: string[] = []
 const warnings: string[] = []
 
-const packs = packsFileSchema.safeParse(JSON.parse(readFileSync(join(CONTENT_DIR, 'packs.json'), 'utf8')))
-if (!packs.success) {
-  errors.push(...packs.error.issues.map((i) => `packs.json ${i.path.join('.')}: ${i.message}`))
+const { packs, scenarios } = await fetchContent()
+
+const packIds = new Set(packs.map((pack) => pack.id))
+const sectionPackIds = sections.flatMap((section) => section.packIds)
+for (const packId of packIds) {
+  const count = sectionPackIds.filter((id) => id === packId).length
+  if (count !== 1) errors.push(`sections.json: pack "${packId}" must be in exactly one section (found ${count})`)
 }
-const packIds = new Set(packs.success ? packs.data.map((p) => p.id) : [])
-const sections = sectionsFileSchema.safeParse(JSON.parse(readFileSync(join(CONTENT_DIR, 'sections.json'), 'utf8')))
-if (!sections.success) {
-  errors.push(...sections.error.issues.map((i) => `sections.json ${i.path.join('.')}: ${i.message}`))
-} else {
-  const sectionPackIds = sections.data.flatMap((section) => section.packIds)
-  for (const packId of packIds) {
-    const count = sectionPackIds.filter((id) => id === packId).length
-    if (count !== 1) errors.push(`sections.json: pack "${packId}" must be in exactly one section (found ${count})`)
-  }
-  for (const packId of sectionPackIds) {
-    if (!packIds.has(packId)) errors.push(`sections.json: unknown pack "${packId}"`)
-  }
+for (const packId of sectionPackIds) {
+  if (!packIds.has(packId)) errors.push(`sections.json: unknown pack "${packId}"`)
 }
 
-const scenarioIds = new Set<string>()
 let stepCount = 0
-
-for (const { name, raw } of readScenarioFiles()) {
-  const parsed = scenarioSchema.safeParse(raw)
-  if (!parsed.success) {
-    errors.push(...parsed.error.issues.map((i) => `${name} ${i.path.join('.')}: ${i.message}`))
-    continue
-  }
-  const scenario = parsed.data
-  if (scenarioIds.has(scenario.id)) errors.push(`${name}: duplicate scenario id "${scenario.id}"`)
-  if (!packIds.has(scenario.packId)) errors.push(`${name}: unknown packId "${scenario.packId}"`)
-  if (!name.startsWith(`scenarios/${scenario.packId}/`))
-    errors.push(`${name}: file must be in scenarios/${scenario.packId}/`)
-  scenarioIds.add(scenario.id)
-
+for (const scenario of scenarios) {
   for (const step of scenario.steps) {
     stepCount += 1
-    const where = `${name} step "${step.id}"`
-
-    const result = scoreTransmission(step, { transcript: step.expectedPilotResponse })
-    if (result.score !== 100) {
-      const misses = result.elements.filter((e) => e.status !== 'matched').map((e) => `${e.id}=${e.status}`)
-      errors.push(`${where}: expectedPilotResponse scores ${result.score}, not 100 (${misses.join(', ')})`)
-    }
-
-    const weightSum = step.requiredElements.reduce((sum, e) => sum + e.weight, 0)
-    if (weightSum !== 100) warnings.push(`${where}: element weights sum to ${weightSum}, expected 100`)
-
-    if (step.atcText) {
-      const expectedAudio = `/audio/atc/${scenario.id}/${step.id}.mp3`
-      if (step.atcAudio !== expectedAudio) {
-        errors.push(`${where}: atcAudio must be "${expectedAudio}"`)
-      } else if (!existsSync(join(PUBLIC_DIR, step.atcAudio))) {
-        warnings.push(`${where}: audio file missing, run npm run audio:atc`)
-      }
-    } else if (step.atcAudio) {
-      errors.push(`${where}: atcAudio without atcText`)
+    if (step.atcAudio && !existsSync(join(PUBLIC_DIR, step.atcAudio))) {
+      warnings.push(`${scenario.id} step "${step.id}": ${step.atcAudio} missing, run npm run audio:atc`)
     }
   }
 }
 
+const scenarioIds = new Set(scenarios.map((scenario) => scenario.id))
 for (const dir of readdirSync(join(PUBLIC_DIR, 'audio/atc'), { withFileTypes: true })) {
   if (dir.isDirectory() && !scenarioIds.has(dir.name))
     warnings.push(`public/audio/atc/${dir.name}: no scenario with this id`)
@@ -81,5 +43,7 @@ for (const dir of readdirSync(join(PUBLIC_DIR, 'audio/atc'), { withFileTypes: tr
 
 for (const warning of warnings) console.warn(`warn  ${warning}`)
 for (const error of errors) console.error(`error ${error}`)
-console.log(`\n${scenarioIds.size} scenarios, ${stepCount} steps, ${errors.length} errors, ${warnings.length} warnings`)
+console.log(
+  `\n${API_URL}: ${scenarios.length} scenarios, ${stepCount} steps, ${errors.length} errors, ${warnings.length} warnings`,
+)
 process.exit(errors.length ? 1 : 0)

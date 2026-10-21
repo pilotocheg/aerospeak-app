@@ -1,6 +1,6 @@
 // Generated from OpenStreetMap data (© OpenStreetMap contributors, ODbL), fetched 2026-10-18.
 // Coordinates are metres from the aerodrome centroid, x east, y south (SVG space).
-// Spots are hand-placed and not verified against the AIP: see content/aerodromes.md.
+// Spots are hand-placed and not verified against the AIP: see content/aerodromes.md in the backend repo.
 import type { AerodromeChartData } from '../types'
 
 export const eppiChart: AerodromeChartData = {

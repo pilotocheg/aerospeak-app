@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { SttFailedError, submitAttempt } from '@/entities/attempt'
 import { guestQueryOptions } from '@/entities/guest'
 import { useRecordScenarioResult } from '@/entities/progress'
-import { getBriefingValue, scenarioDeployedQueryOptions } from '@/entities/scenario'
+import { getBriefingValue } from '@/entities/scenario'
 import { findSectionByPackId } from '@/entities/section'
 import {
   buildSummary,
@@ -27,8 +27,7 @@ import {
   useRecorder,
   type Recording,
 } from '@/features/record-transmission'
-import { LOCAL_SCORING_FALLBACK } from '@/shared/config/features'
-import type { Scenario } from '@/shared/content'
+import type { ScenarioDto } from '@/shared/api'
 import { useAudioPlayer } from '@/shared/lib/audio'
 import { stopSpeaking } from '@/shared/lib/speech'
 import { Button } from '@/shared/ui/button'
@@ -45,7 +44,7 @@ import { ToggleEye } from './toggle-eye'
 import { TranscriptLine, type TextMode } from './transcript-line'
 
 type PracticePlayerProps = {
-  scenario: Scenario
+  scenario: ScenarioDto
 }
 
 type OpenDialog = 'help' | 'feedback' | null
@@ -75,8 +74,6 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   const sectionId = findSectionByPackId(scenario.packId)?.id
 
   const { data: guestId } = useQuery(guestQueryOptions())
-  const { data: isDeployed } = useQuery(scenarioDeployedQueryOptions(scenario.id))
-  const scoreLocally = isDeployed === false && LOCAL_SCORING_FALLBACK
 
   const attemptMutation = useMutation({
     mutationFn: submitAttempt,
@@ -84,19 +81,12 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   })
 
   const handleRecorded = (recording: Recording) => {
-    if (!guestId && !scoreLocally) {
+    if (!guestId) {
       toast.error('Not connected to the server yet. Try again in a moment.')
       return
     }
     attemptMutation.mutate(
-      {
-        guestId: guestId ?? '',
-        scenarioId: scenario.id,
-        step,
-        audio: recording.blob,
-        localTranscript: recording.transcript,
-        scoreLocally,
-      },
+      { guestId, scenarioId: scenario.id, stepId: step.id, audio: recording.blob },
       {
         onSuccess: (result) => {
           addAttempt(step.id, { result, recordingUrl: recording.url })
@@ -108,12 +98,11 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   }
 
   const recorder = useRecorder({
-    withTranscript: scoreLocally,
     onRecorded: handleRecorded,
     onError: (error) => (error instanceof TooShortError ? toast.warning(error.message) : toast.error(error.message)),
   })
 
-  const canRecord = isDeployed !== undefined && (scoreLocally || Boolean(guestId)) && !attemptMutation.isPending
+  const canRecord = Boolean(guestId) && !attemptMutation.isPending
 
   const toggleRecording = () => {
     if (recorder.status === 'idle') {

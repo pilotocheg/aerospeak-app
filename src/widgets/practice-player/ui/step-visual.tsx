@@ -1,13 +1,13 @@
-import type { Scenario, ScenarioStep } from '@/shared/content'
 import { getBriefingValue } from '@/entities/scenario'
+import type { ScenarioDto, ScenarioStepDto } from '@/shared/api'
 
 import { AerodromeChart } from './aerodrome-chart'
 import { PatternDiagram } from './pattern-diagram'
 import { TextVisual } from './text-visual'
 
 type StepVisualProps = {
-  scenario: Scenario
-  step: ScenarioStep
+  scenario: ScenarioDto
+  step: ScenarioStepDto
 }
 
 /** The picture above the controls: drill item, circuit diagram, or the aerodrome chart. */

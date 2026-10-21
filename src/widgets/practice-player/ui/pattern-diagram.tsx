@@ -1,6 +1,8 @@
-import type { PatternPosition } from '@/shared/content'
+import type { PatternVisualDto } from '@/shared/api'
 
 import { AircraftMarker } from './aircraft-marker'
+
+type PatternPosition = PatternVisualDto['position']
 
 type PatternDiagramProps = {
   side: 'left' | 'right'

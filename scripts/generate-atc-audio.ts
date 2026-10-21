@@ -4,6 +4,7 @@
  * Only missing files are created; pass --force to rebuild placeholders.
  * Real voices (ElevenLabs / OpenAI TTS) replace these files later; files not listed
  * in public/audio/atc/placeholders.json are never overwritten.
+ * Scenarios come from the backend API (see fetch-content.ts).
  * Usage: npm run audio:atc [-- --force]
  */
 import { execFileSync } from 'node:child_process'
@@ -12,8 +13,7 @@ import { dirname, join } from 'node:path'
 import { tmpdir } from 'node:os'
 
 import { toSpoken } from '../src/shared/lib/phraseology/to-spoken.ts'
-import { scenarioSchema } from './content-schema.ts'
-import { PUBLIC_DIR, readScenarioFiles } from './load-content.ts'
+import { PUBLIC_DIR, fetchContent } from './fetch-content.ts'
 
 const VOICE = 'Daniel'
 const force = process.argv.includes('--force')
@@ -29,14 +29,10 @@ const RADIO_FILTER =
 let created = 0
 let skipped = 0
 
-for (const { name, raw } of readScenarioFiles()) {
-  const parsed = scenarioSchema.safeParse(raw)
-  if (!parsed.success) {
-    console.warn(`skip ${name}: invalid, run npm run content:check`)
-    continue
-  }
+const { scenarios } = await fetchContent()
 
-  for (const step of parsed.data.steps) {
+for (const scenario of scenarios) {
+  for (const step of scenario.steps) {
     if (!step.atcText || !step.atcAudio) continue
     const target = join(PUBLIC_DIR, step.atcAudio)
     const isPlaceholder = placeholders.has(step.atcAudio)
