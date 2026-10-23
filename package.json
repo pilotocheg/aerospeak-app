@@ -12,7 +12,9 @@
     "api:types": "tsx scripts/generate-api-types.ts",
     "content:check": "tsx scripts/check-content.ts",
     "audio:atc": "tsx scripts/generate-atc-audio.ts",
-    "format": "prettier --write \"src/**/*.{ts,tsx,json}\" \"scripts/**/*.ts\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\" \"scripts/**/*.ts\"",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -56,6 +58,17 @@
     "tsx": "^4.23.15",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.69.0",
-    "vite": "^8.3.0"
+    "vite": "^8.3.0",
+    "storybook": "^10.6.3",
+    "@storybook/react-vite": "^10.6.3",
+    "@chromatic-com/storybook": "latest",
+    "@storybook/addon-vitest": "^10.6.3",
+    "@storybook/addon-a11y": "^10.6.3",
+    "@storybook/addon-docs": "^10.6.3",
+    "eslint-plugin-storybook": "^10.6.3",
+    "vitest": "latest",
+    "@vitest/browser-playwright": "latest",
+    "@vitest/coverage-v8": "latest",
+    "playwright": "latest"
   }
 }

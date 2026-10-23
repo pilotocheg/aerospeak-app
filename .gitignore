@@ -28,3 +28,6 @@ dist-ssr
 
 # Claude Code local settings
 .claude/settings.local.json
+
+*storybook.log
+storybook-static
