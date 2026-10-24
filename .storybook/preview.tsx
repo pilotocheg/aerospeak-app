@@ -1,46 +1,41 @@
-import type { Preview, StoryFn, StoryContext } from '@storybook/react-vite'
+import type { Decorator, Preview } from '@storybook/react-vite'
+
 import '../src/index.css'
 
-const withThemeClass = (Story: StoryFn, context: StoryContext) => {
-  const theme = context.globals.theme ?? 'light'
-  document.documentElement.classList.toggle('dark', theme === 'dark')
-
-  return Story(context.args, context)
+// The app ships dark only (`<html class="dark">`); light is here to check the tokens.
+const withTheme: Decorator = (Story, context) => {
+  document.documentElement.classList.toggle('dark', context.globals.theme !== 'light')
+  return <Story />
 }
 
 const preview: Preview = {
-  decorators: [withThemeClass],
+  decorators: [withTheme],
   globalTypes: {
     theme: {
-      name: 'Theme',
-      description: 'Global theme for components',
-      defaultValue: 'light',
+      description: 'Color theme',
       toolbar: {
+        title: 'Theme',
         icon: 'circlehollow',
         items: [
-          { value: 'light', title: 'Light' },
           { value: 'dark', title: 'Dark' },
+          { value: 'light', title: 'Light' },
         ],
         dynamicTitle: true,
       },
     },
   },
+  initialGlobals: {
+    theme: 'dark',
+  },
   parameters: {
     layout: 'centered',
-    backgrounds: {
-      default: 'canvas',
-      values: [
-        { name: 'canvas', value: 'oklch(1 0 0)' },
-        { name: 'slate', value: '#0f172a' },
-      ],
-    },
+    backgrounds: { disable: true },
     controls: {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
     },
-
     a11y: {
       test: 'todo',
     },

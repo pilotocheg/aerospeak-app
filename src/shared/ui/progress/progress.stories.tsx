@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Progress } from './progress'
+import { Progress } from './index'
 
 const meta = {
   title: 'Components/Progress',
   component: Progress,
   args: {
+    'aria-label': 'Scenario progress',
     value: 60,
   },
   argTypes: {

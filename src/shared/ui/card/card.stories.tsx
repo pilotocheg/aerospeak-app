@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Card } from './card'
+import { Button } from '@/shared/ui/button'
+
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './index'
 
 const meta = {
   title: 'Components/Card',
@@ -9,10 +11,7 @@ const meta = {
     size: 'default',
   },
   argTypes: {
-    size: {
-      control: 'select',
-      options: ['default', 'sm'],
-    },
+    size: { control: 'select', options: ['default', 'sm'] },
   },
 } satisfies Meta<typeof Card>
 
@@ -21,11 +20,17 @@ type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
   render: (args) => (
-    <Card {...args} className="w-90 px-6">
-      <h3 className="font-heading text-lg font-semibold">Scenario Card</h3>
-      <p className="text-muted-foreground">
-        Practice your call with instant scoring and phrase-by-phrase feedback.
-      </p>
+    <Card {...args} className="w-90">
+      <CardHeader>
+        <CardTitle>Taxi to holding point</CardTitle>
+        <CardDescription>EPPO · SP-TFA · 4 steps</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground">Practice your call with instant scoring and phrase-by-phrase feedback.</p>
+      </CardContent>
+      <CardFooter>
+        <Button>Start</Button>
+      </CardFooter>
     </Card>
   ),
 }

@@ -1,6 +1,11 @@
+import type { ComponentProps } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Badge } from './badge'
+import { Badge } from './index'
+
+const variants = ['default', 'secondary', 'destructive', 'outline', 'ghost', 'link'] as const satisfies NonNullable<
+  ComponentProps<typeof Badge>['variant']
+>[]
 
 const meta = {
   title: 'Components/Badge',
@@ -10,10 +15,7 @@ const meta = {
     variant: 'default',
   },
   argTypes: {
-    variant: {
-      control: 'select',
-      options: ['default', 'secondary', 'destructive', 'outline', 'ghost', 'link'],
-    },
+    variant: { control: 'select', options: variants },
   },
 } satisfies Meta<typeof Badge>
 
@@ -25,12 +27,11 @@ export const Playground: Story = {}
 export const Variants: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
-      <Badge>Default</Badge>
-      <Badge variant="secondary">Secondary</Badge>
-      <Badge variant="outline">Outline</Badge>
-      <Badge variant="destructive">Destructive</Badge>
-      <Badge variant="ghost">Ghost</Badge>
-      <Badge variant="link">Link</Badge>
+      {variants.map((variant) => (
+        <Badge key={variant} variant={variant} className="capitalize">
+          {variant}
+        </Badge>
+      ))}
     </div>
   ),
 }

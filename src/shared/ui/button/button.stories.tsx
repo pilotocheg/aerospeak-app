@@ -1,6 +1,16 @@
+import type { ComponentProps } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Button } from './button'
+import { Button } from './index'
+
+type ButtonProps = ComponentProps<typeof Button>
+
+const variants = ['default', 'outline', 'secondary', 'ghost', 'destructive', 'link'] as const satisfies NonNullable<
+  ButtonProps['variant']
+>[]
+const sizes = ['default', 'xs', 'sm', 'lg', 'icon', 'icon-xs', 'icon-sm', 'icon-lg'] as const satisfies NonNullable<
+  ButtonProps['size']
+>[]
 
 const meta = {
   title: 'Components/Button',
@@ -12,14 +22,8 @@ const meta = {
     disabled: false,
   },
   argTypes: {
-    variant: {
-      control: 'select',
-      options: ['default', 'outline', 'secondary', 'ghost', 'destructive', 'link'],
-    },
-    size: {
-      control: 'select',
-      options: ['default', 'xs', 'sm', 'lg', 'icon', 'icon-xs', 'icon-sm', 'icon-lg'],
-    },
+    variant: { control: 'select', options: variants },
+    size: { control: 'select', options: sizes },
   },
 } satisfies Meta<typeof Button>
 
@@ -31,12 +35,11 @@ export const Playground: Story = {}
 export const Variants: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
-      <Button variant="default">Default</Button>
-      <Button variant="outline">Outline</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="ghost">Ghost</Button>
-      <Button variant="destructive">Destructive</Button>
-      <Button variant="link">Link</Button>
+      {variants.map((variant) => (
+        <Button key={variant} variant={variant} className="capitalize">
+          {variant}
+        </Button>
+      ))}
     </div>
   ),
 }

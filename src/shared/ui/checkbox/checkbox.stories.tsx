@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Checkbox } from './checkbox'
+import { Checkbox } from './index'
 
 const meta = {
   title: 'Components/Checkbox',
   component: Checkbox,
   args: {
+    'aria-label': 'Show ATC transcript',
     defaultChecked: false,
     disabled: false,
   },

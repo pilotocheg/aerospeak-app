@@ -29,5 +29,5 @@
       "*": ["./*"]
     }
   },
-  "include": ["src", "content"]
+  "include": ["src", "content", ".storybook"]
 }

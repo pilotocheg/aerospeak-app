@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 
 import { Button } from '@/shared/ui/button'
 
-import { Toaster } from './toaster'
+import { Toaster } from './index'
 
 const meta = {
   title: 'Components/Sonner',

@@ -28,9 +28,7 @@ export const Playground: Story = {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>End scenario attempt?</DialogTitle>
-          <DialogDescription>
-            You can save this result and continue to the next step when ready.
-          </DialogDescription>
+          <DialogDescription>You can save this result and continue to the next step when ready.</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
