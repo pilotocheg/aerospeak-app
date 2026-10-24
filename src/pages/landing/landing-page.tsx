@@ -28,7 +28,7 @@ export const LandingPage = () => (
     <div className="grid max-w-3xl gap-4 sm:grid-cols-3">
       {FEATURES.map(({ icon: Icon, title, text }) => (
         <div key={title} className="rounded-xl bg-card p-5 ring-1 ring-foreground/10">
-          <Icon className="mx-auto mb-2 size-6 text-primary" />
+          <Icon className="mx-auto mb-2 size-6 text-brand" />
           <p className="font-semibold">{title}</p>
           <p className="text-sm text-muted-foreground">{text}</p>
         </div>

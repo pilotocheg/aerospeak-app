@@ -92,7 +92,7 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
         {scenario.phraseologyNote && (
           <section className="space-y-2 rounded-lg border bg-card p-4">
             <h2 className="flex items-center gap-2 text-sm font-semibold">
-              <BookOpen className="size-4 text-primary" />
+              <BookOpen className="size-4 text-brand" />
               {scenario.phraseologyNote.title}
             </h2>
             <p className="text-sm">{scenario.phraseologyNote.shortExplanation}</p>

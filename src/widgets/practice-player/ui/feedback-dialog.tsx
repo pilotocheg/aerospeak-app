@@ -78,7 +78,7 @@ export const FeedbackDialog = ({
         <section className="space-y-1">
           <SectionTitle>You said</SectionTitle>
           <p className="italic">“{result.transcript}”</p>
-          <p className="text-sm text-primary">{result.tip}</p>
+          <p className="text-sm text-brand">{result.tip}</p>
         </section>
 
         <div className="flex flex-wrap gap-2">

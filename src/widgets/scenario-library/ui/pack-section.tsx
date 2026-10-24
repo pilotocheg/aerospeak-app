@@ -26,7 +26,7 @@ export const PackSection = ({ pack, sectionId, isOpen, selectedScenarioId, onTog
         aria-expanded={isOpen}
         className="flex w-full items-center gap-3 bg-card px-4 py-3 text-left transition hover:bg-muted/50"
       >
-        <ChevronRight className={cn('size-4 shrink-0 text-primary transition-transform', isOpen && 'rotate-90')} />
+        <ChevronRight className={cn('size-4 shrink-0 text-brand transition-transform', isOpen && 'rotate-90')} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold">{pack.title}</p>
           <p className="text-xs text-muted-foreground">
@@ -34,7 +34,7 @@ export const PackSection = ({ pack, sectionId, isOpen, selectedScenarioId, onTog
           </p>
         </div>
         {pack.recommendedForBeginners && (
-          <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium text-primary uppercase">
+          <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium text-brand uppercase">
             Start here
           </span>
         )}
