@@ -184,7 +184,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
           {lastAttempt && (
             <button
               type="button"
-              className="text-sm text-primary hover:underline"
+              className="text-sm text-brand hover:underline"
               onClick={() => setOpenDialog('feedback')}
             >
               Show feedback

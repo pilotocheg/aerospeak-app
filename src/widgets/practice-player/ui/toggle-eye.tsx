@@ -16,7 +16,7 @@ export const ToggleEye = ({ label, active, disabled, onClick }: ToggleEyeProps) 
     onClick={onClick}
     className={cn(
       'flex flex-col items-center text-[11px] font-semibold transition disabled:opacity-30',
-      active ? 'text-red-500' : 'text-primary hover:text-primary/80',
+      active ? 'text-red-500' : 'text-brand hover:text-brand/80',
     )}
   >
     {label}
