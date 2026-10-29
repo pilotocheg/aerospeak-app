@@ -1,6 +1,6 @@
 import type { BriefingItemDto } from '@/shared/api'
 
-const STRIP_LABELS = ['Callsign', 'Station', 'ATIS', 'Runway', 'QNH', 'Frequency']
+const STRIP_LABELS = ['Callsign', 'Station', 'ATIS', 'Runway', 'Wind', 'QNH', 'Frequency']
 
 type BriefingStripProps = {
   briefing: BriefingItemDto[]
