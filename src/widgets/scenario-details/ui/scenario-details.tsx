@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { ArrowLeft, BookOpen } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 import { useScenarioProgress } from '@/entities/progress'
 import { formatDuration, scenarioQueryOptions } from '@/entities/scenario'
@@ -8,6 +8,7 @@ import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { ScoreRing } from '@/shared/ui/score-ring'
 
+import { LessonOverview } from './lesson-overview'
 import { ScenarioDetailsSkeleton } from './scenario-details-skeleton'
 import { Stat } from './stat'
 
@@ -89,19 +90,7 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
           </section>
         ) : null}
 
-        {scenario.phraseologyNote && (
-          <section className="space-y-2 rounded-lg border bg-card p-4">
-            <h2 className="flex items-center gap-2 text-sm font-semibold">
-              <BookOpen className="size-4 text-brand" />
-              {scenario.phraseologyNote.title}
-            </h2>
-            <p className="text-sm">{scenario.phraseologyNote.shortExplanation}</p>
-            <p className="text-sm text-muted-foreground italic">“{scenario.phraseologyNote.example}”</p>
-            {scenario.phraseologyNote.whyItMatters && (
-              <p className="text-sm text-muted-foreground">{scenario.phraseologyNote.whyItMatters}</p>
-            )}
-          </section>
-        )}
+        <LessonOverview note={scenario.phraseologyNote} />
       </div>
 
       <div className="border-t bg-card p-4">
