@@ -3,11 +3,11 @@
  *   "SP-TFA, runway 28, QNH 1013" -> "Sierra Papa Tango Foxtrot Alpha, runway two eight, Q N H one zero one tree"
  * Shared by the browser ("Hear expected response") and scripts/generate-atc-audio.ts.
  *
- * Number rules follow UK CAA CAP 413 chapter 2 (2.12-2.15), the same rules the
- * backend scores against (src/scoring/spoken.ts there):
+ * Number rules follow ICAO Doc 9432 2.4 (Polish edition, the source of truth for our
+ * Polish aerodromes), the same rules the backend scores against (src/scoring/spoken.ts there):
  *   digits one by one with tree, fife, niner     QNH 1013 -> Q N H one zero one tree
  *   whole hundreds/thousands for altitude        2500 feet -> two thousand fife hundred feet
- *   FL with three digits, FL100 as "one hundred" FL 65 -> flight level zero six fife
+ *   FL digit by digit, FL100 as "one hundred"   FL 65 -> flight level six fife
  *   squawk/QNH in whole thousands                squawk 7000 -> squawk seven thousand
  *   frequencies with all six figures, four when the last two are zeros
  *                                                121.900 -> one two one decimal niner
@@ -42,7 +42,7 @@ const NATO: Record<string, string> = {
   Z: 'Zulu',
 }
 
-// ICAO digit words (CAP 413 table 3); "four" is said FOW-er by a person, TTS reads "four" fine.
+// ICAO digit words (Doc 9432 2.4.1); "four" is said FOW-er by a person, TTS reads "four" fine.
 const DIGITS = ['zero', 'one', 'two', 'tree', 'four', 'fife', 'six', 'seven', 'eight', 'niner']
 
 const spellDigits = (digits: string) =>
@@ -68,12 +68,12 @@ export const toSpoken = (text: string) =>
         .map((ch) => NATO[ch])
         .join(' '),
     )
-    // Flight levels: FL 65 -> flight level zero six fife, FL 100 -> flight level one hundred
+    // Flight levels: FL 65 -> flight level six fife, FL 100 -> flight level one hundred
     .replace(/\b(?:FL|[Ff]light level) ?(\d{2,3})\b/g, (_, n: string) => {
       const value = Number(n)
       return value % 100 === 0
         ? `flight level ${spellDigits(String(value / 100))} hundred`
-        : `flight level ${spellDigits(n.padStart(3, '0'))}`
+        : `flight level ${spellDigits(String(value))}`
     })
     // Squawk and QNH in whole thousands: squawk 7000 -> squawk seven thousand
     .replace(/\b(squawk|QNH) (\d{4})\b/gi, (match, word: string, n: string) => {
