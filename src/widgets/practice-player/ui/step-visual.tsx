@@ -2,6 +2,7 @@ import { getBriefingValue } from '@/entities/scenario'
 import type { ScenarioDto, ScenarioStepDto } from '@/shared/api'
 
 import { AerodromeChart } from './aerodrome-chart'
+import { AirspaceChart } from './airspace-chart'
 import { PatternDiagram } from './pattern-diagram'
 import { TextVisual } from './text-visual'
 
@@ -10,7 +11,10 @@ type StepVisualProps = {
   step: ScenarioStepDto
 }
 
-/** The picture above the controls: drill item, circuit diagram, or the aerodrome chart. */
+/**
+ * The picture above the controls: drill item, or where the aircraft is: in the aerodrome airspace
+ * (VFR chart), in the circuit (circuit diagram) or on the ground (aerodrome chart).
+ */
 export const StepVisual = ({ scenario, step }: StepVisualProps) => {
   const airport = getBriefingValue(scenario, 'Airport')
 
@@ -19,6 +23,9 @@ export const StepVisual = ({ scenario, step }: StepVisualProps) => {
   }
   if (step.visual?.kind === 'pattern') {
     return <PatternDiagram side={step.visual.side} position={step.visual.position} runway={step.visual.runway} />
+  }
+  if (step.visual?.kind === 'airspace') {
+    return <AirspaceChart airport={airport} point={step.visual.point} direction={step.visual.direction} />
   }
   if (airport) {
     return <AerodromeChart airport={airport} position={getBriefingValue(scenario, 'Position')} />

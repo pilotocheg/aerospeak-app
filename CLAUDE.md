@@ -48,9 +48,12 @@ scripts/      content:check, audio:atc and api:types; they read scenarios from t
 
 `src/shared/content/sections.json` groups backend packs into Basics, Traffic Pattern,
 VFR — Uncontrolled, VFR — Controlled, IFR (soon); every pack must be in exactly one
-section (`npm run content:check`). A step's optional `visual` comes from the backend:
-`{ kind: 'text', text, caption? }` (drills) or `{ kind: 'pattern', side, position, runway }`
-(circuit diagram). Without `visual` the practice screen shows the aerodrome chart.
+section (`npm run content:check`). A step's optional `visual` comes from the backend and
+follows where the aircraft is: `{ kind: 'text', text, caption? }` (drills),
+`{ kind: 'airspace', point, direction }` (aerodrome airspace: VFR chart from the AIP, data in
+`src/entities/aerodrome/model/airspace/`), `{ kind: 'pattern', side, position, runway }`
+(in, joining or leaving the circuit). Without `visual` the aircraft is on the ground and the
+practice screen shows the aerodrome ground chart. En route charts are not drawn yet.
 
 Imports go only downward: `pages → widgets → features → entities → shared`.
 

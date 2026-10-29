@@ -142,8 +142,19 @@ export interface components {
             /** @enum {string} */
             side: "left" | "right";
             /** @enum {string} */
-            position: "upwind" | "crosswind" | "downwind" | "base" | "final";
+            position: "overhead" | "upwind" | "crosswind" | "downwind" | "base" | "final" | "leaving";
             runway: string;
+        };
+        AirspaceVisualDto: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "airspace";
+            /** @description VFR reporting point name as in the AIP, e.g. "Delta" */
+            point: string;
+            /** @enum {string} */
+            direction: "inbound" | "outbound";
         };
         RequiredElementDto: {
             id: string;
@@ -166,8 +177,8 @@ export interface components {
             requiredElements: components["schemas"]["RequiredElementDto"][];
             criticalElements?: string[];
             phraseologyReferenceId?: string;
-            /** @description UI metadata, does not affect scoring. Without it the practice screen shows the aerodrome chart. */
-            visual?: components["schemas"]["TextVisualDto"] | components["schemas"]["PatternVisualDto"];
+            /** @description UI metadata, does not affect scoring. Without it the practice screen shows the aerodrome ground chart. */
+            visual?: components["schemas"]["TextVisualDto"] | components["schemas"]["PatternVisualDto"] | components["schemas"]["AirspaceVisualDto"];
         };
         ScenarioDto: {
             id: string;
