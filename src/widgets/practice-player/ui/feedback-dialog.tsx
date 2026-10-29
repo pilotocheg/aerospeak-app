@@ -39,7 +39,9 @@ export const FeedbackDialog = ({
   }
 
   const { result } = attempt
-  const missedCritical = result.elements.filter((e) => e.critical && e.status === 'missed')
+  // A critical element with a hint was said, but wrongly ("climbing to 2000 feet"): show why.
+  const missedCritical = result.elements.filter((e) => e.critical && e.status === 'missed' && !e.hint)
+  const wrongCritical = result.elements.filter((e) => e.critical && e.status === 'missed' && e.hint)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,6 +70,18 @@ export const FeedbackDialog = ({
             </p>
           </div>
         )}
+
+        {wrongCritical.map((element) => (
+          <div
+            key={element.id}
+            className="flex gap-3 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-300"
+          >
+            <TriangleAlert className="size-5 shrink-0" />
+            <p>
+              “{element.label}”: {element.hint}
+            </p>
+          </div>
+        ))}
 
         {result.order && !result.order.correct && <OrderNotice order={result.order} />}
 
