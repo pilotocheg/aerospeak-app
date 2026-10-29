@@ -11,6 +11,8 @@ type ElementWordsProps = {
 const wordNote = (word: WordResultDto) => {
   if (word.unclear) return 'not clear'
   if (word.status !== 'correct' && word.heard) return `heard “${word.heard}”`
+  // An optional standard word that was left out ("altitude"): understood, but say it.
+  if (word.status === 'almost') return 'not said'
   return null
 }
 
