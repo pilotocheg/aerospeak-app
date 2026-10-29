@@ -116,12 +116,18 @@ export interface components {
             label: string;
             value: string;
         };
+        ReferenceDto: {
+            source: string;
+            section?: string;
+            url?: string;
+        };
         PhraseologyNoteDto: {
             id: string;
             title: string;
             shortExplanation: string;
-            example: string;
+            overview: string[];
             whyItMatters?: string;
+            references: components["schemas"]["ReferenceDto"][];
         };
         TextVisualDto: {
             /**
@@ -189,7 +195,7 @@ export interface components {
             estimatedDurationSec: number;
             objective: string;
             briefing?: components["schemas"]["BriefingItemDto"][];
-            phraseologyNote?: components["schemas"]["PhraseologyNoteDto"];
+            phraseologyNote: components["schemas"]["PhraseologyNoteDto"];
             steps: components["schemas"]["ScenarioStepDto"][];
         };
         GuestDto: {
