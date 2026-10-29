@@ -8,6 +8,7 @@ import { Button } from '@/shared/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/shared/ui/dialog'
 
 import { KeywordFeedback } from './keyword-feedback'
+import { OrderNotice } from './order-notice'
 import { SectionTitle } from './section-title'
 
 type FeedbackDialogProps = {
@@ -38,7 +39,14 @@ export const FeedbackDialog = ({
   }
 
   const { result } = attempt
-  const missedCritical = result.elements.filter((e) => e.critical && e.status === 'missed')
+  // A critical element with a hint was said, but wrongly ("climbing to 2000 feet"): show why.
+  const missedCritical = result.elements.filter((e) => e.critical && e.status === 'missed' && !e.hint)
+  const wrongCritical = result.elements.filter((e) => e.critical && e.status === 'missed' && e.hint)
+  const showOrder = result.order !== undefined && !result.order.correct
+  // The backend tip names the most important problem first. A critical miss or an order
+  // problem already has its own notice above, so the tip would only repeat it.
+  const tipRepeatsNotice =
+    missedCritical.length + wrongCritical.length > 0 || (showOrder && result.tip === result.order?.message)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,17 +76,36 @@ export const FeedbackDialog = ({
           </div>
         )}
 
+        {wrongCritical.map((element) => (
+          <div
+            key={element.id}
+            className="flex gap-3 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-300"
+          >
+            <TriangleAlert className="size-5 shrink-0" />
+            <p>
+              “{element.label}”: {element.hint}
+            </p>
+          </div>
+        ))}
+
+        {showOrder && result.order && <OrderNotice order={result.order} />}
+
         <section className="space-y-2">
           <SectionTitle>Expected response</SectionTitle>
           <div className="rounded-lg bg-card p-4 ring-1 ring-foreground/10">
-            <KeywordFeedback step={step} expected={result.expectedPilotResponse} elements={result.elements} />
+            <KeywordFeedback
+              step={step}
+              expected={result.expectedPilotResponse}
+              elements={result.elements}
+              outOfOrder={result.order?.outOfOrder ?? []}
+            />
           </div>
         </section>
 
         <section className="space-y-1">
           <SectionTitle>You said</SectionTitle>
           <p className="italic">“{result.transcript}”</p>
-          <p className="text-sm text-brand">{result.tip}</p>
+          {!tipRepeatsNotice && <p className="text-sm text-brand">{result.tip}</p>}
         </section>
 
         <div className="flex flex-wrap gap-2">
