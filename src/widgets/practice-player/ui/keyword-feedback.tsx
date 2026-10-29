@@ -6,6 +6,7 @@ import type { ElementResultDto, ScenarioStepDto } from '@/shared/api'
 
 import { ELEMENT_DOT_CLASS, ELEMENT_STATUS_LABEL, ELEMENT_TEXT_CLASS } from '../lib/element-styles'
 import { highlightElements } from '../lib/highlight-elements'
+import { ElementWords } from './element-words'
 
 type KeywordFeedbackProps = {
   step: ScenarioStepDto
@@ -72,6 +73,7 @@ export const KeywordFeedback = ({ step, expected, elements }: KeywordFeedbackPro
             </p>
             <p className={ELEMENT_TEXT_CLASS[selected.status].split(' ')[0]}>{ELEMENT_STATUS_LABEL[selected.status]}</p>
             {selected.matchedText && <p className="text-muted-foreground">Heard: “{selected.matchedText}”</p>}
+            {selected.words.length > 0 && <ElementWords words={selected.words} />}
           </div>
         ) : (
           <p className="text-muted-foreground">Tap a highlighted phrase for details</p>

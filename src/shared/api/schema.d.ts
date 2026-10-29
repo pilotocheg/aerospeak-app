@@ -196,6 +196,16 @@ export interface components {
             scenarioId: string;
             stepId: string;
         };
+        WordResultDto: {
+            /** @description Expected word in ICAO form, e.g. "tree", "niner", "alpha" */
+            expected: string;
+            /** @description What STT heard in its place */
+            heard?: string;
+            /** @enum {string} */
+            status: "correct" | "almost" | "missing";
+            /** @description STT was unsure about the heard word */
+            unclear?: boolean;
+        };
         ElementResultDto: {
             id: string;
             label: string;
@@ -204,6 +214,8 @@ export interface components {
             critical: boolean;
             similarity: number;
             matchedText?: string;
+            /** @description Word by word result in ICAO spoken form */
+            words: components["schemas"]["WordResultDto"][];
         };
         AttemptResultDto: {
             /** Format: uuid */
