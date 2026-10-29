@@ -217,6 +217,21 @@ export interface components {
             /** @description Word by word result in ICAO spoken form */
             words: components["schemas"]["WordResultDto"][];
         };
+        OrderFeedbackDto: {
+            /**
+             * @description call: elements in the standard order (station, callsign, position, request, information); readback: callsign at the start or at the end
+             * @enum {string}
+             */
+            rule: "call" | "readback";
+            /** @description The elements were said in an acceptable order */
+            correct: boolean;
+            /** @description Ids of elements said in the wrong place */
+            outOfOrder: string[];
+            /** @description What to fix, when the order is wrong */
+            message?: string;
+            /** @description Score points lost for the order */
+            lostPoints: number;
+        };
         AttemptResultDto: {
             /** Format: uuid */
             attemptId: string;
@@ -230,6 +245,8 @@ export interface components {
             elements: components["schemas"]["ElementResultDto"][];
             missedCritical: string[];
             orderCorrect: boolean;
+            /** @description Order check; absent when there is nothing to compare */
+            order?: components["schemas"]["OrderFeedbackDto"];
             tip: string;
             /** @description Time from receiving the audio to the result */
             feedbackProcessingMs: number;

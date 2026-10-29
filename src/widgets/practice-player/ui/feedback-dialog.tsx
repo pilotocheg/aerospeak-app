@@ -8,6 +8,7 @@ import { Button } from '@/shared/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/shared/ui/dialog'
 
 import { KeywordFeedback } from './keyword-feedback'
+import { OrderNotice } from './order-notice'
 import { SectionTitle } from './section-title'
 
 type FeedbackDialogProps = {
@@ -68,10 +69,17 @@ export const FeedbackDialog = ({
           </div>
         )}
 
+        {result.order && !result.order.correct && <OrderNotice order={result.order} />}
+
         <section className="space-y-2">
           <SectionTitle>Expected response</SectionTitle>
           <div className="rounded-lg bg-card p-4 ring-1 ring-foreground/10">
-            <KeywordFeedback step={step} expected={result.expectedPilotResponse} elements={result.elements} />
+            <KeywordFeedback
+              step={step}
+              expected={result.expectedPilotResponse}
+              elements={result.elements}
+              outOfOrder={result.order?.outOfOrder ?? []}
+            />
           </div>
         </section>
 
