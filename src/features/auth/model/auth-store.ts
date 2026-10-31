@@ -1,5 +1,15 @@
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut,
+  updateProfile,
+  onAuthStateChanged
+} from 'firebase/auth'
 import { create } from 'zustand'
-import { persist, devtools } from 'zustand/middleware'
+import { devtools } from 'zustand/middleware'
+
+
+import { auth } from '@/shared/lib/firebase'
 
 export type UserRole = 'Student' | 'Mentor'
 
@@ -25,53 +35,92 @@ export type RegisterInput = {
 type AuthState = {
   user: User | null
   isAuthenticated: boolean
-  login: (payload: LoginInput) => void
-  register: (payload: RegisterInput) => void
-  logout: () => void
+  isLoading: boolean
+  login: (payload: LoginInput) => Promise<void>
+  register: (payload: RegisterInput) => Promise<void>
+  logout: () => Promise<void>
+  initAuthListener: () => () => void
 }
 
 export const useAuthStore = create<AuthState>()(
   devtools(
-    persist(
-      (set) => ({
-        user: null,
-        isAuthenticated: false,
-        login: ({ email, password }) => {
-          if (!email || !password) {
-            return
-          }
+    (set) => ({
+      user: null,
+      isAuthenticated: false,
+      isLoading: true,
 
-          set(
-            {
-              user: { id: crypto.randomUUID(), name: email.split('@')[0], email, role: 'Student' },
-              isAuthenticated: true,
-            },
-            false,
-            'auth/login',
-          )
-        },
-        register: ({ name, email, password, role }) => {
-          if (!name || !email || !password) {
-            return
-          }
-
-          set(
-            {
-              user: { id: crypto.randomUUID(), name, email, role },
-              isAuthenticated: true,
-            },
-            false,
-            'auth/register',
-          )
-        },
-        logout: () => {
-          set({ user: null, isAuthenticated: false }, false, 'auth/logout')
-        },
-      }),
-      {
-        name: 'aerospeak-auth-storage',
+      login: async ({ email, password }) => {
+        set({ isLoading: true }, false, 'auth/login-start')
+        try {
+          await signInWithEmailAndPassword(auth, email, password)
+        } finally {
+          set({ isLoading: false }, false, 'auth/login-end')
+        }
       },
-    ),
+
+      register: async ({ name, email, password }) => {
+        set({ isLoading: true }, false, 'auth/register-start')
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+          if (userCredential.user) {
+            await updateProfile(userCredential.user, { displayName: name })
+          }
+        } finally {
+          set({ isLoading: false }, false, 'auth/register-end')
+        }
+      },
+
+      logout: async () => {
+        set({ isLoading: true }, false, 'auth/logout-start')
+        try {
+          await signOut(auth)
+          set(
+            {
+              user: null,
+              isAuthenticated: false,
+              isLoading: false,
+            },
+            false,
+            'auth/logout-success',
+          )
+        } catch {
+          set({ isLoading: false }, false, 'auth/logout-error')
+        }
+      },
+
+      initAuthListener: () => {
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+          if (firebaseUser) {
+            set(
+              {
+                user: {
+                  id: firebaseUser.uid,
+                  name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+                  email: firebaseUser.email || '',
+                  role: 'Student',
+                },
+                isAuthenticated: true,
+                isLoading: false,
+              },
+              false,
+              'auth/state-changed-authenticated',
+            )
+          } else {
+            set(
+              {
+                user: null,
+                isAuthenticated: false,
+                isLoading: false,
+              },
+              false,
+              'auth/state-changed-unauthenticated',
+            )
+          }
+        })
+
+        return unsubscribe
+      },
+    }),
     { name: 'AuthStore' },
   ),
 )

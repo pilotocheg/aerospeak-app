@@ -14,7 +14,7 @@ type ProgressState = {
   recordScenarioResult: (scenarioId: string, score: number) => void
 }
 
-// Guest progress must survive reloads, so this store is persisted.
+// Progress must survive reloads, so this store is persisted.
 export const useProgressStore = create<ProgressState>()(
   persist(
     (set) => ({
