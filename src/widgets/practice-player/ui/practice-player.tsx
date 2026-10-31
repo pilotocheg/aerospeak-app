@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { SttFailedError, submitAttempt } from '@/entities/attempt'
-import { guestQueryOptions } from '@/entities/guest'
 import { useRecordScenarioResult } from '@/entities/progress'
 import { getBriefingValue } from '@/entities/scenario'
 import { findSectionByPackId } from '@/entities/section'
+import { useAuthStore } from '@/features/auth/model/auth-store'
 import {
   buildSummary,
   useAddAttempt,
@@ -62,6 +62,8 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   const recordScenarioResult = useRecordScenarioResult()
   const player = useAudioPlayer()
 
+  const user = useAuthStore((state) => state.user)
+
   const [textMode, setTextMode] = useState<TextMode>('prompt')
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null)
 
@@ -69,11 +71,8 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   const attempts = attemptsByStep[step.id] ?? []
   const lastAttempt = attempts.at(-1)
   const isLastStep = stepIndex === scenario.steps.length - 1
-  // A step counts as done after any scored attempt; only then can the user move on.
   const isStepDone = attempts.length > 0
   const sectionId = findSectionByPackId(scenario.packId)?.id
-
-  const { data: guestId } = useQuery(guestQueryOptions())
 
   const attemptMutation = useMutation({
     mutationFn: submitAttempt,
@@ -81,12 +80,8 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   })
 
   const handleRecorded = (recording: Recording) => {
-    if (!guestId) {
-      toast.error('Not connected to the server yet. Try again in a moment.')
-      return
-    }
     attemptMutation.mutate(
-      { guestId, scenarioId: scenario.id, stepId: step.id, audio: recording.blob },
+      { scenarioId: scenario.id, stepId: step.id, audio: recording.blob },
       {
         onSuccess: (result) => {
           addAttempt(step.id, { result, recordingUrl: recording.url })
@@ -102,7 +97,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
     onError: (error) => (error instanceof TooShortError ? toast.warning(error.message) : toast.error(error.message)),
   })
 
-  const canRecord = Boolean(guestId) && !attemptMutation.isPending
+  const canRecord = Boolean(user) && !attemptMutation.isPending
 
   const toggleRecording = () => {
     if (recorder.status === 'idle') {
@@ -117,7 +112,6 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
 
   useRecordToggleKey(openDialog === null && !isFinished && (canRecord || recorder.status !== 'idle'), toggleRecording)
 
-  // ATC speaks first: play the step's call as soon as the step opens (also after "Repeat").
   const { play, stop } = player
   useEffect(() => {
     if (step.atcAudio) {

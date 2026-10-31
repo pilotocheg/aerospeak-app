@@ -1,6 +1,7 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { cn } from 'cn'
 import { House, LogOut } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { useLogout } from '@/features/auth/model/actions'
 import { useUser } from '@/features/auth/model/selectors'
@@ -19,10 +20,14 @@ export const AppSidebar = () => {
   const user = useUser()
   const logout = useLogout()
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     close()
-    logout()
-    navigate({ to: '/login', replace: true })
+    try {
+      await logout()
+      await navigate({ to: '/login', replace: true })
+    } catch {
+      toast.error('Failed to log out. Please try again.')
+    }
   }
 
   return (

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
+import { toast } from 'sonner'
 import { SignupForm } from '@/features/auth/ui/signup-form'
 import { useRegister } from '@/features/auth/model/actions'
 import { Logo } from '@/shared/ui/logo'
@@ -8,20 +9,26 @@ import { useRedirectIfAuthenticated } from '@/features/auth/model/use-redirect-i
 export const RegisterPage = () => {
   const register = useRegister()
   const [name, setName] = useState('Maya Green')
-  const [email, setEmail] = useState('maya@aerospeak.io')
+  const [email, setEmail] = useState('student@aerospeak.io')
   const [password, setPassword] = useState('password123')
   const [confirmPassword, setConfirmPassword] = useState('password123')
 
   useRedirectIfAuthenticated('/lessons')
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     if (password !== confirmPassword) {
+      toast.error('Passwords do not match')
       return
     }
 
-    register({ name, email, password, role: 'Student' })
+    try {
+      await register({ name, email, password, role: 'Student' })
+      toast.success('Account created successfully')
+    } catch {
+      toast.error('Failed to create account')
+    }
   }
 
   return (
@@ -61,4 +68,3 @@ export const RegisterPage = () => {
     </div>
   )
 }
-
