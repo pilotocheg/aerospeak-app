@@ -3,11 +3,12 @@ import {
   createUserWithEmailAndPassword, 
   signOut,
   updateProfile,
-  onAuthStateChanged
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup
 } from 'firebase/auth'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-
 
 import { auth } from '@/shared/lib/firebase'
 
@@ -37,6 +38,7 @@ type AuthState = {
   isAuthenticated: boolean
   isLoading: boolean
   login: (payload: LoginInput) => Promise<void>
+  loginWithGoogle: () => Promise<void>
   register: (payload: RegisterInput) => Promise<void>
   logout: () => Promise<void>
   initAuthListener: () => () => void
@@ -55,6 +57,16 @@ export const useAuthStore = create<AuthState>()(
           await signInWithEmailAndPassword(auth, email, password)
         } finally {
           set({ isLoading: false }, false, 'auth/login-end')
+        }
+      },
+
+      loginWithGoogle: async () => {
+        set({ isLoading: true }, false, 'auth/google-login-start')
+        try {
+          const provider = new GoogleAuthProvider()
+          await signInWithPopup(auth, provider)
+        } finally {
+          set({ isLoading: false }, false, 'auth/google-login-end')
         }
       },
 
