@@ -2,7 +2,7 @@ import type { AttemptResultDto } from '@/shared/api'
 import { API_URL } from '@/shared/config/env'
 import { auth } from '@/shared/lib/firebase'
 
-import { RateLimitedError, SttFailedError } from './attempt-errors'
+import { ProfileRequiredError, RateLimitedError, SttFailedError } from './attempt-errors'
 
 export type SubmitAttemptInput = {
   scenarioId: string
@@ -32,6 +32,9 @@ export const submitAttempt = async ({ scenarioId, stepId, audio }: SubmitAttempt
 
   if (response.status === 503) {
     throw new SttFailedError()
+  }
+  if (response.status === 403) {
+    throw new ProfileRequiredError()
   }
   if (response.status === 429) {
     throw new RateLimitedError()

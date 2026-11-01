@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { SttFailedError, submitAttempt } from '@/entities/attempt'
+import { ProfileRequiredError, SttFailedError, submitAttempt } from '@/entities/attempt'
 import { useRecordScenarioResult } from '@/entities/progress'
 import { getBriefingValue } from '@/entities/scenario'
 import { findSectionByPackId } from '@/entities/section'
+import { meKeys, meQueryOptions } from '@/entities/user'
 import { useAuthStore } from '@/features/auth/model/auth-store'
 import {
   buildSummary,
@@ -62,7 +63,10 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   const recordScenarioResult = useRecordScenarioResult()
   const player = useAudioPlayer()
 
+  const queryClient = useQueryClient()
   const user = useAuthStore((state) => state.user)
+  // Recording needs a finished registration; TermsGate asks for it while the profile is missing.
+  const { data: profile } = useQuery({ ...meQueryOptions(user?.id ?? ''), enabled: Boolean(user) })
 
   const [textMode, setTextMode] = useState<TextMode>('prompt')
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null)
@@ -76,7 +80,13 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
 
   const attemptMutation = useMutation({
     mutationFn: submitAttempt,
-    onError: (error) => (error instanceof SttFailedError ? toast.warning(error.message) : toast.error(error.message)),
+    onError: (error) => {
+      if (error instanceof ProfileRequiredError) {
+        // The cached profile is out of date: refetching it brings back TermsGate.
+        void queryClient.invalidateQueries({ queryKey: meKeys.all })
+      }
+      return error instanceof SttFailedError ? toast.warning(error.message) : toast.error(error.message)
+    },
   })
 
   const handleRecorded = (recording: Recording) => {
@@ -97,7 +107,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
     onError: (error) => (error instanceof TooShortError ? toast.warning(error.message) : toast.error(error.message)),
   })
 
-  const canRecord = Boolean(user) && !attemptMutation.isPending
+  const canRecord = Boolean(profile?.termsAcceptedAt) && !attemptMutation.isPending
 
   const toggleRecording = () => {
     if (recorder.status === 'idle') {

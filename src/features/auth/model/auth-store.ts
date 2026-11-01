@@ -1,15 +1,16 @@
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut,
   updateProfile,
   onAuthStateChanged,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
 } from 'firebase/auth'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
+import { setProgressOwner } from '@/entities/progress'
 import { auth } from '@/shared/lib/firebase'
 
 export type UserRole = 'Student' | 'Mentor'
@@ -103,6 +104,7 @@ export const useAuthStore = create<AuthState>()(
       initAuthListener: () => {
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
           if (firebaseUser) {
+            setProgressOwner(firebaseUser.uid)
             set(
               {
                 user: {
