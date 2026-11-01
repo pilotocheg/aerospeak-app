@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
+import { toast } from 'sonner'
 import { LoginForm } from '@/features/auth/ui/login-form'
 import { useLogin } from '@/features/auth/model/actions'
 import { Logo } from '@/shared/ui/logo'
@@ -12,9 +13,14 @@ export const LoginPage = () => {
 
   useRedirectIfAuthenticated('/lessons')
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    login({ email, password })
+    try {
+      await login({ email, password })
+      toast.success('Successfully logged in')
+    } catch {
+      toast.error('Failed to sign in')
+    }
   }
 
   return (

@@ -12,3 +12,11 @@ export class RateLimitedError extends Error {
     this.name = 'RateLimitedError'
   }
 }
+
+/** 403 from the backend: the profile is missing or the terms are not accepted (`POST /me`). */
+export class ProfileRequiredError extends Error {
+  constructor() {
+    super('Accept the terms to start practicing.')
+    this.name = 'ProfileRequiredError'
+  }
+}

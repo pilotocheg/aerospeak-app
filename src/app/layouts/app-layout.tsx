@@ -1,5 +1,6 @@
 import { Outlet } from '@tanstack/react-router'
 
+import { TermsGate } from '@/features/auth/ui/terms-gate'
 import { AppSidebar } from '@/widgets/app-sidebar'
 
 /** Authenticated area: sidebar navigation + page. */
@@ -9,5 +10,6 @@ export const AppLayout = () => (
     <main className="flex min-w-0 flex-1 flex-col">
       <Outlet />
     </main>
+    <TermsGate />
   </div>
 )

@@ -10,15 +10,25 @@ export type ScenarioProgress = {
 }
 
 type ProgressState = {
+  /** Firebase uid of the account this progress belongs to. */
+  ownerUid: string | null
   byScenario: Record<string, ScenarioProgress>
   recordScenarioResult: (scenarioId: string, score: number) => void
+  setOwner: (uid: string) => void
 }
 
-// Guest progress must survive reloads, so this store is persisted.
+// Progress must survive reloads, so this store is persisted.
 export const useProgressStore = create<ProgressState>()(
   persist(
     (set) => ({
+      ownerUid: null,
       byScenario: {},
+      // The browser keeps one progress record: another account signing in starts from zero.
+      // Progress saved before accounts existed (no owner) goes to the first account that signs in.
+      setOwner: (uid) =>
+        set((state) =>
+          state.ownerUid === uid ? state : { ownerUid: uid, byScenario: state.ownerUid ? {} : state.byScenario },
+        ),
       recordScenarioResult: (scenarioId, score) =>
         set((state) => {
           const previous = state.byScenario[scenarioId]
