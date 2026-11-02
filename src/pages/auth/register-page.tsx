@@ -8,10 +8,10 @@ import { useRedirectIfAuthenticated } from '@/features/auth/model/use-redirect-i
 
 export const RegisterPage = () => {
   const register = useRegister()
-  const [name, setName] = useState('Maya Green')
-  const [email, setEmail] = useState('student@aerospeak.io')
-  const [password, setPassword] = useState('password123')
-  const [confirmPassword, setConfirmPassword] = useState('password123')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   useRedirectIfAuthenticated('/lessons')
 

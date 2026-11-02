@@ -8,8 +8,8 @@ import { useRedirectIfAuthenticated } from '@/features/auth/model/use-redirect-i
 
 export const LoginPage = () => {
   const login = useLogin()
-  const [email, setEmail] = useState('student@aerospeak.io')
-  const [password, setPassword] = useState('password123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   useRedirectIfAuthenticated('/lessons')
 
