@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { toast } from 'sonner'
+import { GoogleOneTapAutoSignIn } from '@/features/auth-by-google-onetap'
 import { LoginForm } from '@/features/auth/ui/login-form'
 import { useLogin } from '@/features/auth/model/actions'
 import { Logo } from '@/shared/ui/logo'
@@ -25,6 +26,16 @@ export const LoginPage = () => {
 
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4 py-6 sm:px-6">
+      <GoogleOneTapAutoSignIn
+        clientId={import.meta.env.VITE_GOOGLE_ONE_TAP_CLIENT_ID}
+        onSignedIn={() => {
+          toast.success('Successfully logged in with Google')
+        }}
+        onError={() => {
+          toast.error('Failed to sign in with Google One Tap')
+        }}
+      />
+
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
           <div className="mb-4 flex flex-col items-center gap-2">
