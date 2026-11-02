@@ -1,10 +1,10 @@
 import { Button } from '@/shared/ui/button'
-import { useAuthStore } from '../model/auth-store'
 import { toast } from 'sonner'
 import { useNavigate } from '@tanstack/react-router'
+import { useLoginWithGoogle } from '../model/actions'
 
 export const GoogleAuthButton = () => {
-  const loginWithGoogle = useAuthStore((state) => state.loginWithGoogle)
+  const loginWithGoogle = useLoginWithGoogle()
   const navigate = useNavigate()
 
   const handleGoogleLogin = async () => {

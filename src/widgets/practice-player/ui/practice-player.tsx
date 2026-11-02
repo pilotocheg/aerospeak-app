@@ -8,7 +8,7 @@ import { ProfileRequiredError, SttFailedError, submitAttempt } from '@/entities/
 import { useRecordScenarioResult } from '@/entities/progress'
 import { getBriefingValue } from '@/entities/scenario'
 import { findSectionByPackId } from '@/entities/section'
-import { meKeys, meQueryOptions } from '@/entities/user'
+import { getUserProfileQueryOptions, meKeys } from '@/entities/user'
 import { useAuthStore } from '@/features/auth/model/auth-store'
 import {
   buildSummary,
@@ -66,7 +66,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   const queryClient = useQueryClient()
   const user = useAuthStore((state) => state.user)
   // Recording needs a finished registration; TermsGate asks for it while the profile is missing.
-  const { data: profile } = useQuery({ ...meQueryOptions(user?.id ?? ''), enabled: Boolean(user) })
+  const { data: profile } = useQuery({ ...getUserProfileQueryOptions(user?.id ?? ''), enabled: Boolean(user) })
 
   const [textMode, setTextMode] = useState<TextMode>('prompt')
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null)

@@ -1,48 +1,15 @@
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  updateProfile,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from 'firebase/auth'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
-import { setProgressOwner } from '@/entities/progress'
-import { auth } from '@/shared/lib/firebase'
-
-export type UserRole = 'Student' | 'Mentor'
-
-export type User = {
-  id: string
-  name: string
-  email: string
-  role: UserRole
-}
-
-export type LoginInput = {
-  email: string
-  password: string
-}
-
-export type RegisterInput = {
-  name: string
-  email: string
-  password: string
-  role: UserRole
-}
+import type { User } from './types'
 
 type AuthState = {
   user: User | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (payload: LoginInput) => Promise<void>
-  loginWithGoogle: () => Promise<void>
-  register: (payload: RegisterInput) => Promise<void>
-  logout: () => Promise<void>
-  initAuthListener: () => () => void
+  setLoading: (value: boolean) => void
+  setAuthenticatedUser: (user: User) => void
+  clearAuthenticatedUser: () => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -51,89 +18,27 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
       isLoading: true,
-
-      login: async ({ email, password }) => {
-        set({ isLoading: true }, false, 'auth/login-start')
-        try {
-          await signInWithEmailAndPassword(auth, email, password)
-        } finally {
-          set({ isLoading: false }, false, 'auth/login-end')
-        }
-      },
-
-      loginWithGoogle: async () => {
-        set({ isLoading: true }, false, 'auth/google-login-start')
-        try {
-          const provider = new GoogleAuthProvider()
-          await signInWithPopup(auth, provider)
-        } finally {
-          set({ isLoading: false }, false, 'auth/google-login-end')
-        }
-      },
-
-      register: async ({ name, email, password }) => {
-        set({ isLoading: true }, false, 'auth/register-start')
-        try {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-          if (userCredential.user) {
-            await updateProfile(userCredential.user, { displayName: name })
-          }
-        } finally {
-          set({ isLoading: false }, false, 'auth/register-end')
-        }
-      },
-
-      logout: async () => {
-        set({ isLoading: true }, false, 'auth/logout-start')
-        try {
-          await signOut(auth)
-          set(
-            {
-              user: null,
-              isAuthenticated: false,
-              isLoading: false,
-            },
-            false,
-            'auth/logout-success',
-          )
-        } catch {
-          set({ isLoading: false }, false, 'auth/logout-error')
-        }
-      },
-
-      initAuthListener: () => {
-        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-          if (firebaseUser) {
-            setProgressOwner(firebaseUser.uid)
-            set(
-              {
-                user: {
-                  id: firebaseUser.uid,
-                  name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-                  email: firebaseUser.email || '',
-                  role: 'Student',
-                },
-                isAuthenticated: true,
-                isLoading: false,
-              },
-              false,
-              'auth/state-changed-authenticated',
-            )
-          } else {
-            set(
-              {
-                user: null,
-                isAuthenticated: false,
-                isLoading: false,
-              },
-              false,
-              'auth/state-changed-unauthenticated',
-            )
-          }
-        })
-
-        return unsubscribe
-      },
+      setLoading: (value) => set({ isLoading: value }, false, 'auth/set-loading'),
+      setAuthenticatedUser: (user) =>
+        set(
+          {
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+          },
+          false,
+          'auth/set-user',
+        ),
+      clearAuthenticatedUser: () =>
+        set(
+          {
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          },
+          false,
+          'auth/clear-user',
+        ),
     }),
     { name: 'AuthStore' },
   ),

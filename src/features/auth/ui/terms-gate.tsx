@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 
-import { meQueryOptions, useRegisterProfileMutation } from '@/entities/user'
+import { getUserProfileQueryOptions, useRegisterUserProfileMutation } from '@/entities/user'
 import { auth } from '@/shared/lib/firebase'
 import { Button } from '@/shared/ui/button'
 import { Checkbox } from '@/shared/ui/checkbox'
@@ -20,7 +20,7 @@ type TermsDialogProps = {
 const TermsDialog = ({ uid }: TermsDialogProps) => {
   const navigate = useNavigate()
   const logout = useLogout()
-  const registerProfile = useRegisterProfileMutation(uid)
+  const registerProfile = useRegisterUserProfileMutation(uid)
   const [accepted, setAccepted] = useState(false)
 
   const handleContinue = () => {
@@ -77,7 +77,10 @@ const TermsDialog = ({ uid }: TermsDialogProps) => {
 /** Blocks the app until the signed-in user has a backend profile with accepted terms (`POST /me`). */
 export const TermsGate = () => {
   const user = useUser()
-  const { data: profile, isSuccess } = useQuery({ ...meQueryOptions(user?.id ?? ''), enabled: Boolean(user) })
+  const { data: profile, isSuccess } = useQuery({
+    ...getUserProfileQueryOptions(user?.id ?? ''),
+    enabled: Boolean(user),
+  })
 
   if (!user || !isSuccess || profile?.termsAcceptedAt) {
     return null

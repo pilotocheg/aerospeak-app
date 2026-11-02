@@ -1,7 +1,7 @@
 export {
+  getUserProfileQueryOptions,
   meKeys,
-  meQueryOptions,
-  useDeleteAccountMutation,
-  useRegisterProfileMutation,
-  useVoiceConsentMutation,
-} from './api/me-queries'
+  useDeleteUserAccountMutation,
+  useGrantVoiceConsentMutation,
+  useRegisterUserProfileMutation,
+} from './api'

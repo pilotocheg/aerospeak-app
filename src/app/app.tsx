@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { QueryClient } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 
-import { useAuthStore } from '@/features/auth/model/auth-store'
+import { initAuthSession } from '@/features/auth/model/actions'
 
 import { QueryProvider } from './providers/query-provider'
 import { createAppRouter } from './providers/router'
@@ -12,7 +12,7 @@ const router = createAppRouter(queryClient)
 
 export const App = () => {
   useEffect(() => {
-    const unsubscribe = useAuthStore.getState().initAuthListener()
+    const unsubscribe = initAuthSession()
     return () => unsubscribe()
   }, [])
 
