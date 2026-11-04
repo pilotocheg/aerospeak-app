@@ -1,113 +1,107 @@
-import type { FormEvent, ReactNode } from 'react'
-import { cn } from 'cn'
-
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import { Link } from '@tanstack/react-router'
+
 import { Button } from '@/shared/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card'
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/shared/ui/field'
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSeparator } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
+import { GoogleAuthButton } from '@/features/auth/ui/google-auth-button'
 
-type SignupFormProps = {
-  name: string
-  email: string
-  password: string
-  confirmPassword: string
-  onNameChange: (value: string) => void
-  onEmailChange: (value: string) => void
-  onPasswordChange: (value: string) => void
-  onConfirmPasswordChange: (value: string) => void
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void
-  footer?: ReactNode
-}
+import { useRegister } from '../model/actions'
+import { signupSchema, type SignupFormValues } from '../model/schemas'
 
-export const SignupForm = ({
-  className,
-  name,
-  email,
-  password,
-  confirmPassword,
-  onNameChange,
-  onEmailChange,
-  onPasswordChange,
-  onConfirmPasswordChange,
-  onSubmit,
-  footer,
-  ...props
-}: Omit<React.ComponentProps<'div'>, 'onSubmit'> & SignupFormProps) => {
+export const SignupForm = () => {
+  const registerUser = useRegister()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    mode: 'onTouched',
+    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
+  })
+
+  const onSubmit = handleSubmit(async ({ name, email, password }) => {
+    try {
+      await registerUser({ name, email, password, role: 'Student' })
+      toast.success('Account created successfully')
+    } catch {
+      toast.error('Failed to create account')
+    }
+  })
+
   return (
-    <div className={cn('flex w-full flex-col gap-6', className)} {...props}>
-      <Card className="border-border/60 shadow-sm">
-        <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-xl font-semibold tracking-tight">Create your account</CardTitle>
-          <CardDescription>Enter your details below to create your AeroSpeak account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={onSubmit} className="space-y-5">
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Jane Cooper"
-                  value={name}
-                  onChange={(event) => onNameChange(event.target.value)}
-                  autoComplete="name"
-                  required
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@aerospeak.io"
-                  value={email}
-                  onChange={(event) => onEmailChange(event.target.value)}
-                  autoComplete="email"
-                  inputMode="email"
-                  required
-                />
-              </Field>
-              <Field className="grid gap-4 sm:grid-cols-2">
-                <Field>
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Create a password"
-                    value={password}
-                    onChange={(event) => onPasswordChange(event.target.value)}
-                    autoComplete="new-password"
-                    required
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="confirm-password">Confirm password</FieldLabel>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    placeholder="Repeat password"
-                    value={confirmPassword}
-                    onChange={(event) => onConfirmPasswordChange(event.target.value)}
-                    autoComplete="new-password"
-                    required
-                  />
-                </Field>
-              </Field>
-              <Field>
-                <Button type="submit" className="w-full">
-                  Create Account
-                </Button>
-                {footer ? <FieldDescription className="text-center">{footer}</FieldDescription> : null}
-              </Field>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
-      <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <Link to="/terms-and-conditions" target="_blank" rel="noreferrer">Terms of Service</Link> and <Link to="/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</Link>.
-      </FieldDescription>
-    </div>
+    <form onSubmit={onSubmit} noValidate className="space-y-5">
+      <FieldGroup>
+        <Field>
+          <GoogleAuthButton />
+        </Field>
+        <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">Or sign up with email</FieldSeparator>
+        <Field data-invalid={!!errors.name}>
+          <FieldLabel htmlFor="name">Full Name</FieldLabel>
+          <Input
+            id="name"
+            type="text"
+            placeholder="Jane Cooper"
+            autoComplete="name"
+            aria-invalid={!!errors.name}
+            {...register('name')}
+          />
+          <FieldError errors={[errors.name]} />
+        </Field>
+        <Field data-invalid={!!errors.email}>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            type="email"
+            placeholder="name@aerospeak.io"
+            autoComplete="email"
+            inputMode="email"
+            aria-invalid={!!errors.email}
+            {...register('email')}
+          />
+          <FieldError errors={[errors.email]} />
+        </Field>
+        <Field className="grid gap-4 sm:grid-cols-2">
+          <Field data-invalid={!!errors.password}>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Create a password"
+              autoComplete="new-password"
+              aria-invalid={!!errors.password}
+              {...register('password', { deps: ['confirmPassword'] })}
+            />
+            <FieldError errors={[errors.password]} />
+          </Field>
+          <Field data-invalid={!!errors.confirmPassword}>
+            <FieldLabel htmlFor="confirm-password">Confirm password</FieldLabel>
+            <Input
+              id="confirm-password"
+              type="password"
+              placeholder="Repeat password"
+              autoComplete="new-password"
+              aria-invalid={!!errors.confirmPassword}
+              {...register('confirmPassword')}
+            />
+            <FieldError errors={[errors.confirmPassword]} />
+          </Field>
+        </Field>
+        <Field>
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? 'Creating account…' : 'Create Account'}
+          </Button>
+          <FieldDescription className="text-center">
+            Already have an account?{' '}
+            <Link to="/login" className="font-medium text-brand underline-offset-4 hover:underline">
+              Sign in
+            </Link>
+          </FieldDescription>
+        </Field>
+      </FieldGroup>
+    </form>
   )
 }
