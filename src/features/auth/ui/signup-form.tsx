@@ -102,7 +102,7 @@ export const SignupForm = ({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <Link to="/terms-and-conditions" target="_blank" rel="noreferrer">Terms of Service</Link> and <Link to="/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</Link>.
+        By clicking "Create Account", you agree to our <Link to="/terms-and-conditions" target="_blank" rel="noreferrer">Terms of Service</Link> and <Link to="/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</Link>.
       </FieldDescription>
     </div>
   )
