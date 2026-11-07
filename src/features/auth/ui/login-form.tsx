@@ -3,7 +3,7 @@ import { cn } from 'cn'
 
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/shared/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card'
+import { Card, CardContent } from '@/shared/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
 import { GoogleAuthButton } from '@/features/auth/ui/google-auth-button'
@@ -30,10 +30,6 @@ export const LoginForm = ({
   return (
     <div className={cn('flex w-full flex-col gap-6', className)} {...props}>
       <Card className="border-border/60 shadow-sm">
-        <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-xl font-semibold tracking-tight">Welcome back</CardTitle>
-          <CardDescription>Login with your Apple or Google account</CardDescription>
-        </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-5">
             <FieldGroup>
