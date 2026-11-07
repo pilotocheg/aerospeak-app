@@ -1,9 +1,9 @@
 import { setProgressOwner } from '@/entities/progress'
 
-import { loginWithEmail, loginWithGoogle, logoutCurrentUser, observeAuthState, registerWithEmail } from '../api'
+import { loginWithEmail, loginWithGoogle, logoutCurrentUser, observeAuthState, registerWithEmail, sendPasswordResetEmail } from '../api'
 
 import { useAuthStore } from './auth-store'
-import type { LoginInput, RegisterInput } from './types'
+import type { LoginInput, RegisterInput, PasswordResetInput } from './types'
 
 export const useLogin = () => async (payload: LoginInput) => {
 	const { setLoading } = useAuthStore.getState()
@@ -57,4 +57,16 @@ export const initAuthSession = () => {
 		}
 		clearAuthenticatedUser()
 	})
+}
+
+export const useSendPasswordResetEmail = () => async ({ email }: PasswordResetInput) => {
+  const { setLoading } = useAuthStore.getState()
+  setLoading(true)
+  try {
+    await sendPasswordResetEmail(email)
+  } catch {
+		// ignore error for enumeration protection
+	} finally {
+    setLoading(false)
+  }
 }

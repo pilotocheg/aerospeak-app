@@ -18,3 +18,5 @@ export type RegisterInput = {
   password: string
   role: UserRole
 }
+
+export type PasswordResetInput = { email: string }
