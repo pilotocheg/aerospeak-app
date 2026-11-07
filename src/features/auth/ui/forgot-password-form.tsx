@@ -1,62 +1,65 @@
-import type { FormEvent, ReactNode } from 'react'
-import { cn } from 'cn'
-
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import { Link } from '@tanstack/react-router'
+
 import { Button } from '@/shared/ui/button'
-import { Card, CardContent } from '@/shared/ui/card'
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/shared/ui/field'
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
 
-type ForgotPasswordFormProps = {
-  email: string
-  onEmailChange: (value: string) => void
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void
-  footer?: ReactNode
-}
+import { useSendPasswordResetEmail } from '../model/actions'
+import { passwordResetSchema, type PasswordResetFormValues } from '../model/schemas'
 
-export const ForgotPasswordForm = ({
-  className,
-  email,
-  onEmailChange,
-  onSubmit,
-  footer,
-  ...props
-}: Omit<React.ComponentProps<'div'>, 'onSubmit'> & ForgotPasswordFormProps) => {
+export const ForgotPasswordForm = () => {
+  const send = useSendPasswordResetEmail()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<PasswordResetFormValues>({
+    resolver: zodResolver(passwordResetSchema),
+    mode: 'onTouched',
+    defaultValues: { email: '' },
+  })
+
+  const onSubmit = handleSubmit(async (values) => {
+    try {
+      await send(values)
+      toast.success('If an account exists with this email, we have sent a password reset link')
+    } catch {
+      toast.error('Failed to send reset link')
+    }
+  })
+
   return (
-    <div className={cn('flex w-full flex-col gap-6', className)} {...props}>
-      <Card className="border-border/60 shadow-sm">
-        <CardContent>
-          <form onSubmit={onSubmit} className="space-y-5">
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@aerospeak.io"
-                  value={email}
-                  onChange={(event) => onEmailChange(event.target.value)}
-                  autoComplete="email"
-                  inputMode="email"
-                  required
-                />
-              </Field>
-              <Field>
-                <Button type="submit" className="w-full">
-                  Send reset link
-                </Button>
-                {footer ? <FieldDescription className="text-center">{footer}</FieldDescription> : null}
-              </Field>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
-      <FieldDescription className="px-6 text-center">
-        Remembered your password?{' '}
-        <Link to="/login" className="font-medium text-brand underline-offset-4 hover:underline">
-          Sign in
-        </Link>
-      </FieldDescription>
-    </div>
+    <form onSubmit={onSubmit} noValidate className="space-y-5">
+      <FieldGroup>
+        <Field data-invalid={!!errors.email}>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            type="email"
+            placeholder="name@aerospeak.io"
+            autoComplete="email"
+            inputMode="email"
+            aria-invalid={!!errors.email}
+            {...register('email')}
+          />
+          <FieldError errors={[errors.email]} />
+        </Field>
+        <Field>
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? 'Sending…' : 'Send reset link'}
+          </Button>
+          <FieldDescription className="text-center">
+            Remembered your password?{' '}
+            <Link to="/login" className="font-medium text-brand underline-offset-4 hover:underline">
+              Sign in
+            </Link>
+          </FieldDescription>
+        </Field>
+      </FieldGroup>
+    </form>
   )
 }
