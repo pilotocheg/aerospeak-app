@@ -5,6 +5,7 @@ import {
   signInWithPopup,
   signOut,
   updateProfile,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail
 } from 'firebase/auth'
 
 import { auth } from '@/shared/lib/firebase'
@@ -28,4 +29,8 @@ export const registerWithEmail = async ({ name, email, password }: RegisterInput
 
 export const logoutCurrentUser = async () => {
   await signOut(auth)
+}
+
+export const sendPasswordResetEmail = async (email: string) => {
+  await firebaseSendPasswordResetEmail(auth, email)
 }

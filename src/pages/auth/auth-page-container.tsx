@@ -11,10 +11,11 @@ type AuthPageContainerProps = {
   title: string
   subtitle: string
   children: ReactNode
+  showLegal?: boolean
 }
 
 /** Shared shell of the login and register pages: branding, form card, legal links, One Tap. */
-export const AuthPageContainer = ({ title, subtitle, children }: AuthPageContainerProps) => {
+export const AuthPageContainer = ({ title, subtitle, children, showLegal = true }: AuthPageContainerProps) => {
   useRedirectIfAuthenticated('/lessons')
   useGoogleOneTap()
 
@@ -34,17 +35,19 @@ export const AuthPageContainer = ({ title, subtitle, children }: AuthPageContain
           <CardContent>{children}</CardContent>
         </Card>
 
-        <FieldDescription className="px-6 text-center">
-          By clicking continue, you agree to our{' '}
-          <Link to="/terms-and-conditions" target="_blank" rel="noreferrer">
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link to="/privacy-policy" target="_blank" rel="noreferrer">
-            Privacy Policy
-          </Link>
-          .
-        </FieldDescription>
+        {showLegal && (
+          <FieldDescription className="px-6 text-center">
+            By clicking continue, you agree to our{' '}
+            <Link to="/terms-and-conditions" target="_blank" rel="noreferrer">
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link to="/privacy-policy" target="_blank" rel="noreferrer">
+              Privacy Policy
+            </Link>
+            .
+          </FieldDescription>
+        )}
       </div>
     </div>
   )
