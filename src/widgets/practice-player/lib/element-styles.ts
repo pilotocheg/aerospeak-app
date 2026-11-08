@@ -1,9 +1,9 @@
 import type { ElementResultDto, WordResultDto } from '@/shared/api'
 
 export const ELEMENT_TEXT_CLASS: Record<ElementResultDto['status'], string> = {
-  matched: 'text-green-500',
-  partial: 'text-amber-400',
-  missed: 'text-red-500 underline decoration-2 underline-offset-4',
+  matched: 'text-green-600 dark:text-green-500',
+  partial: 'text-amber-600 dark:text-amber-400',
+  missed: 'text-red-600 dark:text-red-500 underline decoration-2 underline-offset-4',
 }
 
 export const ELEMENT_DOT_CLASS: Record<ElementResultDto['status'], string> = {

@@ -22,7 +22,7 @@ export const TranscriptLine = ({ step, mode }: TranscriptLineProps) => {
       aria-live="polite"
       className={cn(
         'min-h-12 flex-1 text-center text-sm leading-snug sm:text-base',
-        mode === 'prompt' ? 'text-foreground' : 'text-red-400 italic',
+        mode === 'prompt' ? 'text-foreground' : 'text-destructive italic',
       )}
     >
       {text}

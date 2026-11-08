@@ -36,7 +36,7 @@ export const KeywordFeedback = ({ step, expected, elements, outOfOrder }: Keywor
       {element.critical && element.status === 'missed' && <TriangleAlert className="ml-0.5 inline size-3.5" />}
       {outOfOrder.includes(element.id) && (
         <>
-          <ArrowDownUp className="ml-0.5 inline size-3.5 text-amber-400" />
+          <ArrowDownUp className="ml-0.5 inline size-3.5 text-amber-600 dark:text-amber-400" />
           <span className="sr-only"> (said in the wrong place)</span>
         </>
       )}
@@ -77,11 +77,11 @@ export const KeywordFeedback = ({ step, expected, elements, outOfOrder }: Keywor
           <div className="space-y-1 text-sm">
             <p className="font-semibold">
               {selected.label}
-              {selected.critical && <span className="ml-2 text-xs text-red-400 uppercase">Safety-critical</span>}
+              {selected.critical && <span className="ml-2 text-xs text-destructive uppercase">Safety-critical</span>}
             </p>
             <p className={ELEMENT_TEXT_CLASS[selected.status].split(' ')[0]}>{ELEMENT_STATUS_LABEL[selected.status]}</p>
-            {outOfOrder.includes(selected.id) && <p className="text-amber-400">Said in the wrong place</p>}
-            {selected.hint && <p className="text-amber-400">{selected.hint}</p>}
+            {outOfOrder.includes(selected.id) && <p className="text-amber-600 dark:text-amber-400">Said in the wrong place</p>}
+            {selected.hint && <p className="text-amber-600 dark:text-amber-400">{selected.hint}</p>}
             {selected.matchedText && <p className="text-muted-foreground">Heard: “{selected.matchedText}”</p>}
             {selected.words.length > 0 && <ElementWords words={selected.words} />}
           </div>
