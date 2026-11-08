@@ -2,7 +2,14 @@ import { useMutation } from '@tanstack/react-query'
 
 import { setProgressOwner } from '@/entities/progress'
 
-import { loginWithEmail, loginWithGoogle, logoutCurrentUser, observeAuthState, registerWithEmail, sendPasswordResetEmail } from '../api'
+import {
+  loginWithEmail,
+  loginWithGoogle,
+  logoutCurrentUser,
+  observeAuthState,
+  registerWithEmail,
+  sendPasswordResetEmail,
+} from '../api'
 
 import { useAuthStore } from './auth-store'
 import type { LoginInput, RegisterInput, PasswordResetInput } from './types'

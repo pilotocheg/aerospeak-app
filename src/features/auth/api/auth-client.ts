@@ -5,7 +5,7 @@ import {
   signInWithPopup,
   signOut,
   updateProfile,
-  sendPasswordResetEmail as firebaseSendPasswordResetEmail
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
 } from 'firebase/auth'
 
 import { auth } from '@/shared/lib/firebase'
