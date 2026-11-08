@@ -80,7 +80,9 @@ export const KeywordFeedback = ({ step, expected, elements, outOfOrder }: Keywor
               {selected.critical && <span className="ml-2 text-xs text-destructive uppercase">Safety-critical</span>}
             </p>
             <p className={ELEMENT_TEXT_CLASS[selected.status].split(' ')[0]}>{ELEMENT_STATUS_LABEL[selected.status]}</p>
-            {outOfOrder.includes(selected.id) && <p className="text-amber-600 dark:text-amber-400">Said in the wrong place</p>}
+            {outOfOrder.includes(selected.id) && (
+              <p className="text-amber-600 dark:text-amber-400">Said in the wrong place</p>
+            )}
             {selected.hint && <p className="text-amber-600 dark:text-amber-400">{selected.hint}</p>}
             {selected.matchedText && <p className="text-muted-foreground">Heard: “{selected.matchedText}”</p>}
             {selected.words.length > 0 && <ElementWords words={selected.words} />}

@@ -30,9 +30,7 @@ export const Footer = () => (
       </div>
 
       <div className="flex flex-col justify-between gap-2 border-t border-foreground/10 pt-6 text-xs sm:flex-row">
-        <p>
-          © {new Date().getFullYear()} AeroSpeak
-        </p>
+        <p>© {new Date().getFullYear()} AeroSpeak</p>
         <p>For training only. Not a substitute for flight instruction.</p>
       </div>
     </div>
