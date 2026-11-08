@@ -67,7 +67,7 @@ export const FeedbackDialog = ({
         </div>
 
         {missedCritical.length > 0 && (
-          <div className="flex gap-3 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-300">
+          <div className="flex gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
             <TriangleAlert className="size-5 shrink-0" />
             <p>
               You missed {missedCritical.map((e) => `“${e.label}”`).join(', ')}. Safety-critical items must always be
@@ -79,7 +79,7 @@ export const FeedbackDialog = ({
         {wrongCritical.map((element) => (
           <div
             key={element.id}
-            className="flex gap-3 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-300"
+            className="flex gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
           >
             <TriangleAlert className="size-5 shrink-0" />
             <p>

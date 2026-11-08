@@ -3,6 +3,7 @@ import { RouterProvider } from '@tanstack/react-router'
 
 import { useAuthSession } from '@/features/auth/lib/use-auth-session'
 
+import { ThemeProvider } from './providers/theme-provider'
 import { QueryProvider } from './providers/query-provider'
 import { createAppRouter } from './providers/router'
 
@@ -14,7 +15,9 @@ export const App = () => {
 
   return (
     <QueryProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </QueryProvider>
   )
 }

@@ -182,7 +182,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
       <BriefingStrip briefing={scenario.briefing ?? []} />
       <StepVisual scenario={scenario} step={step} />
 
-      <div className="shrink-0 space-y-3 border-t bg-black px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-8">
+      <div className="shrink-0 space-y-3 border-t bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-8">
         <ScoreBar score={lastAttempt?.result.score} />
         <div className="h-5 text-center">
           {lastAttempt && (

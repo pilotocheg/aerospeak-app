@@ -1,11 +1,12 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { cn } from 'cn'
-import { House, LogOut } from 'lucide-react'
+import { House, LogOut, Moon, Sun } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useLogout } from '@/features/auth/model/actions'
 import { useUser } from '@/features/auth/model/selectors'
 import { sections } from '@/shared/content'
+import { useTheme, useToggleTheme } from '@/shared/lib/theme'
 import { Button } from '@/shared/ui/button'
 import { Logo } from '@/shared/ui/logo'
 
@@ -19,6 +20,8 @@ export const AppSidebar = () => {
   const close = useCloseSidebar()
   const user = useUser()
   const logout = useLogout()
+  const theme = useTheme()
+  const toggleTheme = useToggleTheme()
 
   const handleLogout = async () => {
     close()
@@ -68,6 +71,14 @@ export const AppSidebar = () => {
             {user?.name.at(0) ?? 'P'}
           </span>
           <span className="flex-1 truncate text-sm">{user?.name ?? 'Pilot'}</span>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Toggle color theme"
+            onClick={toggleTheme}
+          >
+            {theme === 'dark' ? <Sun /> : <Moon />}
+          </Button>
           <Button variant="ghost" size="icon-sm" aria-label="Logout" onClick={handleLogout}>
             <LogOut />
           </Button>
