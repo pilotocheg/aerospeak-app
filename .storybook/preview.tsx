@@ -2,7 +2,7 @@ import type { Decorator, Preview } from '@storybook/react-vite'
 
 import '../src/index.css'
 
-// The app ships dark only (`<html class="dark">`); light is here to check the tokens.
+// The app supports light and dark themes; toggle via the toolbar below.
 const withTheme: Decorator = (Story, context) => {
   document.documentElement.classList.toggle('dark', context.globals.theme !== 'light')
   return <Story />
