@@ -1,3 +1,5 @@
+import { useMutation } from '@tanstack/react-query'
+
 import { setProgressOwner } from '@/entities/progress'
 
 import { loginWithEmail, loginWithGoogle, logoutCurrentUser, observeAuthState, registerWithEmail, sendPasswordResetEmail } from '../api'
@@ -59,14 +61,13 @@ export const initAuthSession = () => {
   })
 }
 
-export const useSendPasswordResetEmail = () => async ({ email }: PasswordResetInput) => {
-  const { setLoading } = useAuthStore.getState()
-  setLoading(true)
-  try {
-    await sendPasswordResetEmail(email)
-  } catch {
-		// ignore error for enumeration protection
-	} finally {
-    setLoading(false)
-  }
-}
+export const useSendPasswordResetEmail = () =>
+  useMutation({
+    mutationFn: async ({ email }: PasswordResetInput) => {
+      try {
+        await sendPasswordResetEmail(email)
+      } catch {
+        // ignore error for enumeration protection
+      }
+    },
+  })

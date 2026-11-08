@@ -1,12 +1,9 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 
 import { ForgotPasswordPage } from '@/pages/auth/forgot-password-page'
-import { auth } from '@/shared/lib/firebase'
+import { requireGuest } from '@/features/auth/model/auth-guards'
 
 export const Route = createFileRoute('/forgot-password')({
-  beforeLoad: async () => {
-    await auth.authStateReady()
-    if (auth.currentUser) throw redirect({ to: '/lessons' })
-  },
+  beforeLoad: requireGuest,
   component: ForgotPasswordPage,
 })
