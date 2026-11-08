@@ -22,7 +22,7 @@ const FEATURES: { icon: LucideIcon; title: string; description: string; shorts: 
     icon: Headset,
     title: 'Learn the right phraseology',
     description:
-      'Every ATC call has required elements, and missing one is easy when you are busy flying. After each reply you see what you said correctly and what you left out.',
+      'Every ATC call has required elements, and missing one is easy when you are busy flying. Our phraseology follows ICAO standards, and after each reply you see what you said correctly and what you left out.',
     shorts: ['Check on every required element', 'Missed items highlighted', 'Clear corrections to learn from'],
   },
   {

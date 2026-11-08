@@ -11,7 +11,8 @@ export const Hero = () => (
         Practice VFR radio calls before you fly
       </h1>
       <p className="max-w-md text-lg text-muted-foreground">
-        Listen to ATC, respond by voice and fix your phraseology mistakes in minutes.
+        Listen to ATC, respond by voice and fix your phraseology mistakes in minutes. Every call follows ICAO standard
+        phraseology.
       </p>
       <div className="mt-2 flex flex-wrap justify-center gap-3 lg:justify-start">
         <Button size="lg" className="px-8" render={<Link to="/lessons" />}>
