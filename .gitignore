@@ -36,3 +36,4 @@ storybook-static
 # Local environment files
 .env*
 !.env.example
+.vercel
