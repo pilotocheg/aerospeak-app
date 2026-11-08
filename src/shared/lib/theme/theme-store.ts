@@ -35,8 +35,7 @@ export const useThemeStore = create<ThemeState>()(
     (set) => ({
       theme: getInitialTheme(),
       setTheme: (theme) => set({ theme }),
-      toggleTheme: () =>
-        set((state: ThemeState) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
+      toggleTheme: () => set((state: ThemeState) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
     }),
     { name: 'aerospeak.theme' },
   ),

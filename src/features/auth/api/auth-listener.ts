@@ -4,11 +4,7 @@ import { auth } from '@/shared/lib/firebase'
 
 import type { User } from '../model/types'
 
-const toUser = (firebaseUser: {
-  uid: string
-  displayName: string | null
-  email: string | null
-}): User => ({
+const toUser = (firebaseUser: { uid: string; displayName: string | null; email: string | null }): User => ({
   id: firebaseUser.uid,
   name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
   email: firebaseUser.email || '',

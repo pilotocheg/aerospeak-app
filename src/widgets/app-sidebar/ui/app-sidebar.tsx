@@ -71,12 +71,7 @@ export const AppSidebar = () => {
             {user?.name.at(0) ?? 'P'}
           </span>
           <span className="flex-1 truncate text-sm">{user?.name ?? 'Pilot'}</span>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Toggle color theme"
-            onClick={toggleTheme}
-          >
+          <Button variant="ghost" size="icon-sm" aria-label="Toggle color theme" onClick={toggleTheme}>
             {theme === 'dark' ? <Sun /> : <Moon />}
           </Button>
           <Button variant="ghost" size="icon-sm" aria-label="Logout" onClick={handleLogout}>
