@@ -23,3 +23,9 @@ export const signupSchema = z
   })
 
 export type SignupFormValues = z.infer<typeof signupSchema>
+
+export const passwordResetSchema = z.object({
+  email,
+})
+
+export type PasswordResetFormValues = z.infer<typeof passwordResetSchema>
