@@ -2,11 +2,7 @@ import { queryOptions } from '@tanstack/react-query'
 
 import { apiClient } from '@/shared/api'
 
-
-export const attemptKeys = {
-  all: ['attempts'] as const,
-  list: (uid: string, limit: number) => [...attemptKeys.all, uid, 'list', limit] as const,
-}
+import { attemptKeys } from './attempt-keys'
 
 export const listAttempts = async (limit = 20) => {
   const { data, error } = await apiClient.GET('/me/attempts', {
@@ -24,4 +20,3 @@ export const listAttemptsQueryOptions = (uid: string, limit = 20) =>
     queryFn: () => listAttempts(limit),
     staleTime: 60_000,
   })
-

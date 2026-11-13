@@ -244,7 +244,7 @@ export const DashboardPage = () => {
             </section>
           </div>
 
-          <aside className="w-full space-y-4 xl:w-[360px] xl:shrink-0">
+          <aside className="w-full space-y-4 xl:w-90 xl:shrink-0">
             <Card>
               <CardHeader>
                 <CardTitle>Attempts · last 7 days</CardTitle>

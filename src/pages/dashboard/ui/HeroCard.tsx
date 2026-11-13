@@ -63,7 +63,7 @@ export const HeroCard = ({
           </div>
         </div>
         <div className="flex shrink-0 items-center justify-center">
-          <div className="relative size-[120px]">
+          <div className="relative size-30">
             <svg width={120} height={120} className="-rotate-90" viewBox="0 0 120 120">
               <circle cx={60} cy={60} r={52} fill="none" strokeWidth={8} className="stroke-white/20" />
               <circle
