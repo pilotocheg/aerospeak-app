@@ -25,7 +25,16 @@ export default mergeConfig(
             },
           },
         },
+        {
+          extends: true,
+          test: {
+            name: 'unit',
+            environment: 'node',
+            include: ['src/**/*.test.ts'],
+          },
+        },
       ],
     },
   }),
 )
+
