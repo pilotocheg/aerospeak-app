@@ -52,22 +52,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/guests": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["GuestsController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/attempts": {
         parameters: {
             query?: never;
@@ -110,6 +94,70 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["MeController_giveVoiceConsent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/progress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ProgressController_getProgress"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/progress/daily": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ProgressController_getDaily"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ProgressController_listAttempts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/attempts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ProgressController_getAttempt"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -230,20 +278,19 @@ export interface components {
             phraseologyNote: components["schemas"]["PhraseologyNoteDto"];
             steps: components["schemas"]["ScenarioStepDto"][];
         };
-        GuestDto: {
-            /** Format: uuid */
-            guestId: string;
-        };
         CreateAttemptDto: {
             /**
              * Format: binary
              * @description Recorded pilot transmission
              */
             audio: string;
-            /** Format: uuid */
-            guestId: string;
             scenarioId: string;
             stepId: string;
+            /**
+             * Format: uuid
+             * @description One pass through a scenario: the same id for every attempt of that run
+             */
+            sessionId?: string;
         };
         WordResultDto: {
             /** @description Expected word in ICAO form, e.g. "tree", "niner", "alpha" */
@@ -313,6 +360,14 @@ export interface components {
             code: "unauthorized" | "token_expired";
             message: string;
         };
+        AttemptForbiddenDto: {
+            /**
+             * @description Registration is not finished: show the terms step and call POST /me
+             * @enum {string}
+             */
+            code: "profile_not_found" | "terms_not_accepted";
+            message: string;
+        };
         RegisterDto: {
             /** @description Display name; defaults to the name from the ID token (Google sign-in) */
             name?: string;
@@ -341,6 +396,108 @@ export interface components {
         ProfileNotFoundDto: {
             /** @enum {string} */
             code: "profile_not_found";
+            message: string;
+        };
+        ProgressTotalsDto: {
+            /** @description Scenarios with a completed run */
+            practicedScenarios: number;
+            /** @description All scenarios in the content */
+            totalScenarios: number;
+            attempts: number;
+            /** @description Attempts with success = true */
+            successfulPhrases: number;
+            /** @description Successful phrases in the last 7 x 24 hours */
+            successfulPhrasesLast7Days: number;
+        };
+        ScenarioProgressDto: {
+            scenarioId: string;
+            packId: string;
+            /** @description Completed runs */
+            runs: number;
+            /** @description Null until the first completed run */
+            bestScore: number | null;
+            lastScore: number | null;
+            /** @description Last 20 completed run scores, oldest first */
+            scores: number[];
+            /**
+             * Format: date-time
+             * @description Last attempt of any kind
+             */
+            lastPlayedAt: string;
+            /** @description All attempts in the scenario, finished runs or not */
+            stepAttempts: number;
+        };
+        ProgressDto: {
+            totals: components["schemas"]["ProgressTotalsDto"];
+            /** @description Scenarios with at least one attempt, in content order */
+            scenarios: components["schemas"]["ScenarioProgressDto"][];
+        };
+        DailyProgressDto: {
+            /**
+             * Format: date
+             * @description Calendar day in the requested zone
+             */
+            date: string;
+            attempts: number;
+            successful: number;
+            averageScore: number;
+        };
+        AttemptHistoryItemDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** @description May no longer exist in the content */
+            scenarioId: string;
+            /** @description May no longer exist in the content */
+            stepId: string;
+            /**
+             * Format: uuid
+             * @description Null on attempts made before runs
+             */
+            sessionId: string | null;
+            transcript: string;
+            score: number;
+            displayScore: number;
+            success: boolean;
+            missedCritical: string[];
+        };
+        AttemptHistoryPageDto: {
+            /** @description Newest first */
+            items: components["schemas"]["AttemptHistoryItemDto"][];
+            /**
+             * Format: uuid
+             * @description Pass as `cursor` for the next page; null on the last page
+             */
+            nextCursor: string | null;
+        };
+        AttemptDetailDto: {
+            /** Format: uuid */
+            attemptId: string;
+            /** @description Recognized transcript as returned by STT */
+            transcript: string;
+            score: number;
+            displayScore: number;
+            /** @description displayScore >= 4 */
+            success: boolean;
+            elements: components["schemas"]["ElementResultDto"][];
+            missedCritical: string[];
+            /** @description Time from receiving the audio to the result */
+            feedbackProcessingMs: number;
+            /** Format: date-time */
+            createdAt: string;
+            scenarioId: string;
+            stepId: string;
+            /** Format: uuid */
+            sessionId: string | null;
+            expectedPilotResponse?: string;
+            orderCorrect?: boolean;
+            order?: components["schemas"]["OrderFeedbackDto"];
+            tip?: string;
+        };
+        AttemptNotFoundDto: {
+            /** @enum {string} */
+            code: "attempt_not_found";
             message: string;
         };
     };
@@ -424,25 +581,6 @@ export interface operations {
             };
         };
     };
-    GuestsController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GuestDto"];
-                };
-            };
-        };
-    };
     AttemptsController_create: {
         parameters: {
             query?: never;
@@ -470,6 +608,23 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Missing, invalid or expired token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthErrorDto"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttemptForbiddenDto"];
+                };
             };
             429: {
                 headers: {
@@ -627,6 +782,190 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProfileNotFoundDto"];
+                };
+            };
+        };
+    };
+    ProgressController_getProgress: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressDto"];
+                };
+            };
+            /** @description Missing, invalid or expired token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthErrorDto"];
+                };
+            };
+            /** @description POST /me was never called */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileNotFoundDto"];
+                };
+            };
+        };
+    };
+    ProgressController_getDaily: {
+        parameters: {
+            query?: {
+                /** @description IANA time zone, e.g. Europe/Warsaw; default UTC */
+                tz?: string;
+                /** @description 1-365, default 30 */
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyProgressDto"][];
+                };
+            };
+            /** @description Invalid days or tz */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing, invalid or expired token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthErrorDto"];
+                };
+            };
+            /** @description POST /me was never called */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileNotFoundDto"];
+                };
+            };
+        };
+    };
+    ProgressController_listAttempts: {
+        parameters: {
+            query?: {
+                /** @description `nextCursor` of the previous page */
+                cursor?: string;
+                /** @description 1-100, default 20 */
+                limit?: number;
+                scenarioId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttemptHistoryPageDto"];
+                };
+            };
+            /** @description Invalid limit or cursor */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing, invalid or expired token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthErrorDto"];
+                };
+            };
+            /** @description POST /me was never called */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileNotFoundDto"];
+                };
+            };
+        };
+    };
+    ProgressController_getAttempt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttemptDetailDto"];
+                };
+            };
+            /** @description Missing, invalid or expired token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthErrorDto"];
+                };
+            };
+            /** @description POST /me was never called */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileNotFoundDto"];
+                };
+            };
+            /** @description No such attempt of this user */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttemptNotFoundDto"];
                 };
             };
         };
