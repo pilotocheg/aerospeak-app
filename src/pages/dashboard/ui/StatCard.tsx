@@ -10,7 +10,7 @@ type StatCardProps = {
 }
 
 export const StatCard = ({ label, value, caption, className }: StatCardProps) => (
-  <Card className={cn('min-w-[180px] flex-1', className)}>
+  <Card className={cn('min-w-45 flex-1', className)}>
     <CardHeader>
       <CardDescription className="text-xs font-semibold tracking-wide uppercase">{label}</CardDescription>
       <CardTitle className="text-3xl font-extrabold tabular-nums">{value}</CardTitle>

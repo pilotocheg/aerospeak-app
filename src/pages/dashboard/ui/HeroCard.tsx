@@ -31,7 +31,7 @@ export const HeroCard = ({
   const offset = circumference * (1 - ringValue)
 
   return (
-    <Card className="border-0 bg-gradient-to-br from-primary to-indigo-600 p-7 text-white">
+    <Card className="border-0 bg-linear-to-br from-primary to-indigo-600 p-7 text-white">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0 flex-1 space-y-4">
           <span className="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide">

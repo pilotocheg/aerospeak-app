@@ -39,10 +39,10 @@ export const DashboardPage = () => {
   const [openPacks, setOpenPacks] = useState<Set<string>>(new Set())
   const openPacksRef = useRef(new Set<string>())
 
-  const packs = packsQuery.data ?? []
-  const progress = progressQuery.data ?? null
-  const attempts = attemptsQuery.data ?? []
-  const daily = dailyQuery.data ?? []
+  const packs = useMemo(() => packsQuery.data ?? [], [packsQuery.data])
+  const progress = useMemo(() => profileQuery.data ? progressQuery.data : null, [profileQuery.data, progressQuery.data])
+  const attempts = useMemo(() => attemptsQuery.data ?? [], [attemptsQuery.data])
+  const daily = useMemo(() => dailyQuery.data ?? [], [dailyQuery.data])
 
   const progressMap = useMemo(
     () => new Map((progress?.scenarios ?? []).map((row) => [row.scenarioId, row])),
@@ -70,8 +70,7 @@ export const DashboardPage = () => {
       if (first) openPacksRef.current = new Set([first.id])
     }
     initializedRef.current = true
-    initializedRef.current = true
-  }, [initializedRef])
+  }, [initializedRef, packs, progressMap])
 
   useEffect(() => {
     setOpenPacks(openPacksRef.current)
