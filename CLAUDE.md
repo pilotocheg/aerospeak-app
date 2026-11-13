@@ -17,14 +17,15 @@ the aerodrome chart, ATC/RES transcript toggles, Help and Feedback dialogs.
   The next step unlocks after one scored attempt. Recordings: 1 s minimum, 2 min maximum.
 - **Routes:** `/` landing placeholder, `/lessons` training plan (section cards),
   `/lessons/:sectionId` packs and scenario details, `/practice/:scenarioId` practice.
-  Everything under `/_app` requires the (mock) login.
+  Everything under `/_app` requires login.
 - **Scoring and STT live only on the backend.** `POST /attempts` takes the recorded
   audio and returns the full feedback. The frontend never scores.
 - **Scenarios live in the backend repo** (`content/` there) and come from `GET /packs` and
   `GET /scenarios/:id`. Write or edit scenarios in the backend repo. This repo keeps only
   the UI side: `src/shared/content/sections.json` and the ATC audio.
-- **No real auth yet.** The backend has no auth endpoints. Login/register screens are a
-  local mock; under the hood every user practices as a backend guest (`POST /guests`).
+- **Auth is Firebase Authentication.** The frontend signs in with the Firebase JS SDK and
+  sends `Authorization: Bearer <ID token>`; the backend only verifies the token. There is
+  no guest mode: practice needs a profile with accepted terms (`POST /me`).
 - **Content for now:** one aircraft `SP-TFA` (Cessna 172), controlled aerodrome
   `EPPO` (Poznań-Ławica), uncontrolled aerodrome `EPPI` (Piła). UI and content are in
   English; team docs are in Ukrainian.
@@ -41,7 +42,7 @@ src/
   pages/      route-level screens
   widgets/    large composite blocks (practice panel, sidebar)
   features/   user actions (auth, record attempt, play ATC audio)
-  entities/   domain models + queries (pack, scenario, guest, attempt)
+  entities/   domain models + queries (scenario, section, aerodrome, user, attempt, progress)
   shared/     api client, ui kit (shadcn/base-ui), lib, config, content (sections)
 scripts/      content:check, audio:atc and api:types; they read scenarios from the API
 ```
