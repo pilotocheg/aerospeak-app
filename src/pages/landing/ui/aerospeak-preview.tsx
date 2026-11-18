@@ -3,7 +3,7 @@ import { Check, X } from 'lucide-react'
 const CHECKS = [
   { label: 'Callsign', ok: true, note: 'SP-KLM' },
   { label: 'Landing clearance', ok: true, note: 'cleared to land' },
-  { label: 'Runway', ok: false, note: 'Missing. Read back "runway 29".' },
+  { label: 'Runway', ok: false, note: 'Missing. Read back "runway 27".' },
 ]
 
 export const AeroSpeakPreview = () => (
@@ -14,7 +14,7 @@ export const AeroSpeakPreview = () => (
     <div className="flex flex-col gap-4">
       <div className="max-w-[88%] rounded-2xl rounded-tl-sm bg-muted px-4 py-3 text-left">
         <p className="mb-1 text-xs text-muted-foreground">ATC</p>
-        <p className="text-sm">SP-KLM, Poznań Tower, runway 29, cleared to land, wind 270 at 8 knots.</p>
+        <p className="text-sm">SP-KLM, runway 27, cleared to land, wind 270 degrees 8 knots.</p>
       </div>
 
       <div className="ml-auto max-w-[88%] rounded-2xl rounded-tr-sm bg-brand/10 px-4 py-3 text-left ring-1 ring-brand/30">

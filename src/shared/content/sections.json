@@ -17,7 +17,7 @@
     "id": "vfr-uncontrolled",
     "title": "VFR — Uncontrolled",
     "icon": "sun",
-    "description": "VFR flight from an uncontrolled airfield (Piła): self-announcing, A/G radio and FIS en route.",
+    "description": "VFR flight from an uncontrolled airfield: self-announcing, A/G radio and FIS en route.",
     "packIds": [
       "ground-uncontrolled",
       "departure-uncontrolled",
@@ -30,7 +30,7 @@
     "id": "vfr-controlled",
     "title": "VFR — Controlled",
     "icon": "radio-tower",
-    "description": "VFR flight at a controlled aerodrome (Poznań): clearances and readbacks with Ground and Tower.",
+    "description": "VFR flight at a controlled aerodrome: clearances and readbacks with Ground and Tower.",
     "packIds": ["ground-controlled", "departure-controlled", "arrival-controlled", "landing-controlled"]
   },
   {

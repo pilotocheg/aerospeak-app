@@ -1,6 +1,7 @@
 /**
  * Checks the frontend side of the content against the backend (see fetch-content.ts):
- * every pack is in exactly one section of sections.json, and every step's ATC audio file exists.
+ * every pack is in exactly one section of sections.json, and every step of every scenario
+ * variant has its ATC audio file.
  * The scenarios themselves are validated by the backend tests.
  * Usage: npm run content:check
  */
@@ -13,7 +14,7 @@ import { API_URL, PUBLIC_DIR, fetchContent } from './fetch-content.ts'
 const errors: string[] = []
 const warnings: string[] = []
 
-const { packs, scenarios } = await fetchContent()
+const { packs, scenarios, variants } = await fetchContent()
 
 const packIds = new Set(packs.map((pack) => pack.id))
 const sectionPackIds = sections.flatMap((section) => section.packIds)
@@ -26,24 +27,28 @@ for (const packId of sectionPackIds) {
 }
 
 let stepCount = 0
-for (const scenario of scenarios) {
+const usedAudio = new Set<string>()
+for (const scenario of variants) {
   for (const step of scenario.steps) {
     stepCount += 1
-    if (step.atcAudio && !existsSync(join(PUBLIC_DIR, step.atcAudio))) {
-      warnings.push(`${scenario.id} step "${step.id}": ${step.atcAudio} missing, run npm run audio:atc`)
+    if (!step.atcAudio) continue
+    usedAudio.add(step.atcAudio)
+    if (!existsSync(join(PUBLIC_DIR, step.atcAudio))) {
+      const name = scenario.variant ? `${scenario.id} [${scenario.variant}]` : scenario.id
+      warnings.push(`${name} step "${step.id}": ${step.atcAudio} missing, run npm run audio:atc`)
     }
   }
 }
 
-const scenarioIds = new Set(scenarios.map((scenario) => scenario.id))
-for (const dir of readdirSync(join(PUBLIC_DIR, 'audio/atc'), { withFileTypes: true })) {
-  if (dir.isDirectory() && !scenarioIds.has(dir.name))
-    warnings.push(`public/audio/atc/${dir.name}: no scenario with this id`)
+for (const entry of readdirSync(join(PUBLIC_DIR, 'audio/atc'), { withFileTypes: true })) {
+  const path = `/audio/atc/${entry.name}`
+  if (entry.isDirectory() || (entry.name.endsWith('.mp3') && !usedAudio.has(path)))
+    warnings.push(`public${path}: no scenario step uses it`)
 }
 
 for (const warning of warnings) console.warn(`warn  ${warning}`)
 for (const error of errors) console.error(`error ${error}`)
 console.log(
-  `\n${API_URL}: ${scenarios.length} scenarios, ${stepCount} steps, ${errors.length} errors, ${warnings.length} warnings`,
+  `\n${API_URL}: ${scenarios.length} scenarios, ${variants.length} variants, ${stepCount} steps, ${errors.length} errors, ${warnings.length} warnings`,
 )
 process.exit(errors.length ? 1 : 0)

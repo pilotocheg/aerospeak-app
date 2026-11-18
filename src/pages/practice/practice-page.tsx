@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Link, useParams } from '@tanstack/react-router'
+import { Link, useParams, useSearch } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 
 import { scenarioQueryOptions } from '@/entities/scenario'
@@ -10,13 +10,14 @@ import { PracticePlayer } from '@/widgets/practice-player'
 
 export const PracticePage = () => {
   const { scenarioId } = useParams({ from: '/_app/practice/$scenarioId' })
-  const { data: scenario, isPending, isError } = useQuery(scenarioQueryOptions(scenarioId))
+  const { variant } = useSearch({ from: '/_app/practice/$scenarioId' })
+  const { data: scenario, isPending, isError } = useQuery(scenarioQueryOptions(scenarioId, variant))
   const activeScenarioId = usePracticeScenarioId()
   const startPractice = useStartPractice()
 
   useEffect(() => {
     startPractice(scenarioId)
-  }, [scenarioId, startPractice])
+  }, [scenarioId, variant, startPractice])
 
   if (isError) {
     return (

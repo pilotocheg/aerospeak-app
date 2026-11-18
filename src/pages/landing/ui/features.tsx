@@ -13,10 +13,10 @@ const FEATURES: { icon: LucideIcon; title: string; description: string; shorts: 
   },
   {
     icon: MapPinned,
-    title: 'Fly the circuit at Poznań and Piła',
+    title: 'Real aerodromes, changing conditions',
     description:
-      'Train on the airfields you actually fly from. Each scenario puts you in a realistic VFR situation, so you know what to expect from ATC before you start the engine.',
-    shorts: ['Poznań and Piła', 'Realistic VFR calls', 'Hear ATC, then reply'],
+      'Each scenario is set at a real aerodrome, controlled or uncontrolled. The wind, the runway in use and your aircraft change from one run to the next, so you know what to expect from ATC before you start the engine.',
+    shorts: ['Real aerodromes', 'Changing wind and runway', 'Hear ATC, then reply'],
   },
   {
     icon: Headset,

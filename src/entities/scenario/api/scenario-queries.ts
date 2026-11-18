@@ -22,8 +22,10 @@ const fetchPacks = async () => {
   return data
 }
 
-const fetchScenario = async (id: string) => {
-  const { data, response } = await apiClient.GET('/scenarios/{id}', { params: { path: { id } } })
+const fetchScenario = async (id: string, variant?: string) => {
+  const { data, response } = await apiClient.GET('/scenarios/{id}', {
+    params: { path: { id }, query: variant ? { variant } : {} },
+  })
   if (response.status === 404) {
     throw new ScenarioNotFoundError(id)
   }
@@ -41,10 +43,14 @@ export const packsQueryOptions = () =>
     gcTime: SCENARIO_CACHE_MS,
   })
 
-export const scenarioQueryOptions = (id: string) =>
+/**
+ * A scenario rendered for one variant (aerodrome, weather, aircraft). Without `variant`: the
+ * default variant; its `variants` lists every key to pick from.
+ */
+export const scenarioQueryOptions = (id: string, variant?: string) =>
   queryOptions({
-    queryKey: scenarioKeys.detail(id),
-    queryFn: () => fetchScenario(id),
+    queryKey: scenarioKeys.detail(id, variant || undefined),
+    queryFn: () => fetchScenario(id, variant || undefined),
     staleTime: 5 * 60 * 1000,
     gcTime: SCENARIO_CACHE_MS,
     retry: (count, error) => !(error instanceof ScenarioNotFoundError) && count < 2,
