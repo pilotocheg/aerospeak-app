@@ -6,3 +6,4 @@ export {
   scenarioQueryOptions,
 } from './api/scenario-queries'
 export { formatDuration, getBriefingValue } from './lib/briefing'
+export { useRandomScenarioVariant } from './model/use-random-scenario-variant'

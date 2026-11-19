@@ -1,10 +1,8 @@
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 
 import { useScenarioProgress } from '@/entities/progress'
-import { formatDuration, scenarioQueryOptions } from '@/entities/scenario'
+import { formatDuration, useRandomScenarioVariant } from '@/entities/scenario'
 import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { ScoreRing } from '@/shared/ui/score-ring'
@@ -20,14 +18,7 @@ type ScenarioDetailsProps = {
 
 export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps) => {
   // Each visit picks one variant (aerodrome, weather, aircraft); practice runs the same one.
-  const [pick] = useState(Math.random)
-  const base = useQuery(scenarioQueryOptions(scenarioId))
-  const variants = base.data?.variants ?? []
-  const variant = variants.length > 1 ? variants[Math.floor(pick * variants.length)] : undefined
-  const picked = useQuery({ ...scenarioQueryOptions(scenarioId, variant), enabled: Boolean(base.data) })
-  const scenario = variant ? picked.data : base.data
-  const isPending = base.isPending || (Boolean(variant) && picked.isPending)
-  const isError = base.isError || picked.isError
+  const { scenario, isPending, isError } = useRandomScenarioVariant(scenarioId)
   const progress = useScenarioProgress(scenarioId)
 
   if (isPending) {
