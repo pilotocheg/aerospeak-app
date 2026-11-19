@@ -1,18 +1,12 @@
-import { useEffect, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { toast } from 'sonner'
 
-import { ProfileRequiredError, SttFailedError, submitAttempt } from '@/entities/attempt'
 import { useRecordScenarioResult } from '@/entities/progress'
-import { getBriefingValue } from '@/entities/scenario'
+import { getAtcTransmission, getBriefingValue } from '@/entities/scenario'
 import { findSectionByPackId } from '@/entities/section'
-import { getUserProfileQueryOptions, meKeys } from '@/entities/user'
-import { useAuthStore } from '@/features/auth/model/auth-store'
 import {
   buildSummary,
-  useAddAttempt,
   useAttemptsByStep,
   useFinishPractice,
   useGoToStep,
@@ -21,18 +15,14 @@ import {
   useStartPractice,
   useStepIndex,
 } from '@/features/practice-session'
-import {
-  PttButton,
-  TooShortError,
-  useRecordToggleKey,
-  useRecorder,
-  type Recording,
-} from '@/features/record-transmission'
+import { PttButton, useRecordToggleKey } from '@/features/record-transmission'
 import type { ScenarioDto } from '@/shared/api'
 import { useAudioPlayer } from '@/shared/lib/audio'
-import { stopSpeaking } from '@/shared/lib/speech'
 import { Button } from '@/shared/ui/button'
 
+import { useAtcPlayback } from '../model/use-atc-playback'
+import { usePracticeAttempt } from '../model/use-practice-attempt'
+import { useStepAtcAutoplay } from '../model/use-step-atc-autoplay'
 import { AtcButton } from './atc-button'
 import { BriefingStrip } from './briefing-strip'
 import { FeedbackDialog } from './feedback-dialog'
@@ -57,16 +47,10 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   const attemptsByStep = useAttemptsByStep()
   const isFinished = useIsFinished()
   const goToStep = useGoToStep()
-  const addAttempt = useAddAttempt()
   const finishPractice = useFinishPractice()
   const startPractice = useStartPractice()
   const recordScenarioResult = useRecordScenarioResult()
   const player = useAudioPlayer()
-
-  const queryClient = useQueryClient()
-  const user = useAuthStore((state) => state.user)
-  // Recording needs a finished registration; TermsGate asks for it while the profile is missing.
-  const { data: profile } = useQuery({ ...getUserProfileQueryOptions(user?.id ?? ''), enabled: Boolean(user) })
 
   const [textMode, setTextMode] = useState<TextMode>('prompt')
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null)
@@ -78,58 +62,17 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   const isStepDone = attempts.length > 0
   const sectionId = findSectionByPackId(scenario.packId)?.id
 
-  const attemptMutation = useMutation({
-    mutationFn: submitAttempt,
-    onError: (error) => {
-      if (error instanceof ProfileRequiredError) {
-        // The cached profile is out of date: refetching it brings back TermsGate.
-        void queryClient.invalidateQueries({ queryKey: meKeys.all })
-      }
-      return error instanceof SttFailedError ? toast.warning(error.message) : toast.error(error.message)
-    },
+  const atc = getAtcTransmission(step, lastAttempt?.result)
+  const atcPlayback = useAtcPlayback(player, atc.audio)
+  useStepAtcAutoplay(player, runId, step.atcAudio)
+
+  const { recorder, canRecord, isSubmitting, toggleRecording } = usePracticeAttempt({
+    scenario,
+    step,
+    player,
+    onScored: () => setOpenDialog('feedback'),
   })
-
-  const handleRecorded = (recording: Recording) => {
-    attemptMutation.mutate(
-      { scenarioId: scenario.id, stepId: step.id, variant: scenario.variant, audio: recording.blob },
-      {
-        onSuccess: (result) => {
-          addAttempt(step.id, { result, recordingUrl: recording.url })
-          setOpenDialog('feedback')
-        },
-        onError: () => URL.revokeObjectURL(recording.url),
-      },
-    )
-  }
-
-  const recorder = useRecorder({
-    onRecorded: handleRecorded,
-    onError: (error) => (error instanceof TooShortError ? toast.warning(error.message) : toast.error(error.message)),
-  })
-
-  const canRecord = Boolean(profile?.termsAcceptedAt) && !attemptMutation.isPending
-
-  const toggleRecording = () => {
-    if (recorder.status === 'idle') {
-      if (!canRecord) {
-        return
-      }
-      player.stop()
-      stopSpeaking()
-    }
-    recorder.toggle()
-  }
-
   useRecordToggleKey(openDialog === null && !isFinished && (canRecord || recorder.status !== 'idle'), toggleRecording)
-
-  const { play, stop } = player
-  useEffect(() => {
-    if (step.atcAudio) {
-      play(step.atcAudio)
-    } else {
-      stop()
-    }
-  }, [runId, step.atcAudio, play, stop])
 
   const enterStep = (index: number) => {
     if (index > stepIndex && !isStepDone) {
@@ -152,15 +95,10 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
 
   const goNext = () => (isLastStep ? finish() : enterStep(stepIndex + 1))
 
-  const toggleAtc = () => {
-    if (!step.atcAudio) {
-      return
-    }
-    if (player.playingSrc === step.atcAudio) {
-      player.stop()
-    } else {
-      player.play(step.atcAudio)
-    }
+  /** Retrying from the feedback goes straight to recording the readback. */
+  const retry = () => {
+    setOpenDialog(null)
+    toggleRecording()
   }
 
   const toggleTextMode = (mode: TextMode) => setTextMode((current) => (current === mode ? 'prompt' : mode))
@@ -198,18 +136,18 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
 
         <div className="flex items-center gap-3 sm:gap-6">
           <AtcButton
-            hasAudio={Boolean(step.atcAudio)}
-            isPlaying={player.playingSrc === step.atcAudio && Boolean(step.atcAudio)}
+            hasAudio={Boolean(atc.audio)}
+            isPlaying={atcPlayback.isPlaying}
             currentTime={player.currentTime}
-            duration={player.playingSrc === step.atcAudio ? player.duration : 0}
-            onToggle={toggleAtc}
+            duration={atcPlayback.duration}
+            onToggle={atcPlayback.toggle}
           />
-          <TranscriptLine step={step} mode={textMode} />
+          <TranscriptLine step={step} mode={textMode} atcText={atc.text} />
           <PttButton
             status={recorder.status}
             elapsedMs={recorder.elapsedMs}
-            disabled={!canRecord && !attemptMutation.isPending}
-            busy={attemptMutation.isPending}
+            disabled={!canRecord && !isSubmitting}
+            busy={isSubmitting}
             onToggle={toggleRecording}
           />
         </div>
@@ -218,7 +156,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
           <ToggleEye
             label="ATC"
             active={textMode === 'atc'}
-            disabled={!step.atcText}
+            disabled={!atc.text}
             onClick={() => toggleTextMode('atc')}
           />
           <Button
@@ -260,9 +198,10 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
         attempt={lastAttempt}
         attemptNumber={attempts.length}
         isLastStep={isLastStep}
+        correction={atc.isCorrection ? atc.text : undefined}
         onOpenChange={(open) => setOpenDialog(open ? 'feedback' : null)}
         onPlayRecording={player.play}
-        onRetry={() => setOpenDialog(null)}
+        onRetry={retry}
         onContinue={goNext}
       />
       <SummaryDialog

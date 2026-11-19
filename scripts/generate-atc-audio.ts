@@ -1,5 +1,6 @@
 /**
- * Generates placeholder ATC audio for every step with atcText, in every scenario variant:
+ * Generates placeholder ATC audio for every step with atcText (and every readback correction,
+ * atcCorrection: "negative, I say again" is a clip of its own), in every scenario variant:
  * macOS `say` -> ffmpeg (radio band-pass, compression, radio hiss) -> MP3.
  *
  * A transmission is stitched from clips, so variants share most of their audio:
@@ -22,6 +23,7 @@ import { dirname, join } from 'node:path'
 
 import { toSpoken } from '../src/shared/lib/phraseology/to-spoken.ts'
 import { PUBLIC_DIR, ROOT, fetchContent } from './fetch-content.ts'
+import { stepTransmissions } from './step-transmissions.ts'
 
 const VOICE = 'Daniel'
 const RATE = '185'
@@ -44,15 +46,28 @@ const RADIO_FILTER =
 
 const CALLSIGN = /^([A-Z0-9]{1,2}-[A-Z]{3,4}),\s*/
 const WIND = /,\s*(wind \d{3} degrees \d+ knots)\.?$/
+const CORRECTION = /^(negative, I say again),\s*/
+const STATION = /^([^,]+ (?:Delivery|Ground|Tower|Approach|Radio|Information|Info)),\s*/
 
-/** "SP-TFA, Poznań Tower, cleared to land, wind 270 degrees 10 knots." -> three clips. */
+/**
+ * "SP-TFA, Poznań Tower, cleared to land, wind 270 degrees 10 knots." -> four clips: callsign,
+ * station, body, wind. A correction ("SP-TFA, negative, I say again, cleared to land, …") has
+ * "negative, I say again" instead of the station, so its body is the same clip as in the
+ * clearance.
+ */
 export const splitTransmission = (atcText: string) => {
   let body = atcText.trim()
-  const callsign = CALLSIGN.exec(body)?.[1]
-  if (callsign) body = body.replace(CALLSIGN, '')
-  const wind = WIND.exec(body)?.[1]
-  if (wind) body = body.replace(WIND, '')
-  return [callsign, body, wind].filter((part): part is string => Boolean(part))
+  /** Cuts the part the pattern matches out of the body and returns it. */
+  const take = (pattern: RegExp) => {
+    const part = pattern.exec(body)?.[1]
+    if (part) body = body.replace(pattern, '')
+    return part
+  }
+  const callsign = take(CALLSIGN)
+  const correction = take(CORRECTION)
+  const station = take(STATION)
+  const wind = take(WIND)
+  return [callsign, correction, station, body, wind].filter((part): part is string => Boolean(part))
 }
 
 let spokenClips = 0
@@ -100,7 +115,7 @@ const { variants } = await fetchContent()
 const transmissions = new Map<string, string>()
 for (const scenario of variants) {
   for (const step of scenario.steps) {
-    if (step.atcText && step.atcAudio) transmissions.set(step.atcAudio, step.atcText)
+    for (const { text, audio } of stepTransmissions(step)) transmissions.set(audio, text)
   }
 }
 

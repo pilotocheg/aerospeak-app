@@ -1,4 +1,4 @@
-import { TriangleAlert, Volume2 } from 'lucide-react'
+import { RadioTower, TriangleAlert, Volume2 } from 'lucide-react'
 
 import type { StepAttempt } from '@/features/practice-session'
 import type { ScenarioStepDto } from '@/shared/api'
@@ -17,6 +17,8 @@ type FeedbackDialogProps = {
   attempt: StepAttempt | undefined
   attemptNumber: number
   isLastStep: boolean
+  /** ATC's "negative, I say again" when this readback missed a critical element. */
+  correction?: string
   onOpenChange: (open: boolean) => void
   onPlayRecording: (url: string) => void
   onRetry: () => void
@@ -29,6 +31,7 @@ export const FeedbackDialog = ({
   attempt,
   attemptNumber,
   isLastStep,
+  correction,
   onOpenChange,
   onPlayRecording,
   onRetry,
@@ -90,6 +93,17 @@ export const FeedbackDialog = ({
 
         {showOrder && result.order && <OrderNotice order={result.order} />}
 
+        {correction && (
+          <div className="flex gap-3 rounded-lg border border-brand/40 bg-brand/10 p-3 text-sm">
+            <RadioTower className="size-5 shrink-0 text-brand" />
+            <div className="space-y-0.5">
+              <p className="font-semibold">ATC corrects you</p>
+              <p className="italic">“{correction}”</p>
+              <p className="text-muted-foreground">Read back the corrected instruction again.</p>
+            </div>
+          </div>
+        )}
+
         <section className="space-y-2">
           <SectionTitle>Expected response</SectionTitle>
           <div className="rounded-lg bg-card p-4 ring-1 ring-foreground/10">
@@ -121,7 +135,7 @@ export const FeedbackDialog = ({
 
         <DialogFooter>
           <Button variant="outline" onClick={onRetry}>
-            Try again
+            {correction ? 'Read back again' : 'Try again'}
           </Button>
           <Button onClick={onContinue}>{isLastStep ? 'Finish scenario' : 'Next transmission'}</Button>
         </DialogFooter>

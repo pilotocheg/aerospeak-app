@@ -7,12 +7,14 @@ export type TextMode = 'prompt' | 'atc' | 'response'
 type TranscriptLineProps = {
   step: ScenarioStepDto
   mode: TextMode
+  /** The ATC transmission now in effect (`getAtcTransmission`): the step's call or ATC's correction. */
+  atcText: string | undefined
 }
 
-export const TranscriptLine = ({ step, mode }: TranscriptLineProps) => {
+export const TranscriptLine = ({ step, mode, atcText }: TranscriptLineProps) => {
   const text =
     mode === 'atc'
-      ? (step.atcText ?? 'No ATC call in this step: you transmit first.')
+      ? (atcText ?? 'No ATC call in this step: you transmit first.')
       : mode === 'response'
         ? step.expectedPilotResponse
         : step.prompt
