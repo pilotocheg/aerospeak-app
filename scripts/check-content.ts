@@ -10,6 +10,7 @@ import { join } from 'node:path'
 
 import { sections } from '../src/shared/content/index.ts'
 import { API_URL, PUBLIC_DIR, fetchContent } from './fetch-content.ts'
+import { stepTransmissions } from './step-transmissions.ts'
 
 const errors: string[] = []
 const warnings: string[] = []
@@ -31,11 +32,12 @@ const usedAudio = new Set<string>()
 for (const scenario of variants) {
   for (const step of scenario.steps) {
     stepCount += 1
-    if (!step.atcAudio) continue
-    usedAudio.add(step.atcAudio)
-    if (!existsSync(join(PUBLIC_DIR, step.atcAudio))) {
-      const name = scenario.variant ? `${scenario.id} [${scenario.variant}]` : scenario.id
-      warnings.push(`${name} step "${step.id}": ${step.atcAudio} missing, run npm run audio:atc`)
+    for (const { audio } of stepTransmissions(step)) {
+      usedAudio.add(audio)
+      if (!existsSync(join(PUBLIC_DIR, audio))) {
+        const name = scenario.variant ? `${scenario.id} [${scenario.variant}]` : scenario.id
+        warnings.push(`${name} step "${step.id}": ${audio} missing, run npm run audio:atc`)
+      }
     }
   }
 }

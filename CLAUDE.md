@@ -34,8 +34,12 @@ the aerodrome chart, ATC/RES transcript toggles, Help and Feedback dialogs.
   (`ScenarioDto.variants`), practice gets it as `?variant=` and sends it with every attempt.
   Without a variant the backend uses the default one.
 - **ATC audio** is pre-generated MP3 in `public/audio/atc/<hash of atcText>.mp3`, one file
-  per distinct transmission of any variant, stitched from clips (callsign, body, wind; see
-  `scripts/generate-atc-audio.ts`). No runtime TTS.
+  per distinct transmission of any variant, stitched from clips (callsign, station or
+  "negative, I say again", body, wind; see `scripts/generate-atc-audio.ts`). No runtime TTS.
+- **ATC corrects a wrong readback.** When a readback attempt misses a critical element, the
+  feedback shows ATC's `atcCorrection` ("<callsign>, negative, I say again, …") and plays it
+  right away, and it becomes the step's ATC transmission until a readback without
+  a critical miss. The next step still unlocks after any scored attempt.
 - Not in the MVP: welcome screen, Pro/locked scenarios, signup prompts, LLM ATC.
 
 ## Architecture (Feature-Sliced Design)
@@ -68,6 +72,9 @@ Imports go only downward: `pages → widgets → features → entities → share
 - Components: `export const Name = () => { ... }` (arrow functions), one component
   per file. A file that exports a component exports nothing else
   (`react-refresh/only-export-components` stays on, never disable it).
+- One hook, helper, utility or query per file, named after it (`use-atc-playback.ts`,
+  `get-atc-transmission.ts`). The only exception is a local, unexported hook or helper
+  that only serves the file's main function. Types it takes or returns may live with it.
 - `cva` variants go to a sibling `styles.ts`.
 - shadcn components live in `src/shared/ui/<name>/` with one file per part and an
   `index.ts`. After `npx shadcn add`, split the generated file the same way and drop
@@ -82,6 +89,24 @@ Imports go only downward: `pages → widgets → features → entities → share
 - Forms: React Hook Form + zod.
 - Phraseology: ICAO pronunciation in spoken text (niner, tree, fife, decimal); written
   values in digits (`runway 29`, `QNH 1013`, `118.505`).
+
+## Skills (use them by default)
+
+Project skills live in `.claude/skills/`; the others come from the `audit-suite` and
+`lattice` plugins (each team member enables them on their own account).
+
+| When | Skills |
+| --- | --- |
+| Writing or changing code in `src/` | `code-quality` (project), lattice `clean-code`, audit-suite `vercel-react-best-practices` |
+| Refactoring existing code | lattice `refactor-safely`, then `code-quality` |
+| Designing a new feature or slice | lattice `architecture` (FSD placement, data flow) |
+| Writing tests | lattice `test-quality` |
+| Before committing | `simplify` on the diff |
+| Opening a PR | `code-review` on the PR, fix what it finds before asking for review |
+| App-wide audit | audit-suite `audit-as-frontend-eng`, `audit-as-structural-eng`, `audit-as-a11y-eng` |
+| Scenario or API changes | `atc-audio`, `api-sync` (project) |
+
+If a plugin skill is not available in the session, follow `code-quality` and say so.
 
 ## Commands
 

@@ -97,7 +97,7 @@ export interface paths {
         delete: operations["MeController_delete"];
         options?: never;
         head?: never;
-        patch?: never;
+        patch: operations["MeController_update"];
         trace?: never;
     };
     "/me/voice-consent": {
@@ -277,6 +277,10 @@ export interface components {
             atcText?: string;
             /** @description ATC audio in the frontend public folder: /audio/atc/<hash of atcText>.mp3, so every variant has its own file */
             atcAudio?: string;
+            /** @description Readback steps: what ATC says when the readback misses a critical element ("<callsign>, negative, I say again, …"). Play it and let the user read back again. */
+            atcCorrection?: string;
+            /** @description ATC audio of atcCorrection, same path rule as atcAudio */
+            atcCorrectionAudio?: string;
             expectedPilotResponse: string;
             requiredElements: components["schemas"]["RequiredElementDto"][];
             criticalElements?: string[];
@@ -424,6 +428,10 @@ export interface components {
             /** @enum {string} */
             code: "profile_not_found";
             message: string;
+        };
+        UpdateProfileDto: {
+            /** @description Display name, trimmed */
+            name: string;
         };
         ProgressTotalsDto: {
             /** @description Scenarios with a completed run */
@@ -806,6 +814,60 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["AuthErrorDto"];
                 };
+            };
+        };
+    };
+    MeController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateProfileDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeDto"];
+                };
+            };
+            /** @description name is missing or invalid, or another field is sent */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing, invalid or expired token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthErrorDto"];
+                };
+            };
+            /** @description POST /me was never called */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileNotFoundDto"];
+                };
+            };
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

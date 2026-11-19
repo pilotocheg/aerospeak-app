@@ -14,11 +14,15 @@ Scenarios live in the backend repo; the audio lives here. A scenario has several
 ## Stitched transmissions
 
 A transmission is built from clips: the callsign at the start (`SP-TFA, ...`), the body and
-the wind at the end (`..., wind 270 degrees 10 knots.`). Each clip is spoken once and cached
+the wind at the end (`..., wind 270 degrees 10 knots.`), with the station name (`Poznań Tower`)
+as a clip of its own after the callsign. A readback correction
+(`atcCorrection`, "SP-TFA, negative, I say again, taxi to ...") also gets
+`negative, I say again` as a clip of its own, so it reuses the body clip of the clearance. Each clip is spoken once and cached
 in `node_modules/.cache/atc-audio/<voice>/`; ffmpeg joins the clips with a short pause and
 puts the radio effect over the whole file, so the joins sit under the same hiss. Variants
-share the callsign and wind clips, so only the bodies are new: about 60 clips (3,700 spoken
-characters) for 176 files, instead of 27,000 characters for every text spoken whole. The
+share the callsign, station and wind clips, so only the bodies are new: 68 clips (3,300
+spoken characters) for 312 files including corrections, instead of about 30,000 characters
+for every text spoken whole. The
 script prints these numbers; they are what a paid voice is charged for.
 
 ## Placeholder voices (current)
