@@ -75,7 +75,8 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   useRecordToggleKey(openDialog === null && !isFinished && (canRecord || recorder.status !== 'idle'), toggleRecording)
 
   const enterStep = (index: number) => {
-    if (index > stepIndex && !isStepDone) {
+    // While an attempt is being scored, the result belongs to this step: stay on it.
+    if (isSubmitting || (index > stepIndex && !isStepDone)) {
       return
     }
     goToStep(index)
@@ -84,7 +85,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
   }
 
   const finish = () => {
-    if (!isStepDone) {
+    if (!isStepDone || isSubmitting) {
       return
     }
     player.stop()
@@ -163,7 +164,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
             variant="ghost"
             size="icon-lg"
             aria-label="Previous transmission"
-            disabled={stepIndex === 0}
+            disabled={stepIndex === 0 || isSubmitting}
             onClick={() => enterStep(stepIndex - 1)}
           >
             <ArrowLeft className="size-6" />
@@ -176,7 +177,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
             size="icon-lg"
             aria-label={isLastStep ? 'Finish scenario' : 'Next transmission'}
             title={isStepDone ? undefined : 'Record a response first'}
-            disabled={!isStepDone}
+            disabled={!isStepDone || isSubmitting}
             onClick={goNext}
           >
             <ArrowRight className="size-6" />

@@ -34,8 +34,8 @@ the aerodrome chart, ATC/RES transcript toggles, Help and Feedback dialogs.
   (`ScenarioDto.variants`), practice gets it as `?variant=` and sends it with every attempt.
   Without a variant the backend uses the default one.
 - **ATC audio** is pre-generated MP3 in `public/audio/atc/<hash of atcText>.mp3`, one file
-  per distinct transmission of any variant, stitched from clips (callsign, body, wind; see
-  `scripts/generate-atc-audio.ts`). No runtime TTS.
+  per distinct transmission of any variant, stitched from clips (callsign, station or
+  "negative, I say again", body, wind; see `scripts/generate-atc-audio.ts`). No runtime TTS.
 - **ATC corrects a wrong readback.** When a readback attempt misses a critical element, the
   feedback shows ATC's `atcCorrection` ("<callsign>, negative, I say again, …") and plays it
   right away, and it becomes the step's ATC transmission until a readback without
