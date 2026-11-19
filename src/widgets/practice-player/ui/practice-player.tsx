@@ -91,7 +91,7 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
 
   const handleRecorded = (recording: Recording) => {
     attemptMutation.mutate(
-      { scenarioId: scenario.id, stepId: step.id, audio: recording.blob },
+      { scenarioId: scenario.id, stepId: step.id, variant: scenario.variant, audio: recording.blob },
       {
         onSuccess: (result) => {
           addAttempt(step.id, { result, recordingUrl: recording.url })

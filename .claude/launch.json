@@ -4,22 +4,23 @@
     {
       "name": "web",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev"
-      ],
+      "runtimeArgs": ["run", "dev"],
       "port": 5173
     },
     {
       "name": "web-local-api",
       "runtimeExecutable": "env",
-      "runtimeArgs": [
-        "VITE_API_URL=http://localhost:3000",
-        "npm",
-        "run",
-        "dev"
-      ],
+      "runtimeArgs": ["VITE_API_URL=http://localhost:3000", "npm", "run", "dev"],
       "port": 5173
+    },
+    {
+      "name": "api-local",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "set -a; . ./.env; export FIREBASE_PROJECT_ID=\"${FIREBASE_PROJECT_ID:-${VITE_FIREBASE_AUTH_DOMAIN%%.*}}\"; exec npm --prefix ../goit--apstone-project-AeroSpeak-BE run start:dev"
+      ],
+      "port": 3000
     }
   ]
 }

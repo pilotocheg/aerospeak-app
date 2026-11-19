@@ -7,6 +7,8 @@ import { ProfileRequiredError, RateLimitedError, SttFailedError } from './attemp
 export type SubmitAttemptInput = {
   scenarioId: string
   stepId: string
+  /** Variant key of the scenario (`ScenarioDto.variant`), so the backend scores the same text. */
+  variant?: string
   audio: Blob
 }
 
@@ -14,11 +16,14 @@ const extensionFor = (mimeType: string) =>
   mimeType.includes('mp4') ? 'm4a' : mimeType.includes('ogg') ? 'ogg' : 'webm'
 
 /** Sends the recording to the backend, which transcribes and scores it. */
-export const submitAttempt = async ({ scenarioId, stepId, audio }: SubmitAttemptInput) => {
+export const submitAttempt = async ({ scenarioId, stepId, variant, audio }: SubmitAttemptInput) => {
   const form = new FormData()
   form.append('audio', audio, `attempt.${extensionFor(audio.type)}`)
   form.append('scenarioId', scenarioId)
   form.append('stepId', stepId)
+  if (variant) {
+    form.append('variant', variant)
+  }
 
   const token = await auth.currentUser?.getIdToken()
 

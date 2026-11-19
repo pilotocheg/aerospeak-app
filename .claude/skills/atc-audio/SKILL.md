@@ -5,16 +5,29 @@ description: Generate or regenerate the ATC MP3 files for scenario steps (public
 
 # ATC audio
 
-Scenarios live in the backend repo; the audio lives here. Every step with `atcText`
-needs `public/audio/atc/<scenarioId>/<stepId>.mp3`, and the backend checks that the
-step's `atcAudio` is `/audio/atc/<scenarioId>/<stepId>.mp3`.
+Scenarios live in the backend repo; the audio lives here. A scenario has several variants
+(aerodrome, weather, aircraft), and every distinct `atcText` of any variant needs
+`public/audio/atc/<hash>.mp3`: the backend sets `atcAudio` to
+`/audio/atc/<sha256 of atcText, 16 hex>.mp3`. The script reads every variant through
+`GET /scenarios/:id/variants`.
+
+## Stitched transmissions
+
+A transmission is built from clips: the callsign at the start (`SP-TFA, ...`), the body and
+the wind at the end (`..., wind 270 degrees 10 knots.`). Each clip is spoken once and cached
+in `node_modules/.cache/atc-audio/<voice>/`; ffmpeg joins the clips with a short pause and
+puts the radio effect over the whole file, so the joins sit under the same hiss. Variants
+share the callsign and wind clips, so only the bodies are new: about 60 clips (3,700 spoken
+characters) for 176 files, instead of 27,000 characters for every text spoken whole. The
+script prints these numbers; they are what a paid voice is charged for.
 
 ## Placeholder voices (current)
 
 `npm run audio:atc` runs `scripts/generate-atc-audio.ts`: it reads scenarios from the
 API (`VITE_API_URL`, production by default), then macOS `say` → AIFF → `ffmpeg`
 band-pass (300–3400 Hz) + light noise → MP3. It only creates missing files; pass
-`--force` to rebuild placeholders. Requires macOS and `ffmpeg` (`brew install ffmpeg`).
+`--force` to rebuild placeholders, and deletes placeholders no variant uses any more.
+Requires macOS and `ffmpeg` (`brew install ffmpeg`).
 
 For a scenario that is not deployed yet, run the backend locally from its branch and
 use `VITE_API_URL=http://localhost:3000 npm run audio:atc`.
@@ -31,7 +44,7 @@ After changing `toSpoken()`, regenerate only the files whose spoken text changed
 delete them and run `npm run audio:atc` (it creates missing files only).
 
 After generating, run `npm run content:check`: it warns about missing audio files
-and audio folders without a scenario.
+and audio files no scenario step uses.
 
 ## Final voices
 

@@ -36,6 +36,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/scenarios/{id}/variants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ScenariosController_listVariants"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/scenarios/{id}": {
         parameters: {
             query?: never;
@@ -183,6 +199,8 @@ export interface components {
             estimatedDurationSec: number;
             objective: string;
             stepCount: number;
+            /** @description How many variants (aerodrome, weather, aircraft) the scenario has */
+            variantCount: number;
         };
         PracticePackDto: {
             id: string;
@@ -257,7 +275,7 @@ export interface components {
             speaker: "pilot" | "atc";
             prompt: string;
             atcText?: string;
-            /** @description Path of the ATC audio file in the frontend public folder */
+            /** @description ATC audio in the frontend public folder: /audio/atc/<hash of atcText>.mp3, so every variant has its own file */
             atcAudio?: string;
             expectedPilotResponse: string;
             requiredElements: components["schemas"]["RequiredElementDto"][];
@@ -277,6 +295,13 @@ export interface components {
             briefing?: components["schemas"]["BriefingItemDto"][];
             phraseologyNote: components["schemas"]["PhraseologyNoteDto"];
             steps: components["schemas"]["ScenarioStepDto"][];
+            /**
+             * @description Key of the variant this scenario was rendered for (aerodrome, weather, aircraft); send it with every attempt. Empty for a scenario without variants.
+             * @example EPPO.w1.sp-tfa
+             */
+            variant: string;
+            /** @description Keys of all variants of the scenario, the first one is the default */
+            variants: string[];
         };
         CreateAttemptDto: {
             /**
@@ -291,6 +316,8 @@ export interface components {
              * @description One pass through a scenario: the same id for every attempt of that run
              */
             sessionId?: string;
+            /** @description Variant key of the scenario (`ScenarioDto.variant`); the default variant when absent */
+            variant?: string;
         };
         WordResultDto: {
             /** @description Expected word in ICAO form, e.g. "tree", "niner", "alpha" */
@@ -554,9 +581,41 @@ export interface operations {
             };
         };
     };
-    ScenariosController_getScenario: {
+    ScenariosController_listVariants: {
         parameters: {
             query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Every variant of a scenario, the default first: for content scripts (ATC audio) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScenarioDto"][];
+                };
+            };
+            /** @description Unknown scenario */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ScenariosController_getScenario: {
+        parameters: {
+            query?: {
+                /** @description Variant key from `variants`; the default variant when absent */
+                variant?: string;
+            };
             header?: never;
             path: {
                 id: string;
@@ -573,6 +632,7 @@ export interface operations {
                     "application/json": components["schemas"]["ScenarioDto"];
                 };
             };
+            /** @description Unknown scenario or variant */
             404: {
                 headers: {
                     [name: string]: unknown;

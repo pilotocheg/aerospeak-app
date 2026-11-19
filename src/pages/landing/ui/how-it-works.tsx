@@ -5,7 +5,8 @@ const STEPS: { icon: LucideIcon; title: string; description: string }[] = [
   {
     icon: Headphones,
     title: 'Hear ATC',
-    description: 'Realistic VFR calls at Poznań and Piła. Listen to the instruction as you would in the cockpit.',
+    description:
+      'Realistic VFR calls at controlled and uncontrolled aerodromes. Listen to the instruction as you would in the cockpit.',
   },
   {
     icon: MessageSquareText,

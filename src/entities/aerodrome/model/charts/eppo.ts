@@ -6,7 +6,7 @@ import type { AerodromeChartData } from '../types'
 export const eppoChart: AerodromeChartData = {
   icao: 'EPPO',
   name: 'Poznań-Ławica',
-  viewBox: '-2140 -1197 3301 1807',
+  viewBox: '-2140 -1420 3301 2030',
   runway: {
     d: 'M-1782 -829 L588 -83 L603 -131 L-1767 -876 Z',
     centerline: 'M-1717 -834 L539 -125',
@@ -191,6 +191,27 @@ export const eppoChart: AerodromeChartData = {
       x: 557,
       y: -14,
       heading: 340,
+    },
+    // Runway 10 spots are placed by hand from the OSM geometry (taxiway D2 at the threshold), unverified.
+    'taxiway delta 2': {
+      x: -1800,
+      y: -690,
+      heading: 20,
+    },
+    'holding point runway 10': {
+      x: -1765,
+      y: -765,
+      heading: 20,
+    },
+    'final runway 10': {
+      x: -2050,
+      y: -935,
+      heading: 107,
+    },
+    'landing roll runway 10': {
+      x: -927,
+      y: -586,
+      heading: 107,
     },
     'final runway 28': {
       x: 901,

@@ -1,9 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 
 import { useScenarioProgress } from '@/entities/progress'
-import { formatDuration, scenarioQueryOptions } from '@/entities/scenario'
+import { formatDuration, useRandomScenarioVariant } from '@/entities/scenario'
 import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { ScoreRing } from '@/shared/ui/score-ring'
@@ -18,14 +17,15 @@ type ScenarioDetailsProps = {
 }
 
 export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps) => {
-  const { data: scenario, isPending, isError } = useQuery(scenarioQueryOptions(scenarioId))
+  // Each visit picks one variant (aerodrome, weather, aircraft); practice runs the same one.
+  const { scenario, isPending, isError } = useRandomScenarioVariant(scenarioId)
   const progress = useScenarioProgress(scenarioId)
 
   if (isPending) {
     return <ScenarioDetailsSkeleton />
   }
 
-  if (isError) {
+  if (isError || !scenario) {
     return <div className="flex flex-1 items-center justify-center text-muted-foreground">Scenario not found.</div>
   }
 
@@ -97,7 +97,13 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
         <Button
           size="lg"
           className="mx-auto flex w-full max-w-sm"
-          render={<Link to="/practice/$scenarioId" params={{ scenarioId: scenario.id }} />}
+          render={
+            <Link
+              to="/practice/$scenarioId"
+              params={{ scenarioId: scenario.id }}
+              search={scenario.variant ? { variant: scenario.variant } : {}}
+            />
+          }
         >
           Start practice
         </Button>

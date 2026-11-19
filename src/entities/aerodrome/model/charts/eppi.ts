@@ -63,6 +63,12 @@ export const eppiChart: AerodromeChartData = {
       y: 270,
       heading: 0,
     },
+    // Placed by hand at the taxiway joining the runway 03 threshold in OSM, unverified.
+    'holding point runway 03': {
+      x: -660,
+      y: 720,
+      heading: 345,
+    },
     'holding point runway 21': {
       x: 790,
       y: -1242,
