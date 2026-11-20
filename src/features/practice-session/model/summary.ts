@@ -1,6 +1,6 @@
 import { isMissedCritical } from '@/entities/attempt'
 import type { ScenarioDto } from '@/shared/api'
-import { average } from '@/shared/lib/average'
+import { average } from '@/shared/lib/math'
 
 import type { StepAttempt } from './practice-store'
 

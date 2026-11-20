@@ -9,8 +9,10 @@ export const apiClient = createClient<paths>({ baseUrl: API_URL })
 
 apiClient.use({
   async onRequest({ request }) {
-    for (const [name, value] of Object.entries(await getAuthHeaders())) {
-      request.headers.set(name, value)
+    const authHeaders = await getAuthHeaders()
+    const authHeaderEntries = Object.entries(authHeaders)
+    for (const [headerName, headerValue] of authHeaderEntries) {
+      request.headers.set(headerName, headerValue)
     }
     return request
   },

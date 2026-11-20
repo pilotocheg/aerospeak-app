@@ -16,7 +16,9 @@ type PackSectionProps = {
 
 export const PackSection = ({ pack, sectionId, isOpen, selectedScenarioId, onToggle }: PackSectionProps) => {
   const progress = useAllProgress()
-  const practiced = pack.scenarios.filter((scenario) => progress[scenario.id]).length
+  const { title, scenarios, recommendedForBeginners } = pack
+  const scenarioCount = scenarios.length
+  const practiced = scenarios.filter((scenario) => progress[scenario.id]).length
 
   return (
     <section className="border-b">
@@ -28,21 +30,21 @@ export const PackSection = ({ pack, sectionId, isOpen, selectedScenarioId, onTog
       >
         <ChevronRight className={cn('size-4 shrink-0 text-brand transition-transform', isOpen && 'rotate-90')} />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold">{pack.title}</p>
+          <p className="truncate text-sm font-semibold">{title}</p>
           <p className="text-xs text-muted-foreground">
-            {pack.scenarios.length ? `${practiced}/${pack.scenarios.length} practiced` : 'Coming soon'}
+            {scenarioCount ? `${practiced}/${scenarioCount} practiced` : 'Coming soon'}
           </p>
         </div>
-        {pack.recommendedForBeginners && (
+        {recommendedForBeginners && (
           <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium text-brand uppercase">
             Start here
           </span>
         )}
       </button>
 
-      {isOpen && pack.scenarios.length > 0 && (
+      {isOpen && scenarioCount > 0 && (
         <div className="bg-background">
-          {pack.scenarios.map((scenario, index) => (
+          {scenarios.map((scenario, index) => (
             <ScenarioRow
               key={scenario.id}
               scenario={scenario}

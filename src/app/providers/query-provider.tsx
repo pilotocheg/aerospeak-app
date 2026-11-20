@@ -23,7 +23,8 @@ export const QueryProvider = ({ client, children }: PropsWithChildren<{ client: 
       maxAge: SCENARIO_CACHE_MS,
       buster: BUSTER,
       dehydrateOptions: {
-        shouldDehydrateQuery: (query) => query.state.status === 'success' && query.queryKey[0] === scenarioKeys.all[0],
+        shouldDehydrateQuery: ({ state, queryKey }) =>
+          state.status === 'success' && queryKey[0] === scenarioKeys.all[0],
       },
     }}
   >

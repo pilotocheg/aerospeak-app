@@ -89,6 +89,10 @@ Imports go only downward: `pages → widgets → features → entities → share
 - Forms: React Hook Form + zod.
 - Imports have no file extension (`./config`, not `./config.ts`) unless the import does not
   resolve without it.
+- Readability over compactness: name intermediate values, name the function a hook returns
+  before returning it, destructure instead of chained property access (`a.b.c`), and group
+  related files of a segment in subfolders (`model/form/`, `lib/math/`). Details in the
+  `code-quality` skill, section 5.
 - Phraseology: ICAO pronunciation in spoken text (niner, tree, fife, decimal); written
   values in digits (`runway 29`, `QNH 1013`, `118.505`).
 

@@ -11,8 +11,11 @@ export const useCompletePractice = () => {
   const recordScenarioResult = useRecordScenarioResult()
   const attemptsByStep = useAttemptsByStep()
 
-  return (scenario: ScenarioDto) => {
+  const completePractice = (scenario: ScenarioDto) => {
     finishPractice()
-    recordScenarioResult(scenario.id, buildSummary(scenario, attemptsByStep).scenarioScore)
+    const { scenarioScore } = buildSummary(scenario, attemptsByStep)
+    recordScenarioResult(scenario.id, scenarioScore)
   }
+
+  return completePractice
 }

@@ -1,119 +1,69 @@
-import { useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
-
-import { getAtcTransmission } from '@/entities/scenario'
-import { findSectionByPackId } from '@/entities/section'
-import {
-  buildSummary,
-  useAttemptsByStep,
-  useCompletePractice,
-  useGoToStep,
-  useIsFinished,
-  useRunId,
-  useStartPractice,
-  useStepIndex,
-} from '@/features/practice-session'
+import { buildSummary, useAttemptsByStep, useRunId } from '@/features/practice-session'
 import { useRecordToggleKey } from '@/features/record-transmission'
 import type { ScenarioDto } from '@/shared/api'
 import { useAudioPlayer } from '@/shared/lib/audio'
 
-import { useAtcPlayback } from './use-atc-playback'
-import { usePracticeAttempt } from './use-practice-attempt'
-import { useStepAtcAutoplay } from './use-step-atc-autoplay'
+import { useStepAtc } from './atc/use-step-atc'
+import { usePracticeAttempt } from './recording/use-practice-attempt'
+import { useClosePractice } from './step/use-close-practice'
+import { usePracticeStep } from './step/use-practice-step'
+import { useStepNavigation } from './step/use-step-navigation'
+import { usePracticeDialogs } from './view/use-practice-dialogs'
+import { useTextMode } from './view/use-text-mode'
 
-export type TextMode = 'prompt' | 'atc' | 'response'
-
-type OpenDialog = 'help' | 'feedback' | null
-
-/** State and handlers of the practice screen: steps, ATC playback, recording, dialogs, finishing. */
+/** Composes the practice screen: step, ATC transmission, recording, dialogs and navigation. */
 export const usePracticePlayer = (scenario: ScenarioDto) => {
-  const navigate = useNavigate()
-  const stepIndex = useStepIndex()
   const runId = useRunId()
   const attemptsByStep = useAttemptsByStep()
-  const isFinished = useIsFinished()
-  const goToStep = useGoToStep()
-  const completePractice = useCompletePractice()
-  const startPractice = useStartPractice()
   const player = useAudioPlayer()
-
-  const [textMode, setTextMode] = useState<TextMode>('prompt')
-  const [openDialog, setOpenDialog] = useState<OpenDialog>(null)
-
-  const step = scenario.steps[stepIndex]
-  const attempts = attemptsByStep[step.id] ?? []
-  const lastAttempt = attempts.at(-1)
-  const isLastStep = stepIndex === scenario.steps.length - 1
-  const isStepDone = attempts.length > 0
-  const sectionId = findSectionByPackId(scenario.packId)?.id
+  const practiceStep = usePracticeStep(scenario)
+  const { step, stepIndex, lastAttempt, isLastStep, isStepDone, isFinished } = practiceStep
+  const dialogs = usePracticeDialogs()
+  const transcript = useTextMode()
+  const atc = useStepAtc({ player, runId, step, lastAttempt })
+  const { sectionId, closePractice } = useClosePractice(scenario)
   const summary = buildSummary(scenario, attemptsByStep)
 
-  const atc = getAtcTransmission(step, lastAttempt?.result)
-  const atcPlayback = useAtcPlayback(player, atc.audio)
-  useStepAtcAutoplay(player, runId, step.atcAudio)
+  const recording = usePracticeAttempt({ scenario, step, player, onScored: dialogs.openFeedback })
+  const { recorder, canRecord, isSubmitting, toggleRecording } = recording
 
-  const { recorder, canRecord, isSubmitting, toggleRecording } = usePracticeAttempt({
-    scenario,
-    step,
-    player,
-    onScored: () => setOpenDialog('feedback'),
-  })
-  useRecordToggleKey(openDialog === null && !isFinished && (canRecord || recorder.status !== 'idle'), toggleRecording)
+  const isRecording = recorder.status !== 'idle'
+  const isRecordKeyEnabled = !dialogs.isAnyDialogOpen && !isFinished && (canRecord || isRecording)
+  useRecordToggleKey(isRecordKeyEnabled, toggleRecording)
 
-  const enterStep = (index: number) => {
-    // While an attempt is being scored, the result belongs to this step: stay on it.
-    if (isSubmitting || (index > stepIndex && !isStepDone)) {
-      return
-    }
-    goToStep(index)
-    setTextMode('prompt')
-    setOpenDialog(null)
+  const leaveStep = () => {
+    player.stop()
+    dialogs.closeDialog()
+    transcript.resetTextMode()
   }
 
-  const finish = () => {
-    if (!isStepDone || isSubmitting) {
-      return
-    }
-    player.stop()
-    setOpenDialog(null)
-    completePractice(scenario)
+  const navigation = useStepNavigation({
+    scenario,
+    stepIndex,
+    isLastStep,
+    isStepDone,
+    isSubmitting,
+    onLeaveStep: leaveStep,
+    onRestart: transcript.resetTextMode,
+  })
+
+  /** Retrying from the feedback goes straight to recording the readback. */
+  const retry = () => {
+    dialogs.closeDialog()
+    toggleRecording()
   }
 
   return {
-    step,
-    stepIndex,
-    attempts,
-    lastAttempt,
-    isLastStep,
-    isStepDone,
-    isFinished,
-    sectionId,
-    summary,
+    practiceStep,
     atc,
-    atcPlayback,
-    player,
-    recorder,
-    canRecord,
-    isSubmitting,
-    toggleRecording,
-    textMode,
-    openDialog,
-    setOpenDialog,
-    toggleTextMode: (mode: TextMode) => setTextMode((current) => (current === mode ? 'prompt' : mode)),
-    goPrevious: () => enterStep(stepIndex - 1),
-    goNext: () => (isLastStep ? finish() : enterStep(stepIndex + 1)),
-    /** Retrying from the feedback goes straight to recording the readback. */
-    retry: () => {
-      setOpenDialog(null)
-      toggleRecording()
-    },
-    repeat: () => {
-      startPractice(scenario.id)
-      setTextMode('prompt')
-    },
-    close: () =>
-      sectionId
-        ? navigate({ to: '/lessons/$sectionId', params: { sectionId }, search: { scenario: scenario.id } })
-        : navigate({ to: '/lessons' }),
+    recording,
+    dialogs,
+    transcript,
+    navigation,
+    summary,
+    sectionId,
+    retry,
+    closePractice,
+    playRecording: player.play,
   }
 }

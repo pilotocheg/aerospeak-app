@@ -20,6 +20,8 @@ export const AppSidebar = () => {
   const logoutToLogin = useLogoutToLogin()
   const theme = useTheme()
   const toggleTheme = useToggleTheme()
+  const userName = user?.name ?? 'Pilot'
+  const userInitial = userName.at(0) ?? 'P'
 
   const handleLogout = () => {
     close()
@@ -61,9 +63,9 @@ export const AppSidebar = () => {
 
         <div className="flex items-center gap-2 border-t p-3">
           <span className="flex size-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground uppercase">
-            {user?.name.at(0) ?? 'P'}
+            {userInitial}
           </span>
-          <span className="flex-1 truncate text-sm">{user?.name ?? 'Pilot'}</span>
+          <span className="flex-1 truncate text-sm">{userName}</span>
           <Button variant="ghost" size="icon-sm" aria-label="Toggle color theme" onClick={toggleTheme}>
             {theme === 'dark' ? <Sun /> : <Moon />}
           </Button>

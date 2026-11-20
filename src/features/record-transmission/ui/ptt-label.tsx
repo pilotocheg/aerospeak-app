@@ -1,4 +1,4 @@
-import { formatTime } from '@/shared/lib/format-time'
+import { formatTime } from '@/shared/lib/format'
 
 type PttLabelProps = {
   isRecording: boolean

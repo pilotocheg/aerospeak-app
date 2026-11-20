@@ -8,43 +8,47 @@ type LessonOverviewProps = {
 }
 
 /** What the lesson is about and where the rules come from; never the expected answer. */
-export const LessonOverview = ({ note }: LessonOverviewProps) => (
-  <section className="space-y-3 rounded-lg border bg-card p-4">
-    <h2 className="flex items-center gap-2 text-sm font-semibold">
-      <BookOpen className="size-4 text-brand" />
-      {note.title}
-    </h2>
-    <p className="text-sm font-medium">{note.shortExplanation}</p>
-    {note.overview.map((paragraph) => (
-      <p key={paragraph} className="text-sm">
-        {paragraph}
-      </p>
-    ))}
-    {note.whyItMatters && <p className="text-sm text-muted-foreground">{note.whyItMatters}</p>}
-    <div className="space-y-1 border-t pt-3">
-      <SectionTitle>Read more</SectionTitle>
-      <ul className="space-y-0.5 text-sm text-muted-foreground">
-        {note.references.map(({ source, section, url }) => {
-          const label = section ? `${source}, ${section}` : source
-          return (
-            <li key={label}>
-              {url ? (
-                <a
-                  href={url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-brand underline-offset-4 hover:underline"
-                >
-                  {label}
-                  <ExternalLink className="size-3" />
-                </a>
-              ) : (
-                label
-              )}
-            </li>
-          )
-        })}
-      </ul>
-    </div>
-  </section>
-)
+export const LessonOverview = ({ note }: LessonOverviewProps) => {
+  const { title, shortExplanation, overview, whyItMatters, references } = note
+
+  return (
+    <section className="space-y-3 rounded-lg border bg-card p-4">
+      <h2 className="flex items-center gap-2 text-sm font-semibold">
+        <BookOpen className="size-4 text-brand" />
+        {title}
+      </h2>
+      <p className="text-sm font-medium">{shortExplanation}</p>
+      {overview.map((paragraph) => (
+        <p key={paragraph} className="text-sm">
+          {paragraph}
+        </p>
+      ))}
+      {whyItMatters && <p className="text-sm text-muted-foreground">{whyItMatters}</p>}
+      <div className="space-y-1 border-t pt-3">
+        <SectionTitle>Read more</SectionTitle>
+        <ul className="space-y-0.5 text-sm text-muted-foreground">
+          {references.map(({ source, section, url }) => {
+            const label = section ? `${source}, ${section}` : source
+            return (
+              <li key={label}>
+                {url ? (
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-brand underline-offset-4 hover:underline"
+                  >
+                    {label}
+                    <ExternalLink className="size-3" />
+                  </a>
+                ) : (
+                  label
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    </section>
+  )
+}
