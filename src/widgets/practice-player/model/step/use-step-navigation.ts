@@ -1,4 +1,4 @@
-import { useCompletePractice, useGoToStep, useStartPractice } from '@/features/practice-session'
+import { useGoToStep, useStartPractice } from '@/features/practice-session'
 import type { ScenarioDto } from '@/shared/api'
 
 type UseStepNavigationOptions = {
@@ -8,9 +8,13 @@ type UseStepNavigationOptions = {
   isStepDone: boolean
   /** While an attempt is being scored, the result belongs to this step: stay on it. */
   isSubmitting: boolean
-  /** Clears what belongs to the step being left: open dialog, shown text, playing audio. */
-  onLeaveStep: () => void
+  /** Called after moving to another step: clears the step's dialog and shown text. */
+  onEnterStep: () => void
+  /** Called right before the run is completed: silences ATC and closes the dialog. */
+  onFinish: () => void
   onRestart: () => void
+  /** Ends the run and stores its score (`useCompletePractice`). */
+  completePractice: () => void
 }
 
 /** Moving between steps, finishing the scenario and starting it again. */
@@ -20,11 +24,12 @@ export const useStepNavigation = ({
   isLastStep,
   isStepDone,
   isSubmitting,
-  onLeaveStep,
+  onEnterStep,
+  onFinish,
   onRestart,
+  completePractice,
 }: UseStepNavigationOptions) => {
   const goToStep = useGoToStep()
-  const completePractice = useCompletePractice()
   const startPractice = useStartPractice()
 
   const enterStep = (index: number) => {
@@ -33,15 +38,15 @@ export const useStepNavigation = ({
       return
     }
     goToStep(index)
-    onLeaveStep()
+    onEnterStep()
   }
 
   const finish = () => {
     if (!isStepDone || isSubmitting) {
       return
     }
-    onLeaveStep()
-    completePractice(scenario)
+    onFinish()
+    completePractice()
   }
 
   const goPrevious = () => enterStep(stepIndex - 1)

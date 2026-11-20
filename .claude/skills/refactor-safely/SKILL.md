@@ -209,9 +209,9 @@ Use `framework:context-anchoring` Enrich to preserve the important parts of the 
 
 No context doc exists and the refactor involved non-trivial structural reasoning → suggest creating one so the decisions are not lost across sessions.
 
-**Harvest learnings**: run `framework:learning-harvest` Harvest behavior. Session context: "refactoring session — structural restructuring and debt resolution". Synthesize and propose cross-cutting patterns from this session — structural debt that accumulated, migration strategies that worked, characterization test gaps discovered. The user confirms what enters the document. **STOP: run this before recommending `/review` below.**
+**Harvest learnings**: run `framework:learning-harvest` Harvest behavior. Session context: "refactoring session — structural restructuring and debt resolution". Synthesize and propose cross-cutting patterns from this session — structural debt that accumulated, migration strategies that worked, characterization test gaps discovered. The user confirms what enters the document. **STOP: run this before recommending `/lattice-review` below.**
 
-After the refactor is complete, recommend `/review` when the change:
+After the refactor is complete, recommend `/lattice-review` when the change:
 
 - touches multiple layers
 - changes domain boundaries

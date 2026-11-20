@@ -1,5 +1,5 @@
 ---
-name: review
+name: lattice-review
 description: "Perform a structured code review by composing validation checklists from relevant atoms based on what code changed. Loads atoms conditionally -- clean-code always, architecture/DDD/security/tests only when the delta touches their domain. Produces a severity-ordered report with specific locations and fixes. Use when the user asks to 'review this', 'code review', 'quality check', 'validate the code', 'check my code', 'review the delta', or 'review this PR'."
 ---
 # Review

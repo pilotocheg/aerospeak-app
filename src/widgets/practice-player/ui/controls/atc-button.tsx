@@ -3,10 +3,10 @@ import { Square, Volume2 } from 'lucide-react'
 
 import { formatTime } from '@/shared/lib/format'
 
-import type { useStepAtc } from '../../model/atc/use-step-atc'
+import type { StepAtc } from '../../model/atc/use-step-atc'
 
 type AtcButtonProps = {
-  atc: ReturnType<typeof useStepAtc>
+  atc: Pick<StepAtc, 'hasAudio' | 'isPlaying' | 'currentTime' | 'duration' | 'toggle'>
 }
 
 const getStatusLabel = ({ hasAudio, isPlaying, currentTime, duration }: AtcButtonProps['atc']) => {

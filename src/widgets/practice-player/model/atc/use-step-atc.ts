@@ -13,8 +13,19 @@ type UseStepAtcOptions = {
   lastAttempt: StepAttempt | undefined
 }
 
+export type StepAtc = {
+  text: string | undefined
+  hasAudio: boolean
+  /** ATC's "negative, I say again" when the last readback missed a critical element. */
+  correction: string | undefined
+  isPlaying: boolean
+  currentTime: number
+  duration: number
+  toggle: () => void
+}
+
 /** The ATC transmission in effect for the step (call or correction), autoplayed and toggleable. */
-export const useStepAtc = ({ player, runId, step, lastAttempt }: UseStepAtcOptions) => {
+export const useStepAtc = ({ player, runId, step, lastAttempt }: UseStepAtcOptions): StepAtc => {
   const transmission = getAtcTransmission(step, lastAttempt?.result)
   const playback = useAtcPlayback(player, transmission.audio)
   useStepAtcAutoplay(player, runId, step.atcAudio)
@@ -22,7 +33,6 @@ export const useStepAtc = ({ player, runId, step, lastAttempt }: UseStepAtcOptio
   return {
     text: transmission.text,
     hasAudio: Boolean(transmission.audio),
-    /** ATC's "negative, I say again" when the last readback missed a critical element. */
     correction: transmission.isCorrection ? transmission.text : undefined,
     isPlaying: playback.isPlaying,
     currentTime: player.currentTime,

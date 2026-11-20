@@ -5,17 +5,17 @@ import { useFinishPractice } from './actions'
 import { useAttemptsByStep } from './selectors'
 import { buildSummary } from './summary'
 
-/** Ends the run and stores its scenario score in the saved progress. */
-export const useCompletePractice = () => {
+/** The run's summary, and ending the run with its scenario score stored in the saved progress. */
+export const useCompletePractice = (scenario: ScenarioDto) => {
   const finishPractice = useFinishPractice()
   const recordScenarioResult = useRecordScenarioResult()
   const attemptsByStep = useAttemptsByStep()
+  const summary = buildSummary(scenario, attemptsByStep)
 
-  const completePractice = (scenario: ScenarioDto) => {
+  const completePractice = () => {
     finishPractice()
-    const { scenarioScore } = buildSummary(scenario, attemptsByStep)
-    recordScenarioResult(scenario.id, scenarioScore)
+    recordScenarioResult(scenario.id, summary.scenarioScore)
   }
 
-  return completePractice
+  return { summary, completePractice }
 }

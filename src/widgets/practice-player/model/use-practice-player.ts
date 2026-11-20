@@ -1,4 +1,4 @@
-import { buildSummary, useAttemptsByStep, useRunId } from '@/features/practice-session'
+import { useCompletePractice, useRunId } from '@/features/practice-session'
 import { useRecordToggleKey } from '@/features/record-transmission'
 import type { ScenarioDto } from '@/shared/api'
 import { useAudioPlayer } from '@/shared/lib/audio'
@@ -14,7 +14,6 @@ import { useTextMode } from './view/use-text-mode'
 /** Composes the practice screen: step, ATC transmission, recording, dialogs and navigation. */
 export const usePracticePlayer = (scenario: ScenarioDto) => {
   const runId = useRunId()
-  const attemptsByStep = useAttemptsByStep()
   const player = useAudioPlayer()
   const practiceStep = usePracticeStep(scenario)
   const { step, stepIndex, lastAttempt, isLastStep, isStepDone, isFinished } = practiceStep
@@ -22,7 +21,7 @@ export const usePracticePlayer = (scenario: ScenarioDto) => {
   const transcript = useTextMode()
   const atc = useStepAtc({ player, runId, step, lastAttempt })
   const { sectionId, closePractice } = useClosePractice(scenario)
-  const summary = buildSummary(scenario, attemptsByStep)
+  const { summary, completePractice } = useCompletePractice(scenario)
 
   const recording = usePracticeAttempt({ scenario, step, player, onScored: dialogs.openFeedback })
   const { recorder, canRecord, isSubmitting, toggleRecording } = recording
@@ -31,10 +30,14 @@ export const usePracticePlayer = (scenario: ScenarioDto) => {
   const isRecordKeyEnabled = !dialogs.isAnyDialogOpen && !isFinished && (canRecord || isRecording)
   useRecordToggleKey(isRecordKeyEnabled, toggleRecording)
 
-  const leaveStep = () => {
-    player.stop()
+  const enterStep = () => {
     dialogs.closeDialog()
     transcript.resetTextMode()
+  }
+
+  const finishRun = () => {
+    player.stop()
+    dialogs.closeDialog()
   }
 
   const navigation = useStepNavigation({
@@ -43,8 +46,10 @@ export const usePracticePlayer = (scenario: ScenarioDto) => {
     isLastStep,
     isStepDone,
     isSubmitting,
-    onLeaveStep: leaveStep,
+    onEnterStep: enterStep,
+    onFinish: finishRun,
     onRestart: transcript.resetTextMode,
+    completePractice,
   })
 
   /** Retrying from the feedback goes straight to recording the readback. */

@@ -1,7 +1,6 @@
 export { useAddAttempt, useFinishPractice, useGoToStep, useStartPractice } from './model/actions'
 export type { StepAttempt } from './model/practice-store'
 export { useAttemptsByStep, useIsFinished, useRunId, useStepIndex } from './model/selectors'
-export { buildSummary } from './model/summary'
 export { useCompletePractice } from './model/use-complete-practice'
 export { usePracticeRun } from './model/use-practice-run'
 export type { PracticeSummary } from './model/summary'
