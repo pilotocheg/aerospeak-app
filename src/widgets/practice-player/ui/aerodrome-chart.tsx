@@ -1,5 +1,9 @@
-import { getAerodromeChart, getChartSpot } from '@/entities/aerodrome'
+import { getAerodromeChart, getChartSpot, getChartUnit } from '@/entities/aerodrome'
+
+import { getSpotCaption } from '../lib/get-spot-caption'
 import { AircraftMarker } from './aircraft-marker'
+import { ChartFallback } from './chart-fallback'
+import { ChartLegend } from './chart-legend'
 
 type AerodromeChartProps = {
   airport?: string
@@ -11,18 +15,11 @@ export const AerodromeChart = ({ airport, position }: AerodromeChartProps) => {
   const chart = getAerodromeChart(airport)
 
   if (!chart) {
-    return (
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1 bg-sky-950/40 text-center">
-        {airport && <p className="font-semibold">{airport}</p>}
-        {position && <p className="text-sm text-muted-foreground">{position}</p>}
-      </div>
-    )
+    return <ChartFallback title={airport} caption={position} />
   }
 
   const spot = getChartSpot(chart, position)
-  const [, , width, height] = chart.viewBox.split(' ').map(Number)
-  // Sizes scale with the chart so labels stay readable on both aerodromes.
-  const unit = Math.max(width, height) / 100
+  const { unit } = getChartUnit(chart.viewBox)
 
   return (
     <div className="relative min-h-0 flex-1 overflow-hidden bg-sky-950/40">
@@ -85,13 +82,10 @@ export const AerodromeChart = ({ airport, position }: AerodromeChartProps) => {
         {spot && <AircraftMarker spot={spot} size={unit * 4} />}
       </svg>
 
-      <div className="pointer-events-none absolute top-2 left-2 rounded bg-background/70 px-2 py-1 text-xs backdrop-blur">
-        <p className="font-semibold">
-          {chart.icao} {chart.name}
-        </p>
-        {position && <p className="text-muted-foreground">{spot ? position : `${position} (off chart)`}</p>}
-      </div>
-      <p className="pointer-events-none absolute top-2 right-3 text-xs font-bold text-slate-300">N ↑</p>
+      <ChartLegend
+        title={`${chart.icao} ${chart.name}`}
+        caption={position && getSpotCaption(position, Boolean(spot))}
+      />
       <a
         href="https://www.openstreetmap.org/copyright"
         target="_blank"

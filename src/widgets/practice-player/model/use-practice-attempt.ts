@@ -1,10 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 import { ProfileRequiredError, SttFailedError, submitAttempt } from '@/entities/attempt'
 import { getAtcTransmission } from '@/entities/scenario'
-import { getUserProfileQueryOptions, meKeys } from '@/entities/user'
-import { useUser } from '@/features/auth/model/selectors'
+import { meKeys } from '@/entities/user'
+import { useCurrentUserProfile } from '@/features/auth'
 import { useAddAttempt } from '@/features/practice-session'
 import { TooShortError, useRecorder, type Recording } from '@/features/record-transmission'
 import type { ScenarioDto, ScenarioStepDto } from '@/shared/api'
@@ -31,9 +31,8 @@ const toastError = (error: Error) =>
 export const usePracticeAttempt = ({ scenario, step, player, onScored }: UsePracticeAttemptOptions) => {
   const queryClient = useQueryClient()
   const addAttempt = useAddAttempt()
-  const user = useUser()
   // Recording needs a finished registration; TermsGate asks for it while the profile is missing.
-  const { data: profile } = useQuery({ ...getUserProfileQueryOptions(user?.id ?? ''), enabled: Boolean(user) })
+  const { data: profile } = useCurrentUserProfile()
 
   const mutation = useMutation({
     mutationFn: submitAttempt,

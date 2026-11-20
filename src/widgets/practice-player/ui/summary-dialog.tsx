@@ -5,6 +5,8 @@ import { Button } from '@/shared/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/shared/ui/dialog'
 import { ScoreRing } from '@/shared/ui/score-ring'
 
+import { formatRetryImprovement } from '../lib/format-retry-improvement'
+import { Callout } from './callout'
 import { SummaryMetric } from './summary-metric'
 
 type SummaryDialogProps = {
@@ -31,21 +33,13 @@ export const SummaryDialog = ({ open, title, summary, onRepeat, onClose }: Summa
         <SummaryMetric label="Phrases recorded" value={summary.phrasesRecorded} />
         <SummaryMetric label="Successful phrases" value={summary.successfulPhrases} />
         <SummaryMetric label="Best phrase" value={`${summary.bestPhraseScore}%`} />
-        <SummaryMetric
-          label="Retry improvement"
-          value={
-            summary.retryImprovement === null
-              ? '–'
-              : `${summary.retryImprovement >= 0 ? '+' : ''}${summary.retryImprovement}`
-          }
-        />
+        <SummaryMetric label="Retry improvement" value={formatRetryImprovement(summary.retryImprovement)} />
       </div>
 
       {summary.missedCritical.length > 0 && (
-        <div className="flex gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-          <TriangleAlert className="size-5 shrink-0" />
+        <Callout tone="destructive" icon={TriangleAlert}>
           <p>Still missing: {summary.missedCritical.join(', ')}</p>
-        </div>
+        </Callout>
       )}
 
       <DialogFooter>

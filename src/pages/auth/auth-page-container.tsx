@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 
-import { useGoogleOneTap } from '@/features/auth/model/use-google-one-tap'
-import { useRedirectIfAuthenticated } from '@/features/auth/model/use-redirect-if-authenticated'
+import { useGoogleOneTap, useRedirectIfAuthenticated } from '@/features/auth'
 import { Card, CardContent } from '@/shared/ui/card'
 import { FieldDescription } from '@/shared/ui/field'
 import { Logo } from '@/shared/ui/logo'

@@ -9,7 +9,8 @@ import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { sections } from '../src/shared/content/index.ts'
-import { API_URL, PUBLIC_DIR, fetchContent } from './fetch-content.ts'
+import { API_URL, PUBLIC_DIR } from './config.ts'
+import { fetchContent } from './fetch-content.ts'
 import { stepTransmissions } from './step-transmissions.ts'
 
 const errors: string[] = []

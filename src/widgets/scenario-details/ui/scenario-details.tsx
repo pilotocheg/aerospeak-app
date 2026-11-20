@@ -2,10 +2,13 @@ import { Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 
 import { useScenarioProgress } from '@/entities/progress'
-import { formatDuration, useRandomScenarioVariant } from '@/entities/scenario'
+import { useRandomScenarioVariant } from '@/entities/scenario'
+import { formatDuration } from '@/shared/lib/format-duration'
+import { roundedAverage } from '@/shared/lib/rounded-average'
 import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { ScoreRing } from '@/shared/ui/score-ring'
+import { SectionTitle } from '@/shared/ui/section-title'
 
 import { LessonOverview } from './lesson-overview'
 import { ScenarioDetailsSkeleton } from './scenario-details-skeleton'
@@ -28,10 +31,6 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
   if (isError || !scenario) {
     return <div className="flex flex-1 items-center justify-center text-muted-foreground">Scenario not found.</div>
   }
-
-  const average = progress?.scores.length
-    ? Math.round(progress.scores.reduce((sum, score) => sum + score, 0) / progress.scores.length)
-    : null
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -59,7 +58,7 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
             <span className="text-lg font-semibold">{formatDuration(scenario.estimatedDurationSec)}</span>
           </Stat>
           <Stat label="Avg score">
-            <ScoreRing value={average} size={56} />
+            <ScoreRing value={roundedAverage(progress?.scores ?? [])} size={56} />
           </Stat>
           <Stat label="Best score">
             <ScoreRing value={progress?.bestScore ?? null} size={56} />
@@ -69,7 +68,7 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
 
       <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-6 sm:px-6">
         <section className="space-y-1">
-          <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Objective</h2>
+          <SectionTitle as="h2">Objective</SectionTitle>
           <p>{scenario.objective}</p>
           <p className="text-sm text-muted-foreground">
             {scenario.steps.length} {scenario.steps.length === 1 ? 'transmission' : 'transmissions'}
@@ -78,7 +77,7 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
 
         {scenario.briefing?.length ? (
           <section className="space-y-2">
-            <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Briefing</h2>
+            <SectionTitle as="h2">Briefing</SectionTitle>
             <dl className="grid grid-cols-2 gap-x-6 gap-y-2 rounded-lg border bg-card p-4 text-sm sm:grid-cols-3">
               {scenario.briefing.map((item) => (
                 <div key={item.label}>

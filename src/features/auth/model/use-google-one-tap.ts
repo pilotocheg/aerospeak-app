@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 
-import { signInWithGoogleIdToken } from '@/entities/user'
-
+import { signInWithGoogleIdToken } from '../api'
 import { loadGoogleIdentity, type GoogleCredentialResponse } from '../lib/load-google-identity'
 
 import { useIsAuthenticated, useIsAuthLoading } from './selectors'

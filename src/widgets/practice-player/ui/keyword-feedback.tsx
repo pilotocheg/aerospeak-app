@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { cn } from 'cn'
-import { ArrowDownUp, TriangleAlert } from 'lucide-react'
 
 import type { ElementResultDto, ScenarioStepDto } from '@/shared/api'
 
-import { ELEMENT_DOT_CLASS, ELEMENT_STATUS_LABEL, ELEMENT_TEXT_CLASS } from '../lib/element-styles'
+import { ELEMENT_DOT_CLASS, ELEMENT_STATUS_LABEL } from '../lib/element-styles'
 import { highlightElements } from '../lib/highlight-elements'
-import { ElementWords } from './element-words'
+import { ElementChip } from './element-chip'
+import { ElementDetails } from './element-details'
 
 type KeywordFeedbackProps = {
   step: ScenarioStepDto
@@ -21,34 +21,19 @@ export const KeywordFeedback = ({ step, expected, elements, outOfOrder }: Keywor
   const { segments, unplaced } = highlightElements(expected, step, elements)
   const selected = elements.find((element) => element.id === selectedId)
 
-  const renderElement = (element: ElementResultDto, text: string, key: string | number) => (
-    <button
-      key={key}
-      type="button"
-      onClick={() => setSelectedId(element.id)}
-      className={cn(
-        'rounded-sm transition hover:bg-muted',
-        ELEMENT_TEXT_CLASS[element.status],
-        selectedId === element.id && 'bg-muted',
-      )}
-    >
-      {text}
-      {element.critical && element.status === 'missed' && <TriangleAlert className="ml-0.5 inline size-3.5" />}
-      {outOfOrder.includes(element.id) && (
-        <>
-          <ArrowDownUp className="ml-0.5 inline size-3.5 text-amber-600 dark:text-amber-400" />
-          <span className="sr-only"> (said in the wrong place)</span>
-        </>
-      )}
-    </button>
-  )
+  const chipProps = (element: ElementResultDto) => ({
+    element,
+    isSelected: selectedId === element.id,
+    isOutOfOrder: outOfOrder.includes(element.id),
+    onSelect: setSelectedId,
+  })
 
   return (
     <div className="space-y-4">
       <p className="text-center text-lg leading-relaxed">
         {segments.map((segment, index) =>
           segment.element ? (
-            renderElement(segment.element, segment.text, index)
+            <ElementChip key={index} text={segment.text} {...chipProps(segment.element)} />
           ) : (
             <span key={index} className="text-muted-foreground">
               {segment.text}
@@ -59,7 +44,9 @@ export const KeywordFeedback = ({ step, expected, elements, outOfOrder }: Keywor
 
       {unplaced.length > 0 && (
         <div className="flex flex-wrap justify-center gap-2">
-          {unplaced.map((element) => renderElement(element, element.label, element.id))}
+          {unplaced.map((element) => (
+            <ElementChip key={element.id} text={element.label} {...chipProps(element)} />
+          ))}
         </div>
       )}
 
@@ -74,19 +61,7 @@ export const KeywordFeedback = ({ step, expected, elements, outOfOrder }: Keywor
 
       <div className="flex min-h-20 items-center justify-center rounded-lg bg-background p-4 text-center">
         {selected ? (
-          <div className="space-y-1 text-sm">
-            <p className="font-semibold">
-              {selected.label}
-              {selected.critical && <span className="ml-2 text-xs text-destructive uppercase">Safety-critical</span>}
-            </p>
-            <p className={ELEMENT_TEXT_CLASS[selected.status].split(' ')[0]}>{ELEMENT_STATUS_LABEL[selected.status]}</p>
-            {outOfOrder.includes(selected.id) && (
-              <p className="text-amber-600 dark:text-amber-400">Said in the wrong place</p>
-            )}
-            {selected.hint && <p className="text-amber-600 dark:text-amber-400">{selected.hint}</p>}
-            {selected.matchedText && <p className="text-muted-foreground">Heard: “{selected.matchedText}”</p>}
-            {selected.words.length > 0 && <ElementWords words={selected.words} />}
-          </div>
+          <ElementDetails element={selected} isOutOfOrder={outOfOrder.includes(selected.id)} />
         ) : (
           <p className="text-muted-foreground">Tap a highlighted phrase for details</p>
         )}

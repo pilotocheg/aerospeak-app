@@ -1,44 +1,18 @@
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
-import { Link } from '@tanstack/react-router'
-
-import { Button } from '@/shared/ui/button'
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSeparator } from '@/shared/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
-import { GoogleAuthButton } from '@/features/auth/ui/google-auth-button'
 
-import { useRegister } from '../model/actions'
-import { signupSchema, type SignupFormValues } from '../model/schemas'
+import { useSignupForm } from '../model/use-signup-form'
+import { AuthFormFooter } from './auth-form-footer'
+import { EmailField } from './email-field'
+import { GoogleAuthSection } from './google-auth-section'
 
 export const SignupForm = () => {
-  const registerUser = useRegister()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SignupFormValues>({
-    resolver: zodResolver(signupSchema),
-    mode: 'onTouched',
-    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
-  })
-
-  const onSubmit = handleSubmit(async ({ name, email, password }) => {
-    try {
-      await registerUser({ name, email, password, role: 'Student' })
-      toast.success('Account created successfully')
-    } catch {
-      toast.error('Failed to create account')
-    }
-  })
+  const { register, errors, isSubmitting, onSubmit } = useSignupForm()
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-5">
       <FieldGroup>
-        <Field>
-          <GoogleAuthButton />
-        </Field>
-        <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">Or sign up with email</FieldSeparator>
+        <GoogleAuthSection separatorLabel="Or sign up with email" />
         <Field data-invalid={!!errors.name}>
           <FieldLabel htmlFor="name">Full Name</FieldLabel>
           <Input
@@ -51,19 +25,7 @@ export const SignupForm = () => {
           />
           <FieldError errors={[errors.name]} />
         </Field>
-        <Field data-invalid={!!errors.email}>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input
-            id="email"
-            type="email"
-            placeholder="name@aerospeak.io"
-            autoComplete="email"
-            inputMode="email"
-            aria-invalid={!!errors.email}
-            {...register('email')}
-          />
-          <FieldError errors={[errors.email]} />
-        </Field>
+        <EmailField error={errors.email} inputProps={register('email')} />
         <Field className="grid gap-4 sm:grid-cols-2">
           <Field data-invalid={!!errors.password}>
             <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -90,17 +52,14 @@ export const SignupForm = () => {
             <FieldError errors={[errors.confirmPassword]} />
           </Field>
         </Field>
-        <Field>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating account…' : 'Create Account'}
-          </Button>
-          <FieldDescription className="text-center">
-            Already have an account?{' '}
-            <Link to="/login" className="font-medium text-brand underline-offset-4 hover:underline">
-              Sign in
-            </Link>
-          </FieldDescription>
-        </Field>
+        <AuthFormFooter
+          submitLabel="Create Account"
+          pendingLabel="Creating account…"
+          isSubmitting={isSubmitting}
+          prompt="Already have an account?"
+          linkTo="/login"
+          linkLabel="Sign in"
+        />
       </FieldGroup>
     </form>
   )

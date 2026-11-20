@@ -1,80 +1,31 @@
-import { useMutation } from '@tanstack/react-query'
-
-import { setProgressOwner } from '@/entities/progress'
-
-import {
-  loginWithEmail,
-  loginWithGoogle,
-  logoutCurrentUser,
-  observeAuthState,
-  registerWithEmail,
-  sendPasswordResetEmail,
-} from '../api'
+import { loginWithEmail, loginWithGoogle, logoutCurrentUser, registerWithEmail } from '../api'
 
 import { useAuthStore } from './auth-store'
-import type { LoginInput, RegisterInput, PasswordResetInput } from './types'
 
-export const useLogin = () => async (payload: LoginInput) => {
-  const { setLoading } = useAuthStore.getState()
-  setLoading(true)
-  try {
-    await loginWithEmail(payload)
-  } finally {
-    setLoading(false)
-  }
-}
-
-export const useLoginWithGoogle = () => async () => {
-  const { setLoading } = useAuthStore.getState()
-  setLoading(true)
-  try {
-    await loginWithGoogle()
-  } finally {
-    setLoading(false)
-  }
-}
-
-export const useRegister = () => async (payload: RegisterInput) => {
-  const { setLoading } = useAuthStore.getState()
-  setLoading(true)
-  try {
-    await registerWithEmail(payload)
-  } finally {
-    setLoading(false)
-  }
-}
-
-export const useLogout = () => async () => {
-  const { setLoading, clearAuthenticatedUser } = useAuthStore.getState()
-  setLoading(true)
-  try {
-    await logoutCurrentUser()
-    clearAuthenticatedUser()
-  } finally {
-    setLoading(false)
-  }
-}
-
-export const initAuthSession = () => {
-  const { setAuthenticatedUser, clearAuthenticatedUser } = useAuthStore.getState()
-
-  return observeAuthState((user) => {
-    if (user) {
-      setProgressOwner(user.id)
-      setAuthenticatedUser(user)
-      return
+const withAuthLoading =
+  <Args extends unknown[]>(run: (...args: Args) => Promise<void>) =>
+  async (...args: Args) => {
+    const { setLoading } = useAuthStore.getState()
+    setLoading(true)
+    try {
+      await run(...args)
+    } finally {
+      setLoading(false)
     }
-    clearAuthenticatedUser()
-  })
-}
+  }
 
-export const useSendPasswordResetEmail = () =>
-  useMutation({
-    mutationFn: async ({ email }: PasswordResetInput) => {
-      try {
-        await sendPasswordResetEmail(email)
-      } catch {
-        // ignore error for enumeration protection
-      }
-    },
-  })
+const login = withAuthLoading(loginWithEmail)
+const loginWithGooglePopup = withAuthLoading(loginWithGoogle)
+const register = withAuthLoading(registerWithEmail)
+const logout = withAuthLoading(async () => {
+  await logoutCurrentUser()
+  useAuthStore.getState().clearAuthenticatedUser()
+})
+
+export const useLogin = () => login
+
+export const useLoginWithGoogle = () => loginWithGooglePopup
+
+export const useRegister = () => register
+
+export const useLogout = () => logout

@@ -1,14 +1,4 @@
-import { eppiAirspace } from '../model/airspace/eppi'
-import { eppoAirspace } from '../model/airspace/eppo'
 import type { AirspaceChartData, ChartSpot } from '../model/types'
-
-const charts = [eppoAirspace, eppiAirspace]
-
-/** Matches the "Airport" briefing value, e.g. "EPPO Poznań-Ławica", by its ICAO code. */
-export const getAirspaceChart = (airport?: string): AirspaceChartData | undefined => {
-  const code = airport?.trim().slice(0, 4).toUpperCase()
-  return charts.find((chart) => chart.icao === code)
-}
 
 /** The aircraft over a VFR point, heading to the aerodrome (inbound) or away from it (outbound). */
 export const getAirspaceSpot = (

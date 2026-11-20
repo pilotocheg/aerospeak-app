@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
-import { scenarioQueryOptions } from '../api/scenario-queries'
+import { scenarioQueryOptions } from '../api/scenario-query-options'
 
 /**
  * A scenario in a variant (aerodrome, weather, aircraft) picked at random once per mount:

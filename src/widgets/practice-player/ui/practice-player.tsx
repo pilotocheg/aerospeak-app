@@ -1,28 +1,11 @@
-import { useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 
-import { useRecordScenarioResult } from '@/entities/progress'
-import { getAtcTransmission, getBriefingValue } from '@/entities/scenario'
-import { findSectionByPackId } from '@/entities/section'
-import {
-  buildSummary,
-  useAttemptsByStep,
-  useFinishPractice,
-  useGoToStep,
-  useIsFinished,
-  useRunId,
-  useStartPractice,
-  useStepIndex,
-} from '@/features/practice-session'
-import { PttButton, useRecordToggleKey } from '@/features/record-transmission'
+import { getBriefingValue } from '@/entities/scenario'
+import { PttButton } from '@/features/record-transmission'
 import type { ScenarioDto } from '@/shared/api'
-import { useAudioPlayer } from '@/shared/lib/audio'
 import { Button } from '@/shared/ui/button'
 
-import { useAtcPlayback } from '../model/use-atc-playback'
-import { usePracticeAttempt } from '../model/use-practice-attempt'
-import { useStepAtcAutoplay } from '../model/use-step-atc-autoplay'
+import { usePracticePlayer } from '../model/use-practice-player'
 import { AtcButton } from './atc-button'
 import { BriefingStrip } from './briefing-strip'
 import { FeedbackDialog } from './feedback-dialog'
@@ -32,103 +15,36 @@ import { ScoreBar } from './score-bar'
 import { StepVisual } from './step-visual'
 import { SummaryDialog } from './summary-dialog'
 import { ToggleEye } from './toggle-eye'
-import { TranscriptLine, type TextMode } from './transcript-line'
+import { TranscriptLine } from './transcript-line'
 
 type PracticePlayerProps = {
   scenario: ScenarioDto
 }
 
-type OpenDialog = 'help' | 'feedback' | null
-
 export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
-  const navigate = useNavigate()
-  const stepIndex = useStepIndex()
-  const runId = useRunId()
-  const attemptsByStep = useAttemptsByStep()
-  const isFinished = useIsFinished()
-  const goToStep = useGoToStep()
-  const finishPractice = useFinishPractice()
-  const startPractice = useStartPractice()
-  const recordScenarioResult = useRecordScenarioResult()
-  const player = useAudioPlayer()
-
-  const [textMode, setTextMode] = useState<TextMode>('prompt')
-  const [openDialog, setOpenDialog] = useState<OpenDialog>(null)
-
-  const step = scenario.steps[stepIndex]
-  const attempts = attemptsByStep[step.id] ?? []
-  const lastAttempt = attempts.at(-1)
-  const isLastStep = stepIndex === scenario.steps.length - 1
-  const isStepDone = attempts.length > 0
-  const sectionId = findSectionByPackId(scenario.packId)?.id
-
-  const atc = getAtcTransmission(step, lastAttempt?.result)
-  const atcPlayback = useAtcPlayback(player, atc.audio)
-  useStepAtcAutoplay(player, runId, step.atcAudio)
-
-  const { recorder, canRecord, isSubmitting, toggleRecording } = usePracticeAttempt({
-    scenario,
-    step,
-    player,
-    onScored: () => setOpenDialog('feedback'),
-  })
-  useRecordToggleKey(openDialog === null && !isFinished && (canRecord || recorder.status !== 'idle'), toggleRecording)
-
-  const enterStep = (index: number) => {
-    // While an attempt is being scored, the result belongs to this step: stay on it.
-    if (isSubmitting || (index > stepIndex && !isStepDone)) {
-      return
-    }
-    goToStep(index)
-    setTextMode('prompt')
-    setOpenDialog(null)
-  }
-
-  const finish = () => {
-    if (!isStepDone || isSubmitting) {
-      return
-    }
-    player.stop()
-    setOpenDialog(null)
-    finishPractice()
-    recordScenarioResult(scenario.id, buildSummary(scenario, attemptsByStep).scenarioScore)
-  }
-
-  const goNext = () => (isLastStep ? finish() : enterStep(stepIndex + 1))
-
-  /** Retrying from the feedback goes straight to recording the readback. */
-  const retry = () => {
-    setOpenDialog(null)
-    toggleRecording()
-  }
-
-  const toggleTextMode = (mode: TextMode) => setTextMode((current) => (current === mode ? 'prompt' : mode))
-
-  const repeat = () => {
-    startPractice(scenario.id)
-    setTextMode('prompt')
-  }
+  const practice = usePracticePlayer(scenario)
+  const { step, stepIndex, atc, recorder, isSubmitting, textMode } = practice
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <PracticeHeader
-        sectionId={sectionId}
+        sectionId={practice.sectionId}
         title={scenario.title}
         stepIndex={stepIndex}
         stepCount={scenario.steps.length}
-        onHelp={() => setOpenDialog('help')}
+        onHelp={() => practice.setOpenDialog('help')}
       />
       <BriefingStrip briefing={scenario.briefing ?? []} />
       <StepVisual scenario={scenario} step={step} />
 
       <div className="shrink-0 space-y-3 border-t bg-card px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-8">
-        <ScoreBar score={lastAttempt?.result.score} />
+        <ScoreBar score={practice.lastAttempt?.result.score} />
         <div className="h-5 text-center">
-          {lastAttempt && (
+          {practice.lastAttempt && (
             <button
               type="button"
               className="text-sm text-brand hover:underline"
-              onClick={() => setOpenDialog('feedback')}
+              onClick={() => practice.setOpenDialog('feedback')}
             >
               Show feedback
             </button>
@@ -138,18 +54,18 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
         <div className="flex items-center gap-3 sm:gap-6">
           <AtcButton
             hasAudio={Boolean(atc.audio)}
-            isPlaying={atcPlayback.isPlaying}
-            currentTime={player.currentTime}
-            duration={atcPlayback.duration}
-            onToggle={atcPlayback.toggle}
+            isPlaying={practice.atcPlayback.isPlaying}
+            currentTime={practice.player.currentTime}
+            duration={practice.atcPlayback.duration}
+            onToggle={practice.atcPlayback.toggle}
           />
           <TranscriptLine step={step} mode={textMode} atcText={atc.text} />
           <PttButton
             status={recorder.status}
             elapsedMs={recorder.elapsedMs}
-            disabled={!canRecord && !isSubmitting}
+            disabled={!practice.canRecord && !isSubmitting}
             busy={isSubmitting}
-            onToggle={toggleRecording}
+            onToggle={practice.toggleRecording}
           />
         </div>
 
@@ -158,14 +74,14 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
             label="ATC"
             active={textMode === 'atc'}
             disabled={!atc.text}
-            onClick={() => toggleTextMode('atc')}
+            onClick={() => practice.toggleTextMode('atc')}
           />
           <Button
             variant="ghost"
             size="icon-lg"
             aria-label="Previous transmission"
             disabled={stepIndex === 0 || isSubmitting}
-            onClick={() => enterStep(stepIndex - 1)}
+            onClick={practice.goPrevious}
           >
             <ArrowLeft className="size-6" />
           </Button>
@@ -175,46 +91,42 @@ export const PracticePlayer = ({ scenario }: PracticePlayerProps) => {
           <Button
             variant="ghost"
             size="icon-lg"
-            aria-label={isLastStep ? 'Finish scenario' : 'Next transmission'}
-            title={isStepDone ? undefined : 'Record a response first'}
-            disabled={!isStepDone || isSubmitting}
-            onClick={goNext}
+            aria-label={practice.isLastStep ? 'Finish scenario' : 'Next transmission'}
+            title={practice.isStepDone ? undefined : 'Record a response first'}
+            disabled={!practice.isStepDone || isSubmitting}
+            onClick={practice.goNext}
           >
             <ArrowRight className="size-6" />
           </Button>
-          <ToggleEye label="RES" active={textMode === 'response'} onClick={() => toggleTextMode('response')} />
+          <ToggleEye label="RES" active={textMode === 'response'} onClick={() => practice.toggleTextMode('response')} />
         </div>
       </div>
 
       <HelpDialog
-        open={openDialog === 'help'}
+        open={practice.openDialog === 'help'}
         scenario={scenario}
         step={step}
         callsign={getBriefingValue(scenario, 'Callsign')}
-        onOpenChange={(open) => setOpenDialog(open ? 'help' : null)}
+        onOpenChange={(open) => practice.setOpenDialog(open ? 'help' : null)}
       />
       <FeedbackDialog
-        open={openDialog === 'feedback'}
+        open={practice.openDialog === 'feedback'}
         step={step}
-        attempt={lastAttempt}
-        attemptNumber={attempts.length}
-        isLastStep={isLastStep}
+        attempt={practice.lastAttempt}
+        attemptNumber={practice.attempts.length}
+        isLastStep={practice.isLastStep}
         correction={atc.isCorrection ? atc.text : undefined}
-        onOpenChange={(open) => setOpenDialog(open ? 'feedback' : null)}
-        onPlayRecording={player.play}
-        onRetry={retry}
-        onContinue={goNext}
+        onOpenChange={(open) => practice.setOpenDialog(open ? 'feedback' : null)}
+        onPlayRecording={practice.player.play}
+        onRetry={practice.retry}
+        onContinue={practice.goNext}
       />
       <SummaryDialog
-        open={isFinished}
+        open={practice.isFinished}
         title={scenario.title}
-        summary={buildSummary(scenario, attemptsByStep)}
-        onRepeat={repeat}
-        onClose={() =>
-          sectionId
-            ? navigate({ to: '/lessons/$sectionId', params: { sectionId }, search: { scenario: scenario.id } })
-            : navigate({ to: '/lessons' })
-        }
+        summary={practice.summary}
+        onRepeat={practice.repeat}
+        onClose={practice.close}
       />
     </div>
   )

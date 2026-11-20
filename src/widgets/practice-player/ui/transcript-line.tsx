@@ -2,7 +2,7 @@ import { cn } from 'cn'
 
 import type { ScenarioStepDto } from '@/shared/api'
 
-export type TextMode = 'prompt' | 'atc' | 'response'
+import type { TextMode } from '../model/use-practice-player'
 
 type TranscriptLineProps = {
   step: ScenarioStepDto
@@ -12,12 +12,11 @@ type TranscriptLineProps = {
 }
 
 export const TranscriptLine = ({ step, mode, atcText }: TranscriptLineProps) => {
-  const text =
-    mode === 'atc'
-      ? (atcText ?? 'No ATC call in this step: you transmit first.')
-      : mode === 'response'
-        ? step.expectedPilotResponse
-        : step.prompt
+  const textByMode: Record<TextMode, string> = {
+    prompt: step.prompt,
+    atc: atcText ?? 'No ATC call in this step: you transmit first.',
+    response: step.expectedPilotResponse,
+  }
 
   return (
     <p
@@ -27,7 +26,7 @@ export const TranscriptLine = ({ step, mode, atcText }: TranscriptLineProps) => 
         mode === 'prompt' ? 'text-foreground' : 'text-destructive italic',
       )}
     >
-      {text}
+      {textByMode[mode]}
     </p>
   )
 }

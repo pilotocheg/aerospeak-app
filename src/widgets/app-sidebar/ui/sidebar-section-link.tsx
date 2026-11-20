@@ -12,7 +12,7 @@ type SidebarSectionLinkProps = {
 const itemClass = 'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition'
 
 export const SidebarSectionLink = ({ section, onNavigate }: SidebarSectionLinkProps) => {
-  const { total, practiced } = useSectionProgress(section.id)
+  const { completionPercent } = useSectionProgress(section.id)
 
   if (section.comingSoon) {
     return (
@@ -36,7 +36,7 @@ export const SidebarSectionLink = ({ section, onNavigate }: SidebarSectionLinkPr
       <SectionIcon name={section.icon} className="size-4" />
       <span className="flex-1 truncate">{section.title}</span>
       <span className="h-1 w-10 overflow-hidden rounded-full bg-foreground/20">
-        <span className="block h-full bg-current" style={{ width: `${total ? (practiced / total) * 100 : 0}%` }} />
+        <span className="block h-full bg-current" style={{ width: `${completionPercent}%` }} />
       </span>
     </Link>
   )

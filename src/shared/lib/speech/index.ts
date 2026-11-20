@@ -1,1 +1,2 @@
-export { speak, stopSpeaking } from './speak'
+export { speak } from './speak'
+export { stopSpeaking } from './stop-speaking'

@@ -1,6 +1,7 @@
 import { BookOpen, ExternalLink } from 'lucide-react'
 
-import type { PhraseologyNoteDto } from '@/shared/api/types'
+import type { PhraseologyNoteDto } from '@/shared/api'
+import { SectionTitle } from '@/shared/ui/section-title'
 
 type LessonOverviewProps = {
   note: PhraseologyNoteDto
@@ -21,7 +22,7 @@ export const LessonOverview = ({ note }: LessonOverviewProps) => (
     ))}
     {note.whyItMatters && <p className="text-sm text-muted-foreground">{note.whyItMatters}</p>}
     <div className="space-y-1 border-t pt-3">
-      <h3 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Read more</h3>
+      <SectionTitle>Read more</SectionTitle>
       <ul className="space-y-0.5 text-sm text-muted-foreground">
         {note.references.map(({ source, section, url }) => {
           const label = section ? `${source}, ${section}` : source

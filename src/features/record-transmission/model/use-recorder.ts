@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { playCue } from '@/shared/lib/audio'
 
-import { MicrophoneError, TooShortError } from './recorder-errors'
+import { MicrophoneError, TooShortError } from '../lib/recorder-errors'
 
 export type Recording = {
   blob: Blob
@@ -55,6 +55,12 @@ export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: Us
     streamRef.current = null
   }
 
+  const failToStart = () => {
+    releaseStream()
+    updateStatus('idle')
+    onError(new MicrophoneError())
+  }
+
   useEffect(
     () => () => {
       clearTimer()
@@ -89,8 +95,7 @@ export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: Us
         audio: { echoCancellation: true, noiseSuppression: true },
       })
     } catch {
-      updateStatus('idle')
-      onError(new MicrophoneError())
+      failToStart()
       return
     }
 
@@ -99,9 +104,7 @@ export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: Us
     try {
       recorder = new MediaRecorder(streamRef.current, mimeType ? { mimeType } : undefined)
     } catch {
-      releaseStream()
-      updateStatus('idle')
-      onError(new MicrophoneError())
+      failToStart()
       return
     }
     const chunks: Blob[] = []
@@ -134,9 +137,7 @@ export const useRecorder = ({ maxDurationMs = 120_000, onRecorded, onError }: Us
     try {
       recorder.start()
     } catch {
-      releaseStream()
-      updateStatus('idle')
-      onError(new MicrophoneError())
+      failToStart()
       return
     }
     updateStatus('recording')

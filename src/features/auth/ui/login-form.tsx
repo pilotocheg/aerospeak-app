@@ -1,58 +1,21 @@
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
 import { Link } from '@tanstack/react-router'
 
-import { Button } from '@/shared/ui/button'
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSeparator } from '@/shared/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
-import { GoogleAuthButton } from '@/features/auth/ui/google-auth-button'
 
-import { useLogin } from '../model/actions'
-import { loginSchema, type LoginFormValues } from '../model/schemas'
+import { useLoginForm } from '../model/use-login-form'
+import { AuthFormFooter } from './auth-form-footer'
+import { EmailField } from './email-field'
+import { GoogleAuthSection } from './google-auth-section'
 
 export const LoginForm = () => {
-  const login = useLogin()
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    mode: 'onTouched',
-    defaultValues: { email: '', password: '' },
-  })
-
-  const onSubmit = handleSubmit(async (values) => {
-    try {
-      await login(values)
-      toast.success('Successfully logged in')
-    } catch {
-      toast.error('Failed to sign in')
-    }
-  })
+  const { register, errors, isSubmitting, onSubmit } = useLoginForm()
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-5">
       <FieldGroup>
-        <Field>
-          <GoogleAuthButton />
-        </Field>
-        <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">Or sign in with email</FieldSeparator>
-        <Field data-invalid={!!errors.email}>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input
-            id="email"
-            type="email"
-            placeholder="name@aerospeak.io"
-            autoComplete="email"
-            inputMode="email"
-            aria-invalid={!!errors.email}
-            {...register('email')}
-          />
-          <FieldError errors={[errors.email]} />
-        </Field>
+        <GoogleAuthSection separatorLabel="Or sign in with email" />
+        <EmailField error={errors.email} inputProps={register('email')} />
         <Field data-invalid={!!errors.password}>
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -70,17 +33,14 @@ export const LoginForm = () => {
           />
           <FieldError errors={[errors.password]} />
         </Field>
-        <Field>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? 'Signing in…' : 'Login'}
-          </Button>
-          <FieldDescription className="text-center">
-            New here?{' '}
-            <Link to="/register" className="font-medium text-brand underline-offset-4 hover:underline">
-              Create an account
-            </Link>
-          </FieldDescription>
-        </Field>
+        <AuthFormFooter
+          submitLabel="Login"
+          pendingLabel="Signing in…"
+          isSubmitting={isSubmitting}
+          prompt="New here?"
+          linkTo="/register"
+          linkLabel="Create an account"
+        />
       </FieldGroup>
     </form>
   )

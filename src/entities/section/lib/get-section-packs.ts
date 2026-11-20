@@ -1,9 +1,6 @@
 import type { PracticePackDto } from '@/shared/api'
-import { sections } from '@/shared/content'
 
-export const getSection = (id: string) => sections.find((section) => section.id === id)
-
-export const findSectionByPackId = (packId: string) => sections.find((section) => section.packIds.includes(packId))
+import { getSection } from './get-section'
 
 /** Packs of a section, in the section's order. */
 export const getSectionPacks = (sectionId: string, packs: PracticePackDto[]) =>

@@ -1,3 +1,6 @@
-export { getAerodromeChart, getChartSpot } from './lib/chart-lookup'
-export { getAirspaceChart, getAirspaceSpot } from './lib/airspace-lookup'
+export { getAerodromeChart } from './lib/get-aerodrome-chart'
+export { getAirspaceChart } from './lib/get-airspace-chart'
+export { getChartUnit } from './lib/get-chart-unit'
+export { getAirspaceSpot } from './lib/get-airspace-spot'
+export { getChartSpot } from './lib/get-chart-spot'
 export type { AerodromeChartData, AirspaceChartData, AirspacePoint, ChartSpot } from './model/types'

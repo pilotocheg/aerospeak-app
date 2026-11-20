@@ -1,6 +1,6 @@
 import { Outlet } from '@tanstack/react-router'
 
-import { TermsGate } from '@/features/auth/ui/terms-gate'
+import { TermsGate } from '@/features/auth'
 import { AppSidebar } from '@/widgets/app-sidebar'
 
 /** Authenticated area: sidebar navigation + page. */

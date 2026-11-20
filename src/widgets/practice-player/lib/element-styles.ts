@@ -6,6 +6,13 @@ export const ELEMENT_TEXT_CLASS: Record<ElementResultDto['status'], string> = {
   missed: 'text-red-600 dark:text-red-500 underline decoration-2 underline-offset-4',
 }
 
+/** Status colour of the element details, without the underline of the response text. */
+export const ELEMENT_STATUS_TEXT_CLASS: Record<ElementResultDto['status'], string> = {
+  matched: 'text-green-600',
+  partial: 'text-amber-600',
+  missed: 'text-red-600',
+}
+
 export const ELEMENT_DOT_CLASS: Record<ElementResultDto['status'], string> = {
   matched: 'bg-green-500',
   partial: 'bg-amber-400',

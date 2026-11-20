@@ -2,14 +2,17 @@ import { RadioTower, TriangleAlert, Volume2 } from 'lucide-react'
 
 import type { StepAttempt } from '@/features/practice-session'
 import type { ScenarioStepDto } from '@/shared/api'
-import { speak } from '@/shared/lib/speech'
 import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/shared/ui/dialog'
+import { SectionTitle } from '@/shared/ui/section-title'
 
+import { getFeedbackNotices } from '../lib/get-feedback-notices'
+import { Callout } from './callout'
+import { HearExpectedButton } from './hear-expected-button'
 import { KeywordFeedback } from './keyword-feedback'
 import { OrderNotice } from './order-notice'
-import { SectionTitle } from './section-title'
+import { Panel } from './panel'
 
 type FeedbackDialogProps = {
   open: boolean
@@ -42,14 +45,7 @@ export const FeedbackDialog = ({
   }
 
   const { result } = attempt
-  // A critical element with a hint was said, but wrongly ("climbing to 2000 feet"): show why.
-  const missedCritical = result.elements.filter((e) => e.critical && e.status === 'missed' && !e.hint)
-  const wrongCritical = result.elements.filter((e) => e.critical && e.status === 'missed' && e.hint)
-  const showOrder = result.order !== undefined && !result.order.correct
-  // The backend tip names the most important problem first. A critical miss or an order
-  // problem already has its own notice above, so the tip would only repeat it.
-  const tipRepeatsNotice =
-    missedCritical.length + wrongCritical.length > 0 || (showOrder && result.tip === result.order?.message)
+  const { missedCritical, wrongCritical, order, showTip } = getFeedbackNotices(result)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -70,63 +66,54 @@ export const FeedbackDialog = ({
         </div>
 
         {missedCritical.length > 0 && (
-          <div className="flex gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-            <TriangleAlert className="size-5 shrink-0" />
+          <Callout tone="destructive" icon={TriangleAlert}>
             <p>
               You missed {missedCritical.map((e) => `“${e.label}”`).join(', ')}. Safety-critical items must always be
               read back.
             </p>
-          </div>
+          </Callout>
         )}
 
         {wrongCritical.map((element) => (
-          <div
-            key={element.id}
-            className="flex gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
-          >
-            <TriangleAlert className="size-5 shrink-0" />
+          <Callout key={element.id} tone="destructive" icon={TriangleAlert}>
             <p>
               “{element.label}”: {element.hint}
             </p>
-          </div>
+          </Callout>
         ))}
 
-        {showOrder && result.order && <OrderNotice order={result.order} />}
+        {order && <OrderNotice order={order} />}
 
         {correction && (
-          <div className="flex gap-3 rounded-lg border border-brand/40 bg-brand/10 p-3 text-sm">
-            <RadioTower className="size-5 shrink-0 text-brand" />
+          <Callout tone="brand" icon={RadioTower}>
             <div className="space-y-0.5">
               <p className="font-semibold">ATC corrects you</p>
               <p className="italic">“{correction}”</p>
               <p className="text-muted-foreground">Read back the corrected instruction again.</p>
             </div>
-          </div>
+          </Callout>
         )}
 
         <section className="space-y-2">
           <SectionTitle>Expected response</SectionTitle>
-          <div className="rounded-lg bg-card p-4 ring-1 ring-foreground/10">
+          <Panel>
             <KeywordFeedback
               step={step}
               expected={result.expectedPilotResponse}
               elements={result.elements}
               outOfOrder={result.order?.outOfOrder ?? []}
             />
-          </div>
+          </Panel>
         </section>
 
         <section className="space-y-1">
           <SectionTitle>You said</SectionTitle>
           <p className="italic">“{result.transcript}”</p>
-          {!tipRepeatsNotice && <p className="text-sm text-brand">{result.tip}</p>}
+          {showTip && <p className="text-sm text-brand">{result.tip}</p>}
         </section>
 
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={() => speak(result.expectedPilotResponse)}>
-            <Volume2 />
-            Hear expected response
-          </Button>
+          <HearExpectedButton text={result.expectedPilotResponse} />
           <Button variant="outline" size="sm" onClick={() => onPlayRecording(attempt.recordingUrl)}>
             <Volume2 />
             Hear your response

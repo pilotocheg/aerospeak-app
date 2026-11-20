@@ -22,7 +22,9 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node
 import { dirname, join } from 'node:path'
 
 import { toSpoken } from '../src/shared/lib/phraseology/to-spoken.ts'
-import { PUBLIC_DIR, ROOT, fetchContent } from './fetch-content.ts'
+import { PUBLIC_DIR, ROOT } from './config.ts'
+import { fetchContent } from './fetch-content.ts'
+import { splitTransmission } from './split-transmission.ts'
 import { stepTransmissions } from './step-transmissions.ts'
 
 const VOICE = 'Daniel'
@@ -43,32 +45,6 @@ const RADIO_FILTER =
   'highpass=f=300,lowpass=f=3400,acompressor=threshold=-20dB:ratio=4:makeup=6,adelay=200,apad=pad_dur=0.25[v];' +
   'anoisesrc=color=white:amplitude=0.05:sample_rate=22050,highpass=f=400,lowpass=f=3000,tremolo=f=6:d=0.25[n];' +
   '[v][n]amix=inputs=2:duration=first:normalize=0,asoftclip=type=tanh,afade=t=in:d=0.01[out]'
-
-const CALLSIGN = /^([A-Z0-9]{1,2}-[A-Z]{3,4}),\s*/
-const WIND = /,\s*(wind \d{3} degrees \d+ knots)\.?$/
-const CORRECTION = /^(negative, I say again),\s*/
-const STATION = /^([^,]+ (?:Delivery|Ground|Tower|Approach|Radio|Information|Info)),\s*/
-
-/**
- * "SP-TFA, Poznań Tower, cleared to land, wind 270 degrees 10 knots." -> four clips: callsign,
- * station, body, wind. A correction ("SP-TFA, negative, I say again, cleared to land, …") has
- * "negative, I say again" instead of the station, so its body is the same clip as in the
- * clearance.
- */
-export const splitTransmission = (atcText: string) => {
-  let body = atcText.trim()
-  /** Cuts the part the pattern matches out of the body and returns it. */
-  const take = (pattern: RegExp) => {
-    const part = pattern.exec(body)?.[1]
-    if (part) body = body.replace(pattern, '')
-    return part
-  }
-  const callsign = take(CALLSIGN)
-  const correction = take(CORRECTION)
-  const station = take(STATION)
-  const wind = take(WIND)
-  return [callsign, correction, station, body, wind].filter((part): part is string => Boolean(part))
-}
 
 let spokenClips = 0
 /** A clip spoken once by `say` and cached by its spoken text. */

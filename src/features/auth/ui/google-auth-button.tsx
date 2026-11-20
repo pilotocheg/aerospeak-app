@@ -1,20 +1,9 @@
 import { Button } from '@/shared/ui/button'
-import { toast } from 'sonner'
-import { useNavigate } from '@tanstack/react-router'
-import { useLoginWithGoogle } from '../model/actions'
+
+import { useGoogleLogin } from '../model/use-google-login'
 
 export const GoogleAuthButton = () => {
-  const loginWithGoogle = useLoginWithGoogle()
-  const navigate = useNavigate()
-
-  const handleGoogleLogin = async () => {
-    try {
-      await loginWithGoogle()
-      await navigate({ to: '/lessons', replace: true })
-    } catch {
-      toast.error('Failed to sign in with Google')
-    }
-  }
+  const handleGoogleLogin = useGoogleLogin()
 
   return (
     <Button variant="outline" type="button" className="w-full justify-center gap-2" onClick={handleGoogleLogin}>

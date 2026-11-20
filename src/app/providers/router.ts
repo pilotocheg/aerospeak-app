@@ -1,7 +1,6 @@
 import { createRouter } from '@tanstack/react-router'
 import type { QueryClient } from '@tanstack/react-query'
 
-import { useAuthStore } from '@/features/auth/model/auth-store'
 import { routeTree } from '@/routeTree.gen'
 
 export const createAppRouter = (queryClient: QueryClient) =>
@@ -9,7 +8,6 @@ export const createAppRouter = (queryClient: QueryClient) =>
     routeTree,
     context: {
       queryClient,
-      authStore: useAuthStore,
     },
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,

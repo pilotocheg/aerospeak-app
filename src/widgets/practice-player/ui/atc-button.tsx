@@ -11,6 +11,12 @@ type AtcButtonProps = {
   onToggle: () => void
 }
 
+const getStatusLabel = ({ hasAudio, isPlaying, currentTime, duration }: Omit<AtcButtonProps, 'onToggle'>) => {
+  if (!hasAudio) return 'You call'
+  if (isPlaying) return formatTime(currentTime)
+  return duration ? formatTime(duration) : 'ATC'
+}
+
 export const AtcButton = ({ hasAudio, isPlaying, currentTime, duration, onToggle }: AtcButtonProps) => (
   <div className="flex flex-col items-center gap-1">
     <button
@@ -26,7 +32,7 @@ export const AtcButton = ({ hasAudio, isPlaying, currentTime, duration, onToggle
       {isPlaying ? <Square className="size-5" /> : <Volume2 className="size-6" />}
     </button>
     <span className="text-xs text-muted-foreground tabular-nums">
-      {!hasAudio ? 'You call' : isPlaying ? formatTime(currentTime) : duration ? formatTime(duration) : 'ATC'}
+      {getStatusLabel({ hasAudio, isPlaying, currentTime, duration })}
     </span>
   </div>
 )

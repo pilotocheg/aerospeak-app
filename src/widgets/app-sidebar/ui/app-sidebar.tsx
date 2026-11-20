@@ -1,36 +1,29 @@
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { cn } from 'cn'
 import { House, LogOut, Moon, Sun } from 'lucide-react'
-import { toast } from 'sonner'
 
-import { useLogout } from '@/features/auth/model/actions'
-import { useUser } from '@/features/auth/model/selectors'
+import { useLogoutToLogin, useUser } from '@/features/auth'
 import { sections } from '@/shared/content'
 import { useTheme, useToggleTheme } from '@/shared/lib/theme'
 import { Button } from '@/shared/ui/button'
 import { Logo } from '@/shared/ui/logo'
+import { SectionTitle } from '@/shared/ui/section-title'
 
 import { useCloseSidebar } from '../model/actions'
 import { useIsSidebarOpen } from '../model/selectors'
 import { SidebarSectionLink } from './sidebar-section-link'
 
 export const AppSidebar = () => {
-  const navigate = useNavigate()
   const isOpen = useIsSidebarOpen()
   const close = useCloseSidebar()
   const user = useUser()
-  const logout = useLogout()
+  const logoutToLogin = useLogoutToLogin()
   const theme = useTheme()
   const toggleTheme = useToggleTheme()
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     close()
-    try {
-      await logout()
-      await navigate({ to: '/login', replace: true })
-    } catch {
-      toast.error('Failed to log out. Please try again.')
-    }
+    void logoutToLogin()
   }
 
   return (
@@ -58,9 +51,9 @@ export const AppSidebar = () => {
             <House className="size-4" />
             Home
           </Link>
-          <p className="px-3 pt-5 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          <SectionTitle as="p" className="px-3 pt-5 pb-1">
             Training plan
-          </p>
+          </SectionTitle>
           {sections.map((section) => (
             <SidebarSectionLink key={section.id} section={section} onNavigate={close} />
           ))}

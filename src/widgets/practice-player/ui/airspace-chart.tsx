@@ -1,7 +1,10 @@
-import { getAirspaceChart, getAirspaceSpot } from '@/entities/aerodrome'
+import { getAirspaceChart, getAirspaceSpot, getChartUnit } from '@/entities/aerodrome'
 import type { AirspaceVisualDto } from '@/shared/api'
 
+import { getSpotCaption } from '../lib/get-spot-caption'
 import { AircraftMarker } from './aircraft-marker'
+import { ChartFallback } from './chart-fallback'
+import { ChartLegend } from './chart-legend'
 
 type AirspaceChartProps = {
   airport?: string
@@ -11,25 +14,25 @@ type AirspaceChartProps = {
 
 const SCALE_BAR_M = 5000
 
+/** Labels point away from the aerodrome: anchor them on the side facing the point. */
+const getLabelAnchor = (dx: number) => {
+  if (dx > 0.3) return 'start'
+  if (dx < -0.3) return 'end'
+  return 'middle'
+}
+
 /** Simplified north-up VFR operations chart with the aircraft over a VFR reporting point. */
 export const AirspaceChart = ({ airport, point, direction }: AirspaceChartProps) => {
   const chart = getAirspaceChart(airport)
   const caption = `${direction === 'inbound' ? 'Inbound' : 'Outbound'} · ${point}`
 
   if (!chart) {
-    return (
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1 bg-sky-950/40 text-center">
-        {airport && <p className="font-semibold">{airport}</p>}
-        <p className="text-sm text-muted-foreground">{caption}</p>
-      </div>
-    )
+    return <ChartFallback title={airport} caption={caption} />
   }
 
   const spot = getAirspaceSpot(chart, point, direction)
   const active = point.trim().toLowerCase()
-  const [minX, minY, width, height] = chart.viewBox.split(' ').map(Number)
-  // Sizes scale with the chart so labels stay readable on both aerodromes.
-  const unit = Math.max(width, height) / 100
+  const { minX, minY, height, unit } = getChartUnit(chart.viewBox)
   const scaleBar = { x: minX + unit * 3, y: minY + height - unit * 4 }
 
   return (
@@ -90,7 +93,7 @@ export const AirspaceChart = ({ airport, point, direction }: AirspaceChartProps)
                 <text
                   x={dx * offset}
                   y={dy * offset}
-                  textAnchor={dx > 0.3 ? 'start' : dx < -0.3 ? 'end' : 'middle'}
+                  textAnchor={getLabelAnchor(dx)}
                   className={isActive ? 'fill-yellow-300 stroke-slate-950' : 'fill-rose-300 stroke-slate-950'}
                   strokeWidth={unit * 0.4}
                   paintOrder="stroke"
@@ -119,13 +122,7 @@ export const AirspaceChart = ({ airport, point, direction }: AirspaceChartProps)
         </g>
       </svg>
 
-      <div className="pointer-events-none absolute top-2 left-2 rounded bg-background/70 px-2 py-1 text-xs backdrop-blur">
-        <p className="font-semibold">
-          {chart.icao} {chart.name}
-        </p>
-        <p className="text-muted-foreground">{spot ? caption : `${caption} (off chart)`}</p>
-      </div>
-      <p className="pointer-events-none absolute top-2 right-3 text-xs font-bold text-slate-300">N ↑</p>
+      <ChartLegend title={`${chart.icao} ${chart.name}`} caption={getSpotCaption(caption, Boolean(spot))} />
       <p className="pointer-events-none absolute right-2 bottom-1 text-[10px] text-slate-400">
         Simplified from AIP Poland (PANSA), not for navigation
       </p>

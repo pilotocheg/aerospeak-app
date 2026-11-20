@@ -3,10 +3,13 @@ import { useQuery } from '@tanstack/react-query'
 import { useAllProgress } from '@/entities/progress'
 import { packsQueryOptions } from '@/entities/scenario'
 import { getSection } from '@/entities/section'
+import { roundedAverage } from '@/shared/lib/rounded-average'
 
 export type SectionProgress = {
   total: number
   practiced: number
+  /** practiced / total in percent (0 for an empty section). */
+  completionPercent: number
   /** Mean best score over practiced scenarios, null before the first one. */
   averageBest: number | null
   /** True until packs are loaded (from the network or the persisted cache). */
@@ -21,7 +24,8 @@ const summarize = (
   return {
     total: scenarioIds.length,
     practiced: best.length,
-    averageBest: best.length ? Math.round(best.reduce((sum, score) => sum + score, 0) / best.length) : null,
+    completionPercent: scenarioIds.length ? (best.length / scenarioIds.length) * 100 : 0,
+    averageBest: roundedAverage(best),
   }
 }
 
