@@ -93,26 +93,34 @@ Imports go only downward: `pages → widgets → features → entities → share
   before returning it, destructure instead of chained property access (`a.b.c`), and group
   related files of a segment in subfolders (`model/form/`, `lib/math/`). Details in the
   `code-quality` skill, section 5.
+- Memoization: the React Compiler (`reactCompilerPreset` in `vite.config.ts`) already memoizes
+  components, JSX and derived values. Do not add `memo`, `useMemo` or `useCallback` by default;
+  add one only where the React Profiler shows a re-render the compiler does not prevent, with a
+  comment saying why.
 - Phraseology: ICAO pronunciation in spoken text (niner, tree, fife, decimal); written
   values in digits (`runway 29`, `QNH 1013`, `118.505`).
 
 ## Skills (use them by default)
 
-Project skills live in `.claude/skills/`; the others come from the `audit-suite` and
-`lattice` plugins (each team member enables them on their own account).
+All skills live in `.claude/skills/`, so every Claude Code session in this repository has them
+without installing plugins. Besides the project skills (`code-quality`, `api-sync`, `atc-audio`),
+the folder holds MIT-licensed skills copied from the `lattice` and `audit-suite` plugins (versions,
+sources and licenses in `.claude/skills/THIRD_PARTY_SKILLS.md`). `simplify` and `code-review` are
+built into Claude Code.
 
 | When | Skills |
 | --- | --- |
-| Writing or changing code in `src/` | `code-quality` (project), lattice `clean-code`, audit-suite `vercel-react-best-practices` |
-| Refactoring existing code | lattice `refactor-safely`, then `code-quality` |
-| Designing a new feature or slice | lattice `architecture` (FSD placement, data flow) |
-| Writing tests | lattice `test-quality` |
+| Writing or changing code in `src/` | `code-quality`, `clean-code`, `vercel-react-best-practices` |
+| Refactoring existing code | `refactor-safely`, then `code-quality` |
+| Designing a new feature or slice | `architecture` (FSD placement, data flow) |
+| Writing tests | `test-quality` |
 | Before committing | `simplify` on the diff |
 | Opening a PR | `code-review` on the PR, fix what it finds before asking for review |
-| App-wide audit | audit-suite `audit-as-frontend-eng`, `audit-as-structural-eng`, `audit-as-a11y-eng` |
-| Scenario or API changes | `atc-audio`, `api-sync` (project) |
+| App-wide audit | `audit-as-frontend-eng`, `audit-as-structural-eng`, `audit-as-a11y-eng` |
+| Scenario or API changes | `atc-audio`, `api-sync` |
 
-If a plugin skill is not available in the session, follow `code-quality` and say so.
+The audit-suite lenses were written for another repository layout: apply their checklists to
+this one.
 
 ## Commands
 

@@ -69,6 +69,10 @@ before calling the work done.
   step navigation, ATC playback) and compose them.
 - Group related files of a segment in subfolders by purpose: `shared/lib/math/`,
   `features/auth/model/form/`, `features/auth/model/requests/`, `practice-player/ui/charts/`.
+- Memoize only where it is really needed. The React Compiler already caches components, JSX
+  and derived values (a heavy chart re-renders only when its props change). Add `memo`,
+  `useMemo` or `useCallback` only when the React Profiler shows a re-render the compiler does
+  not prevent, and say why in a comment.
 
 ## Before calling it done
 
