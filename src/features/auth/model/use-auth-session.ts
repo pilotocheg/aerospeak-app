@@ -4,21 +4,20 @@ import { setProgressOwner } from '@/entities/progress'
 
 import { observeAuthState } from '../api'
 
-import { useAuthStore } from './auth-store'
+import { useSetUser } from './actions'
 
 /** Mirrors the Firebase auth state into the auth store for the app's lifetime. */
 export const useAuthSession = () => {
+  const setUser = useSetUser()
+
   useEffect(
     () =>
       observeAuthState((user) => {
-        const { setAuthenticatedUser, clearAuthenticatedUser } = useAuthStore.getState()
         if (user) {
           setProgressOwner(user.id)
-          setAuthenticatedUser(user)
-          return
         }
-        clearAuthenticatedUser()
+        setUser(user)
       }),
-    [],
+    [setUser],
   )
 }
