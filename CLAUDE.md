@@ -87,6 +87,8 @@ Imports go only downward: `pages → widgets → features → entities → share
 - API types are generated from the backend schema (`npm run api:types`), never
   written by hand.
 - Forms: React Hook Form + zod.
+- Imports have no file extension (`./config`, not `./config.ts`) unless the import does not
+  resolve without it.
 - Phraseology: ICAO pronunciation in spoken text (niner, tree, fife, decimal); written
   values in digits (`runway 29`, `QNH 1013`, `118.505`).
 

@@ -8,10 +8,10 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { sections } from '../src/shared/content/index.ts'
-import { API_URL, PUBLIC_DIR } from './config.ts'
-import { fetchContent } from './fetch-content.ts'
-import { stepTransmissions } from './step-transmissions.ts'
+import { sections } from '../src/shared/content/index'
+import { API_URL, PUBLIC_DIR } from './config'
+import { fetchContent } from './fetch-content'
+import { stepTransmissions } from './step-transmissions'
 
 const errors: string[] = []
 const warnings: string[] = []

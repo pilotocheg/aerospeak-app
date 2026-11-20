@@ -1,7 +1,7 @@
 /** Reads packs and scenarios from the backend (see `config.ts` for the URL). */
-import type { PracticePackDto, ScenarioDto } from '../src/shared/api/types.ts'
+import type { PracticePackDto, ScenarioDto } from '../src/shared/api/types'
 
-import { API_URL } from './config.ts'
+import { API_URL } from './config'
 
 const fetchJson = async <T>(path: string): Promise<T> => {
   // Render's free plan sleeps: the first request can take up to a minute.

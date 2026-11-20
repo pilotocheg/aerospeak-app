@@ -1,4 +1,4 @@
-import type { ScenarioStepDto } from '../src/shared/api/types.ts'
+import type { ScenarioStepDto } from '../src/shared/api/types'
 
 /**
  * ATC transmissions of a step with their audio paths: the step's call and, on readback steps,
