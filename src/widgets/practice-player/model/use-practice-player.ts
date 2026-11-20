@@ -38,6 +38,7 @@ export const usePracticePlayer = (scenario: ScenarioDto) => {
   const finishRun = () => {
     player.stop()
     dialogs.closeDialog()
+    transcript.resetTextMode()
   }
 
   const navigation = useStepNavigation({

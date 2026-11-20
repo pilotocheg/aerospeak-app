@@ -10,7 +10,7 @@ type UseStepNavigationOptions = {
   isSubmitting: boolean
   /** Called after moving to another step: clears the step's dialog and shown text. */
   onEnterStep: () => void
-  /** Called right before the run is completed: silences ATC and closes the dialog. */
+  /** Called right before the run is completed: silences ATC, closes the dialog, resets the text. */
   onFinish: () => void
   onRestart: () => void
   /** Ends the run and stores its score (`useCompletePractice`). */
