@@ -1,57 +1,144 @@
-import { useSectionProgress } from '@/features/section-progress'
+import { useQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+
+import { useUser } from '@/features/auth/model/selectors'
 import { sections } from '@/shared/content'
-import { ScoreRing } from '@/shared/ui/score-ring'
+
+import { Button } from '@/shared/ui/button'
 import { SectionTitle } from '@/shared/ui/section-title'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { SidebarToggle } from '@/widgets/app-sidebar'
 import { SectionCard } from '@/widgets/section-cards'
 
-import { StatusMetric } from './ui/status-metric'
-
-const ringPlaceholder = <Skeleton className="size-21 rounded-full" />
+import { useUserProgress } from '@/entities/progress'
+import { packsQueryOptions } from '@/entities/scenario'
+import { getUserProfileQueryOptions } from '@/entities/user'
+import { findSectionByPackId } from '@/entities/section'
 
 export const LessonsHomePage = () => {
-  const { total, practiced, completionPercent, averageBest, isPending } = useSectionProgress()
+  const user = useUser()
+  const progressQuery = useUserProgress()
+  const packsQuery = useQuery(packsQueryOptions())
+  const { data: packs = [] } = packsQuery
+
+  const { data: profile } = useQuery({
+    ...getUserProfileQueryOptions(user?.id ?? ''),
+    enabled: Boolean(user),
+  })
+
+  const progress = progressQuery.data
+  const totals = progress?.totals
+  const practiced = totals?.practicedScenarios ?? 0
+  const total = totals?.totalScenarios ?? 0
+  const practicedScenarios = new Set(progress?.scenarios.map((s) => s.scenarioId) ?? [])
+
+  /** Find the first unpracticed scenario across packs ordered by `order`. */
+  const nextScenario = [...packs]
+    .sort((a, b) => a.order - b.order)
+    .flatMap((pack) => pack.scenarios)
+    .find((scenario) => !practicedScenarios.has(scenario.id))
+
+  const section = findSectionByPackId(nextScenario?.packId ?? '')
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
       <div className="flex items-center gap-2 px-2 pt-2 lg:hidden">
         <SidebarToggle />
       </div>
-      <div className="mx-auto max-w-6xl space-y-8 px-4 py-6 sm:px-6">
-        <section className="text-center">
-          <h1 className="text-lg font-semibold">Training status</h1>
-          <div className="mt-4 flex items-center justify-center gap-10">
-            <StatusMetric label="Progress" isPending={isPending} placeholder={ringPlaceholder}>
-              <ScoreRing value={Math.round(completionPercent)} size={84} />
-            </StatusMetric>
-            <StatusMetric
-              label="Scenarios practiced"
-              isPending={isPending}
-              placeholder={<Skeleton className="h-8 w-14" />}
-              className="gap-1"
-            >
-              <span className="text-2xl font-bold tabular-nums">
-                {practiced}/{total}
-              </span>
-            </StatusMetric>
-            <StatusMetric label="Proficiency" isPending={isPending} placeholder={ringPlaceholder}>
-              <ScoreRing value={averageBest} size={84} />
-            </StatusMetric>
-          </div>
-        </section>
 
-        <section className="space-y-3">
-          <SectionTitle as="h2" className="text-center">
-            Training plan
-          </SectionTitle>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {sections.map((section) => (
-              <SectionCard key={section.id} section={section} />
-            ))}
+      {progressQuery.isPending || packsQuery.isPending ? (
+        <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
+          {/* Skeleton: greeting card */}
+          <div className="rounded-lg border border-border bg-card p-6">
+            <section className="space-y-3">
+              <Skeleton className="h-6 w-1/3" />
+              <Skeleton className="h-4 w-3/4" />
+            </section>
           </div>
-        </section>
-      </div>
+
+          {/* Skeleton: continue course card */}
+          <div className="rounded-lg border border-border bg-card p-6">
+            <section>
+              <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                <div className="flex-1 min-w-0">
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-6 w-1/2" />
+                  <Skeleton className="h-3 w-2/3" />
+                </div>
+                <Skeleton className="h-10 w-24" />
+              </div>
+            </section>
+          </div>
+
+          {/* Skeleton: training plan */}
+          <section className="space-y-3">
+            <SectionTitle as="h2" className="text-center">
+              Training plan
+            </SectionTitle>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Skeleton key={i} className="h-48 rounded-xl" />
+              ))}
+            </div>
+          </section>
+        </div>
+      ) : (
+        <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
+          {/* Greeting + current status */}
+          <div className="rounded-lg border border-border bg-card p-6">
+            <section className="space-y-3">
+              <h1 className="text-lg font-semibold">{profile ? `Hi, ${profile.name}` : 'Welcome'}</h1>
+              <p className="text-sm text-muted-foreground">
+                {practiced === total && total > 0
+                  ? 'You have completed all scenarios. Great job!'
+                  : practiced > 0
+                    ? `You have practiced ${practiced} of ${total} scenarios.`
+                    : 'Start with the first scenario to practice radio communication.'}
+              </p>
+            </section>
+          </div>
+
+          {/* Continue course recommendation */}
+          {nextScenario && section && (
+            <div className="rounded-lg border border-border bg-card p-6">
+              <section>
+                <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-muted-foreground uppercase tracking-wider truncate">
+                      Continue course - Next
+                    </p>
+                    <p className="text-lg font-semibold truncate">{nextScenario.title}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2">{nextScenario.objective}</p>
+                  </div>
+                  <Button
+                    render={
+                      <Link
+                        to="/lessons/$sectionId"
+                        params={{ sectionId: section.id }}
+                        search={{ scenario: String(nextScenario.id) }}
+                        className="w-full md:w-auto"
+                      />
+                    }
+                  >
+                    Start
+                  </Button>
+                </div>
+              </section>
+            </div>
+          )}
+
+          <section className="space-y-3">
+            <SectionTitle as="h2" className="text-center">
+              Training plan
+            </SectionTitle>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {sections.map((section) => (
+                <SectionCard key={section.id} section={section} />
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   )
 }

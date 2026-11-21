@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { cn } from 'cn'
-import { House, LogOut, Moon, Sun } from 'lucide-react'
+import { House, LogOut, Moon, Sun, ChartBar } from 'lucide-react'
 
 import { useLogoutToLogin, useUser } from '@/features/auth'
 import { sections } from '@/shared/content'
@@ -62,6 +62,17 @@ export const AppSidebar = () => {
           {sections.map((section) => (
             <SidebarSectionLink key={section.id} section={section} onNavigate={close} />
           ))}
+          <p className="px-3 pt-5 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Progress</p>
+          <Link
+            to="/statistic"
+            onClick={close}
+            activeOptions={{ exact: true }}
+            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition hover:bg-muted/60"
+            activeProps={{ className: 'bg-primary text-primary-foreground hover:bg-primary' }}
+          >
+            <ChartBar className="size-4" />
+            <span>Statistic</span>
+          </Link>
         </nav>
 
         <div className="flex items-center gap-2 border-t p-3">
