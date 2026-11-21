@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 
 import { useUserDailyProgress, useUserProgress } from '@/entities/progress'
 import { DailyProgressTable, StatCard, StatisticError, StatisticSkeleton } from '@/widgets/statistic'
+import { SidebarToggle } from '@/widgets/app-sidebar'
 
 const EMPTY_TOTALS = {
   practicedScenarios: 0,
@@ -59,6 +60,9 @@ export const StatisticPage = () => {
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
+      <div className="flex items-center gap-2 px-2 pt-2 lg:hidden">
+        <SidebarToggle />
+      </div>
       <div className="mx-auto max-w-6xl space-y-8">
         <section className="space-y-2">
           <h2 className="text-lg font-semibold">Your statistics</h2>

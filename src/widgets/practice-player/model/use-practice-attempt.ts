@@ -3,6 +3,7 @@ import { toast } from 'sonner'
 
 import { ProfileRequiredError, SttFailedError, submitAttempt } from '@/entities/attempt'
 import { getAtcTransmission } from '@/entities/scenario'
+import { progressKeys } from '@/entities/progress'
 import { getUserProfileQueryOptions, meKeys } from '@/entities/user'
 import { useUser } from '@/features/auth/model/selectors'
 import { useAddAttempt } from '@/features/practice-session'
@@ -53,6 +54,7 @@ export const usePracticeAttempt = ({ scenario, step, player, onScored }: UsePrac
         onSuccess: (result) => {
           addAttempt(step.id, { result, recordingUrl: recording.url })
           onScored()
+          void queryClient.invalidateQueries({ queryKey: progressKeys.all })
           const atc = getAtcTransmission(step, result)
           if (atc.isCorrection && atc.audio) {
             void player.play(atc.audio)

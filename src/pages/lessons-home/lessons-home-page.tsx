@@ -1,38 +1,43 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 
-import { useSectionProgress } from '@/features/section-progress'
 import { useUser } from '@/features/auth/model/selectors'
 import { sections } from '@/shared/content'
 import { Button } from '@/shared/ui/button'
 import { SidebarToggle } from '@/widgets/app-sidebar'
 import { SectionCard } from '@/widgets/section-cards'
 
-import { useAllProgress } from '@/entities/progress'
+import { useUserProgress } from '@/entities/progress'
 import { packsQueryOptions } from '@/entities/scenario'
 import { getUserProfileQueryOptions } from '@/entities/user'
 import { findSectionByPackId } from '@/entities/section'
 
 export const LessonsHomePage = () => {
   const user = useUser()
-  const { total, practiced, isPending } = useSectionProgress()
-  const allProgress = useAllProgress()
-  const { data: packs = [] } = useQuery(packsQueryOptions())
+  const progressQuery = useUserProgress()
+  const packsQuery = useQuery(packsQueryOptions())
+  const { data: packs = [] } = packsQuery
 
   const { data: profile } = useQuery({
     ...getUserProfileQueryOptions(user?.id ?? ''),
     enabled: Boolean(user),
   })
 
-  if (isPending) {
+  if (progressQuery.isPending || packsQuery.isPending) {
     return <div>Loading…</div>
   }
+
+  const progress = progressQuery.data
+  const totals = progress?.totals
+  const practiced = totals?.practicedScenarios ?? 0
+  const total = totals?.totalScenarios ?? 0
+  const practicedScenarios = new Set(progress?.scenarios.map((s) => s.scenarioId) ?? [])
 
   /** Find the first unpracticed scenario across packs ordered by `order`. */
   const nextScenario = [...packs]
     .sort((a, b) => a.order - b.order)
     .flatMap((pack) => pack.scenarios)
-    .find((scenario) => !allProgress[scenario.id])
+    .find((scenario) => !practicedScenarios.has(scenario.id))
 
   const section = findSectionByPackId(nextScenario?.packId ?? '')
 
@@ -66,15 +71,17 @@ export const LessonsHomePage = () => {
                   <p className="text-lg font-semibold truncate">{nextScenario.title}</p>
                   <p className="text-xs text-muted-foreground">{nextScenario.objective}</p>
                 </div>
-                <Button>
-                  <Link
-                    to="/lessons/$sectionId"
-                    params={{ sectionId: section.id }}
-                    search={{ scenario: String(nextScenario.id) }}
-                    className="w-full"
-                  >
-                    Start
-                  </Link>
+                <Button
+                  render={
+                    <Link
+                      to="/lessons/$sectionId"
+                      params={{ sectionId: section.id }}
+                      search={{ scenario: String(nextScenario.id) }}
+                      className="w-full"
+                    />
+                  }
+                >
+                  Start
                 </Button>
               </div>
             </section>

@@ -68,7 +68,9 @@ export const AppSidebar = () => {
           <Link
             to="/statistic"
             onClick={close}
+            activeOptions={{ exact: true }}
             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition hover:bg-muted/60"
+            activeProps={{ className: 'bg-primary text-primary-foreground hover:bg-primary' }}
           >
             <ChartBar className="size-4" />
             <span>Statistic</span>
