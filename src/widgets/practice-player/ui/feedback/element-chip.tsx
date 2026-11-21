@@ -4,7 +4,7 @@ import { ArrowDownUp, TriangleAlert } from 'lucide-react'
 import { isMissedCritical } from '@/entities/attempt'
 import type { ElementResultDto } from '@/shared/api'
 
-import { ELEMENT_STATUS_LABEL, ELEMENT_TEXT_CLASS } from '../../lib/feedback/element-styles'
+import { ELEMENT_STATUS_LABEL, ELEMENT_STATUS_TEXT_CLASS, ELEMENT_TEXT_CLASS } from '../../lib/feedback/element-styles'
 
 type ElementChipProps = {
   element: ElementResultDto
@@ -30,7 +30,7 @@ export const ElementChip = ({ element, text, isSelected, isOutOfOrder, onSelect 
       {isMissedCritical(element) && <TriangleAlert className="ml-0.5 inline size-3.5" aria-hidden />}
       {isOutOfOrder && (
         <>
-          <ArrowDownUp className={cn('ml-0.5 inline size-3.5', ELEMENT_TEXT_CLASS.partial)} />
+          <ArrowDownUp className={cn('ml-0.5 inline size-3.5', ELEMENT_STATUS_TEXT_CLASS.partial)} />
           <span className="sr-only"> (said in the wrong place)</span>
         </>
       )}
