@@ -25,5 +25,12 @@ execSync(`npx -y openapi-typescript@7 ${API_URL}/api-json -o src/shared/api/sche
 })
 
 const schema = readFileSync(SCHEMA_PATH, 'utf8')
+const binaryFieldCount = schema.match(/Format: binary/g)?.length ?? 0
+const patchedFieldCount = schema.match(BINARY_FIELD)?.length ?? 0
+if (patchedFieldCount !== binaryFieldCount) {
+  throw new Error(
+    `Found ${binaryFieldCount} binary fields but can type only ${patchedFieldCount} as Blob: update BINARY_FIELD`,
+  )
+}
 const schemaWithBlobs = schema.replace(BINARY_FIELD, '$1: Blob;')
 writeFileSync(SCHEMA_PATH, schemaWithBlobs)
