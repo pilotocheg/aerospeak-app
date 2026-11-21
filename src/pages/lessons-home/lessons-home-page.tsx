@@ -104,9 +104,11 @@ export const LessonsHomePage = () => {
               <section>
                 <div className="flex flex-col gap-3 md:flex-row md:items-center">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-muted-foreground uppercase tracking-wider">Continue course - Next</p>
+                    <p className="text-sm text-muted-foreground uppercase tracking-wider truncate">
+                      Continue course - Next
+                    </p>
                     <p className="text-lg font-semibold truncate">{nextScenario.title}</p>
-                    <p className="text-xs text-muted-foreground">{nextScenario.objective}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2">{nextScenario.objective}</p>
                   </div>
                   <Button
                     render={
@@ -114,7 +116,7 @@ export const LessonsHomePage = () => {
                         to="/lessons/$sectionId"
                         params={{ sectionId: section.id }}
                         search={{ scenario: String(nextScenario.id) }}
-                        className="w-full"
+                        className="w-full md:w-auto"
                       />
                     }
                   >
