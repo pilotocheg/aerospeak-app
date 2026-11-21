@@ -312,7 +312,7 @@ export interface components {
              * Format: binary
              * @description Recorded pilot transmission
              */
-            audio: string;
+            audio: Blob;
             scenarioId: string;
             stepId: string;
             /**

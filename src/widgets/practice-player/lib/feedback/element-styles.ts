@@ -1,16 +1,16 @@
 import type { ElementResultDto, WordResultDto } from '@/shared/api'
 
-export const ELEMENT_TEXT_CLASS: Record<ElementResultDto['status'], string> = {
+/** Status colour of an element, in both themes. */
+export const ELEMENT_STATUS_TEXT_CLASS: Record<ElementResultDto['status'], string> = {
   matched: 'text-green-600 dark:text-green-500',
   partial: 'text-amber-600 dark:text-amber-400',
-  missed: 'text-red-600 dark:text-red-500 underline decoration-2 underline-offset-4',
+  missed: 'text-red-600 dark:text-red-500',
 }
 
-/** Status colour of the element details, without the underline of the response text. */
-export const ELEMENT_STATUS_TEXT_CLASS: Record<ElementResultDto['status'], string> = {
-  matched: 'text-green-600',
-  partial: 'text-amber-600',
-  missed: 'text-red-600',
+/** Elements in the expected response: the status colour, and missed ones underlined. */
+export const ELEMENT_TEXT_CLASS: Record<ElementResultDto['status'], string> = {
+  ...ELEMENT_STATUS_TEXT_CLASS,
+  missed: `${ELEMENT_STATUS_TEXT_CLASS.missed} underline decoration-2 underline-offset-4`,
 }
 
 export const ELEMENT_DOT_CLASS: Record<ElementResultDto['status'], string> = {
