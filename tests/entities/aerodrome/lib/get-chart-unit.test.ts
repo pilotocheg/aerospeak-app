@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getChartUnit } from './get-chart-unit'
+import { getChartUnit } from '@/entities/aerodrome/lib/get-chart-unit'
 
 describe('getChartUnit', () => {
   it("is 1% of the chart's larger side", () => {

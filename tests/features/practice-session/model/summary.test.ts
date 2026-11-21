@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildAttemptResult, buildElementResult, buildScenario, buildScenarioStep } from '@/shared/testing'
+import { buildAttemptResult, buildElementResult, buildScenario, buildScenarioStep } from '@tests/builders'
 
-import type { StepAttempt } from './practice-store'
-import { buildSummary } from './summary'
+import type { StepAttempt } from '@/features/practice-session/model/practice-store'
+import { buildSummary } from '@/features/practice-session/model/summary'
 
 const STEP_A = buildScenarioStep({ id: 'a' })
 const STEP_B = buildScenarioStep({ id: 'b' })

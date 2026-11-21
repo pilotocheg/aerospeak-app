@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { toSpoken } from './to-spoken'
+import { toSpoken } from '@/shared/lib/phraseology/to-spoken'
 
 // ICAO Doc 9432 2.4, the same rules the backend scores against.
 describe('toSpoken', () => {

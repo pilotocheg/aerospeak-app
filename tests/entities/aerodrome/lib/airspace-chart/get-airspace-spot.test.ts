@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import type { AirspaceChartData } from '../../model/types'
-import { getAirspaceSpot } from './get-airspace-spot'
+import type { AirspaceChartData } from '@/entities/aerodrome/model/types'
+import { getAirspaceSpot } from '@/entities/aerodrome/lib/airspace-chart/get-airspace-spot'
 
 // The ARP is at 0 0 and y grows to the south.
 const NORTH_POINT = { name: 'November', x: 0, y: -5000 }

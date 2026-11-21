@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { average } from './average'
+import { average } from '@/shared/lib/math/average'
 
 describe('average', () => {
   it('returns the arithmetic mean', () => {

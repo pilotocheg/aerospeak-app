@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildElementResult } from '@/shared/testing'
+import { buildElementResult } from '@tests/builders'
 
-import { isMissedCritical } from './is-missed-critical'
+import { isMissedCritical } from '@/entities/attempt/lib/is-missed-critical'
 
 describe('isMissedCritical', () => {
   it('is true for a critical element that was missed', () => {

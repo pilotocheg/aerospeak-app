@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatDuration } from './format-duration'
+import { formatDuration } from '@/shared/lib/format/format-duration'
 
 describe('formatDuration', () => {
   it('shows durations under a minute in seconds', () => {

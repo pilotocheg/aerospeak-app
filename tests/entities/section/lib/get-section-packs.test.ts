@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import type { PracticePackDto } from '@/shared/api'
 
-import { getSectionPacks } from './get-section-packs'
+import { getSectionPacks } from '@/entities/section/lib/get-section-packs'
 
 // A fixed section instead of sections.json, so content edits do not break the test.
 const { SECTION_ID, FIRST_PACK_ID, SECOND_PACK_ID } = vi.hoisted(() => ({

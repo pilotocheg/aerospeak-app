@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { splitTransmission } from './split-transmission'
+import { splitTransmission } from '../../scripts/split-transmission'
 
 describe('splitTransmission', () => {
   it('splits a clearance into callsign, station, body and wind', () => {

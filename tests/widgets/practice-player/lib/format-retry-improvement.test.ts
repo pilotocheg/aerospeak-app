@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatRetryImprovement } from './format-retry-improvement'
+import { formatRetryImprovement } from '@/widgets/practice-player/lib/format-retry-improvement'
 
 describe('formatRetryImprovement', () => {
   it.each([

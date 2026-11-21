@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildElementResult, buildScenarioStep } from '@/shared/testing'
+import { buildElementResult, buildScenarioStep } from '@tests/builders'
 
-import { highlightElements } from './highlight-elements'
+import { highlightElements } from '@/widgets/practice-player/lib/feedback/highlight-elements'
 
 const EXPECTED = 'Runway 28, cleared to land, SP-TFA.'
 

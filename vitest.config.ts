@@ -14,10 +14,14 @@ export default mergeConfig(
       projects: [
         {
           extends: true,
+          resolve: {
+            alias: { '@tests': path.join(import.meta.dirname, 'tests') },
+          },
           test: {
             name: 'unit',
             environment: 'node',
-            include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts'],
+            include: ['tests/**/*.test.{ts,tsx}'],
+            setupFiles: ['tests/setup/mock-firebase.ts'],
           },
         },
         {

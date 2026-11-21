@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildScenarioStep } from '@/shared/testing'
+import { buildScenarioStep } from '@tests/builders'
 
-import { getAtcTransmission } from './get-atc-transmission'
+import { getAtcTransmission } from '@/entities/scenario/lib/get-atc-transmission'
 
 const CORRECTION = 'SP-TFA, negative, I say again, runway 28, cleared to land.'
 const CORRECTION_AUDIO = '/audio/atc/landing-correction.mp3'

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getVfrLabelPlacement } from './get-vfr-label-placement'
+import { getVfrLabelPlacement } from '@/widgets/practice-player/lib/get-vfr-label-placement'
 
 const OFFSET = 10
 

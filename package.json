@@ -15,14 +15,14 @@
     "api:types": "tsx scripts/generate-api-types.ts",
     "content:check": "tsx scripts/check-content.ts",
     "audio:atc": "tsx scripts/generate-atc-audio.ts",
-    "format": "prettier --write \"src/**/*.{ts,tsx,json}\" \"scripts/**/*.ts\" \".storybook/*.{ts,tsx}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\" \"scripts/**/*.ts\" \"tests/**/*.ts\" \".storybook/*.{ts,tsx}\"",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "test:stories": "vitest run --project storybook",
     "test:unit": "vitest run --project unit",
     "prepare": "husky",
     "typecheck": "tsc -b",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\" \"scripts/**/*.ts\" \".storybook/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\" \"scripts/**/*.ts\" \"tests/**/*.ts\" \".storybook/*.{ts,tsx}\"",
     "check": "npm run lint && npm run format:check && npm run typecheck && npm run test:unit && npm run test:stories"
   },
   "dependencies": {

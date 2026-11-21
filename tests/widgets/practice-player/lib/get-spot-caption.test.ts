@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getSpotCaption } from './get-spot-caption'
+import { getSpotCaption } from '@/widgets/practice-player/lib/get-spot-caption'
 
 describe('getSpotCaption', () => {
   it('is the caption when the spot is on the chart', () => {

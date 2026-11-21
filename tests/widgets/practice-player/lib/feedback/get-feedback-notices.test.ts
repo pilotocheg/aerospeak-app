@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
 import type { OrderFeedbackDto } from '@/shared/api'
-import { buildAttemptResult, buildElementResult } from '@/shared/testing'
+import { buildAttemptResult, buildElementResult } from '@tests/builders'
 
-import { getFeedbackNotices } from './get-feedback-notices'
+import { getFeedbackNotices } from '@/widgets/practice-player/lib/feedback/get-feedback-notices'
 
 const ORDER_MESSAGE = 'Read back the runway before the clearance.'
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { roundedAverage } from './rounded-average'
+import { roundedAverage } from '@/shared/lib/math/rounded-average'
 
 describe('roundedAverage', () => {
   it('rounds the mean to a whole number', () => {

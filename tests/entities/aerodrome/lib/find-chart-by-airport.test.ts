@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { findChartByAirport } from './find-chart-by-airport'
+import { findChartByAirport } from '@/entities/aerodrome/lib/find-chart-by-airport'
 
 const EPPO = { icao: 'EPPO' }
 const EPPI = { icao: 'EPPI' }
