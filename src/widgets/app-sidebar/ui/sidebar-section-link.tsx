@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { SectionIcon } from '@/entities/section'
 import { useSectionProgress } from '@/features/section-progress'
 import type { Section } from '@/shared/content'
+import { Progress } from '@/shared/ui/progress'
 
 type SidebarSectionLinkProps = {
   section: Section
@@ -35,9 +36,13 @@ export const SidebarSectionLink = ({ section, onNavigate }: SidebarSectionLinkPr
     >
       <SectionIcon name={section.icon} className="size-4" />
       <span className="flex-1 truncate">{section.title}</span>
-      <span className="h-1 w-10 overflow-hidden rounded-full bg-foreground/20">
-        <span className="block h-full bg-current" style={{ width: `${completionPercent}%` }} />
-      </span>
+      <Progress
+        value={completionPercent}
+        aria-label="Completed"
+        className="w-10"
+        trackClassName="h-1 bg-foreground/20"
+        indicatorClassName="bg-current"
+      />
     </Link>
   )
 }
