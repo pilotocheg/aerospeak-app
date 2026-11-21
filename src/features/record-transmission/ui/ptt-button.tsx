@@ -22,7 +22,6 @@ export const PttButton = ({ status, elapsedMs, disabled, busy, onToggle }: PttBu
       <button
         type="button"
         aria-label={isRecording ? 'Stop recording' : 'Start recording'}
-        aria-pressed={isRecording}
         disabled={disabled || isBusy}
         onClick={onToggle}
         onContextMenu={(event) => event.preventDefault()}
