@@ -9,7 +9,7 @@ const STEP_A = buildScenarioStep({ id: 'a' })
 const STEP_B = buildScenarioStep({ id: 'b' })
 const scenario = buildScenario({ steps: [STEP_A, STEP_B] })
 
-const attemptWithScore = (score: number, success = score >= 80): StepAttempt => ({
+const attemptWithScore = (score: number, success = false): StepAttempt => ({
   result: buildAttemptResult({ score, success }),
   recordingUrl: `blob:attempt-${score}`,
 })
@@ -39,13 +39,22 @@ describe('buildSummary', () => {
     expect(summary.scenarioScore).toBe(45)
   })
 
-  it('counts every recorded and every successful phrase', () => {
+  it('counts every recorded phrase', () => {
     const summary = buildSummary(scenario, {
       a: [attemptWithScore(60), attemptWithScore(90)],
       b: [attemptWithScore(85)],
     })
 
-    expect([summary.phrasesRecorded, summary.successfulPhrases]).toEqual([3, 2])
+    expect(summary.phrasesRecorded).toBe(3)
+  })
+
+  it('counts the phrases the backend marked successful', () => {
+    const summary = buildSummary(scenario, {
+      a: [attemptWithScore(60), attemptWithScore(90, true)],
+      b: [attemptWithScore(85, true)],
+    })
+
+    expect(summary.successfulPhrases).toBe(2)
   })
 
   it('reports the best single phrase', () => {
