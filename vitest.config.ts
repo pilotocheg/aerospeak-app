@@ -14,6 +14,18 @@ export default mergeConfig(
       projects: [
         {
           extends: true,
+          resolve: {
+            alias: { '@tests': path.join(import.meta.dirname, 'tests') },
+          },
+          test: {
+            name: 'unit',
+            environment: 'node',
+            include: ['tests/**/*.test.{ts,tsx}'],
+            setupFiles: ['tests/setup/mock-firebase.ts'],
+          },
+        },
+        {
+          extends: true,
           plugins: [storybookTest({ configDir: path.join(import.meta.dirname, '.storybook') })],
           test: {
             name: 'storybook',
