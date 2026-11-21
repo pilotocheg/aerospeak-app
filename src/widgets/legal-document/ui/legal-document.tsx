@@ -39,12 +39,12 @@ export const LegalDocument = ({ title, subtitle, lastUpdated, sections }: LegalD
         </CardHeader>
 
         <CardContent className="gap-6">
-          {sections.map((section, index) => (
-            <section key={section.heading} className="space-y-3">
+          {sections.map(({ heading, paragraphs }, index) => (
+            <section key={heading} className="space-y-3">
               {index > 0 ? <Separator /> : null}
-              <h2 className="pt-3 text-lg font-semibold">{section.heading}</h2>
+              <h2 className="pt-3 text-lg font-semibold">{heading}</h2>
               <div className="space-y-2 text-sm text-muted-foreground sm:text-base">
-                {section.paragraphs.map((paragraph) => (
+                {paragraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>

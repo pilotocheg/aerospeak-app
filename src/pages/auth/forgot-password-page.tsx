@@ -1,4 +1,4 @@
-import { ForgotPasswordForm } from '@/features/auth/ui/forgot-password-form'
+import { ForgotPasswordForm } from '@/features/auth'
 
 import { AuthPageContainer } from './auth-page-container'
 

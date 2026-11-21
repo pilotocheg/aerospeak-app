@@ -6,7 +6,7 @@
  */
 import { execSync } from 'node:child_process'
 
-import { API_URL, ROOT } from './fetch-content.ts'
+import { API_URL, ROOT } from './config'
 
 execSync(`npx -y openapi-typescript@7 ${API_URL}/api-json -o src/shared/api/schema.d.ts`, {
   cwd: ROOT,

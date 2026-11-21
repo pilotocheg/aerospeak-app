@@ -1,12 +1,17 @@
 import { useSectionProgress } from '@/features/section-progress'
 import { sections } from '@/shared/content'
 import { ScoreRing } from '@/shared/ui/score-ring'
+import { SectionTitle } from '@/shared/ui/section-title'
 import { Skeleton } from '@/shared/ui/skeleton'
 import { SidebarToggle } from '@/widgets/app-sidebar'
 import { SectionCard } from '@/widgets/section-cards'
 
+import { StatusMetric } from './ui/status-metric'
+
+const ringPlaceholder = <Skeleton className="size-21 rounded-full" />
+
 export const LessonsHomePage = () => {
-  const { total, practiced, averageBest, isPending } = useSectionProgress()
+  const { total, practiced, completionPercent, averageBest, isPending } = useSectionProgress()
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
@@ -17,35 +22,29 @@ export const LessonsHomePage = () => {
         <section className="text-center">
           <h1 className="text-lg font-semibold">Training status</h1>
           <div className="mt-4 flex items-center justify-center gap-10">
-            <div className="flex flex-col items-center gap-2">
-              {isPending ? (
-                <Skeleton className="size-21 rounded-full" />
-              ) : (
-                <ScoreRing value={total ? Math.round((practiced / total) * 100) : 0} size={84} />
-              )}
-              <span className="text-xs tracking-wide text-muted-foreground uppercase">Progress</span>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              {isPending ? (
-                <Skeleton className="h-8 w-14" />
-              ) : (
-                <span className="text-2xl font-bold tabular-nums">
-                  {practiced}/{total}
-                </span>
-              )}
-              <span className="text-xs tracking-wide text-muted-foreground uppercase">Scenarios practiced</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              {isPending ? <Skeleton className="size-21 rounded-full" /> : <ScoreRing value={averageBest} size={84} />}
-              <span className="text-xs tracking-wide text-muted-foreground uppercase">Proficiency</span>
-            </div>
+            <StatusMetric label="Progress" isPending={isPending} placeholder={ringPlaceholder}>
+              <ScoreRing value={Math.round(completionPercent)} size={84} />
+            </StatusMetric>
+            <StatusMetric
+              label="Scenarios practiced"
+              isPending={isPending}
+              placeholder={<Skeleton className="h-8 w-14" />}
+              className="gap-1"
+            >
+              <span className="text-2xl font-bold tabular-nums">
+                {practiced}/{total}
+              </span>
+            </StatusMetric>
+            <StatusMetric label="Proficiency" isPending={isPending} placeholder={ringPlaceholder}>
+              <ScoreRing value={averageBest} size={84} />
+            </StatusMetric>
           </div>
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-center text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          <SectionTitle as="h2" className="text-center">
             Training plan
-          </h2>
+          </SectionTitle>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {sections.map((section) => (
               <SectionCard key={section.id} section={section} />

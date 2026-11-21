@@ -1,7 +1,6 @@
 export {
   getUserProfileQueryOptions,
   meKeys,
-  signInWithGoogleIdToken,
   useDeleteUserAccountMutation,
   useGrantVoiceConsentMutation,
   useRegisterUserProfileMutation,

@@ -11,9 +11,3 @@ export const speak = (text: string) => {
   utterance.rate = 0.95
   window.speechSynthesis.speak(utterance)
 }
-
-export const stopSpeaking = () => {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel()
-  }
-}

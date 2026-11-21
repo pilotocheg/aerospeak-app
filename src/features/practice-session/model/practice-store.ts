@@ -33,7 +33,8 @@ export const usePracticeStore = create<PracticeState>()((set, get) => ({
   attemptsByStep: {},
   isFinished: false,
   start: (scenarioId) => {
-    revokeRecordings(get().attemptsByStep)
+    const { attemptsByStep } = get()
+    revokeRecordings(attemptsByStep)
     set((state) => ({ scenarioId, runId: state.runId + 1, stepIndex: 0, attemptsByStep: {}, isFinished: false }))
   },
   goToStep: (stepIndex) => set({ stepIndex }),

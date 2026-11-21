@@ -2,10 +2,13 @@ import { Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 
 import { useScenarioProgress } from '@/entities/progress'
-import { formatDuration, useRandomScenarioVariant } from '@/entities/scenario'
+import { useRandomScenarioVariant } from '@/entities/scenario'
+import { formatDuration } from '@/shared/lib/format'
+import { roundedAverage } from '@/shared/lib/math'
 import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { ScoreRing } from '@/shared/ui/score-ring'
+import { SectionTitle } from '@/shared/ui/section-title'
 
 import { LessonOverview } from './lesson-overview'
 import { ScenarioDetailsSkeleton } from './scenario-details-skeleton'
@@ -29,9 +32,10 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
     return <div className="flex flex-1 items-center justify-center text-muted-foreground">Scenario not found.</div>
   }
 
-  const average = progress?.scores.length
-    ? Math.round(progress.scores.reduce((sum, score) => sum + score, 0) / progress.scores.length)
-    : null
+  const { id, title, difficulty, estimatedDurationSec, objective, steps, briefing, phraseologyNote, variant } = scenario
+  const stepCount = steps.length
+  const transmissionsLabel = stepCount === 1 ? 'transmission' : 'transmissions'
+  const averageScore = roundedAverage(progress?.scores ?? [])
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -45,9 +49,9 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
           >
             <ArrowLeft />
           </Button>
-          <h1 className="flex-1 truncate text-lg font-semibold">{scenario.title}</h1>
+          <h1 className="flex-1 truncate text-lg font-semibold">{title}</h1>
           <Badge variant="outline" className="capitalize">
-            {scenario.difficulty}
+            {difficulty}
           </Badge>
         </div>
 
@@ -56,10 +60,10 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
             <ScoreRing value={null} label={String(progress?.attempts ?? 0)} size={56} />
           </Stat>
           <Stat label="Duration">
-            <span className="text-lg font-semibold">{formatDuration(scenario.estimatedDurationSec)}</span>
+            <span className="text-lg font-semibold">{formatDuration(estimatedDurationSec)}</span>
           </Stat>
           <Stat label="Avg score">
-            <ScoreRing value={average} size={56} />
+            <ScoreRing value={averageScore} size={56} />
           </Stat>
           <Stat label="Best score">
             <ScoreRing value={progress?.bestScore ?? null} size={56} />
@@ -69,18 +73,18 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
 
       <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-6 sm:px-6">
         <section className="space-y-1">
-          <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Objective</h2>
-          <p>{scenario.objective}</p>
+          <SectionTitle as="h2">Objective</SectionTitle>
+          <p>{objective}</p>
           <p className="text-sm text-muted-foreground">
-            {scenario.steps.length} {scenario.steps.length === 1 ? 'transmission' : 'transmissions'}
+            {stepCount} {transmissionsLabel}
           </p>
         </section>
 
-        {scenario.briefing?.length ? (
+        {briefing?.length ? (
           <section className="space-y-2">
-            <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Briefing</h2>
+            <SectionTitle as="h2">Briefing</SectionTitle>
             <dl className="grid grid-cols-2 gap-x-6 gap-y-2 rounded-lg border bg-card p-4 text-sm sm:grid-cols-3">
-              {scenario.briefing.map((item) => (
+              {briefing.map((item) => (
                 <div key={item.label}>
                   <dt className="text-xs text-muted-foreground">{item.label}</dt>
                   <dd className="font-medium">{item.value}</dd>
@@ -90,20 +94,14 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
           </section>
         ) : null}
 
-        <LessonOverview note={scenario.phraseologyNote} />
+        <LessonOverview note={phraseologyNote} />
       </div>
 
       <div className="border-t bg-card p-4">
         <Button
           size="lg"
           className="mx-auto flex w-full max-w-sm"
-          render={
-            <Link
-              to="/practice/$scenarioId"
-              params={{ scenarioId: scenario.id }}
-              search={scenario.variant ? { variant: scenario.variant } : {}}
-            />
-          }
+          render={<Link to="/practice/$scenarioId" params={{ scenarioId: id }} search={variant ? { variant } : {}} />}
         >
           Start practice
         </Button>
