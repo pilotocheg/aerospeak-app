@@ -1,6 +1,5 @@
-import type { AttemptResultDto } from '@/shared/api'
+import { getAuthHeaders, type AttemptResultDto } from '@/shared/api'
 import { API_URL } from '@/shared/config/env'
-import { auth } from '@/shared/lib/firebase'
 
 import { ProfileRequiredError, RateLimitedError, SttFailedError } from './attempt-errors'
 
@@ -12,8 +11,11 @@ export type SubmitAttemptInput = {
   audio: Blob
 }
 
-const extensionFor = (mimeType: string) =>
-  mimeType.includes('mp4') ? 'm4a' : mimeType.includes('ogg') ? 'ogg' : 'webm'
+const extensionFor = (mimeType: string) => {
+  if (mimeType.includes('mp4')) return 'm4a'
+  if (mimeType.includes('ogg')) return 'ogg'
+  return 'webm'
+}
 
 /** Sends the recording to the backend, which transcribes and scores it. */
 export const submitAttempt = async ({ scenarioId, stepId, variant, audio }: SubmitAttemptInput) => {
@@ -25,13 +27,9 @@ export const submitAttempt = async ({ scenarioId, stepId, variant, audio }: Subm
     form.append('variant', variant)
   }
 
-  const token = await auth.currentUser?.getIdToken()
-
   const response = await fetch(`${API_URL}/attempts`, {
     method: 'POST',
-    headers: {
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
+    headers: await getAuthHeaders(),
     body: form,
   })
 

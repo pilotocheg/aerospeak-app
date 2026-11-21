@@ -1,9 +1,8 @@
 import { cn } from 'cn'
-import { Loader2, Mic, Square } from 'lucide-react'
 
-import { formatTime } from '@/shared/lib/format-time'
-
-import type { RecorderStatus } from '../lib/use-recorder'
+import type { RecorderStatus } from '../model/use-recorder'
+import { PttIcon } from './ptt-icon'
+import { PttLabel } from './ptt-label'
 
 type PttButtonProps = {
   status: RecorderStatus
@@ -31,26 +30,10 @@ export const PttButton = ({ status, elapsedMs, disabled, busy, onToggle }: PttBu
           isRecording ? 'animate-pulse bg-red-600 ring-4 ring-red-600/30' : 'bg-primary hover:bg-primary/80',
         )}
       >
-        {isBusy ? (
-          <Loader2 className="size-7 animate-spin" />
-        ) : isRecording ? (
-          <Square className="size-6" />
-        ) : (
-          <Mic className="size-7" />
-        )}
+        <PttIcon isRecording={isRecording} isBusy={isBusy} />
       </button>
       <span className={cn('text-xs tabular-nums', isRecording ? 'text-red-400' : 'text-muted-foreground')}>
-        {isRecording ? (
-          formatTime(elapsedMs / 1000)
-        ) : isBusy ? (
-          'Scoring…'
-        ) : disabled ? (
-          'Connecting…'
-        ) : (
-          <>
-            Tap<span className="hidden sm:inline"> · Space</span>
-          </>
-        )}
+        <PttLabel isRecording={isRecording} isBusy={isBusy} disabled={disabled} elapsedMs={elapsedMs} />
       </span>
     </div>
   )

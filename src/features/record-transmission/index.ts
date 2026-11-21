@@ -1,5 +1,5 @@
 export { MicrophoneError, TooShortError } from './lib/recorder-errors'
-export { useRecordToggleKey } from './lib/use-record-toggle-key'
-export { useRecorder } from './lib/use-recorder'
-export type { RecorderStatus, Recording } from './lib/use-recorder'
+export { useRecordToggleKey } from './model/use-record-toggle-key'
+export { useRecorder } from './model/use-recorder'
+export type { RecorderStatus, Recording } from './model/use-recorder'
 export { PttButton } from './ui/ptt-button'

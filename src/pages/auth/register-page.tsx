@@ -1,4 +1,4 @@
-import { SignupForm } from '@/features/auth/ui/signup-form'
+import { SignupForm } from '@/features/auth'
 
 import { AuthPageContainer } from './auth-page-container'
 

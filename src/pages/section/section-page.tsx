@@ -4,6 +4,7 @@ import { ChevronLeft, GraduationCap } from 'lucide-react'
 
 import { getSection } from '@/entities/section'
 import { Button } from '@/shared/ui/button'
+import { EmptyState } from '@/shared/ui/empty-state'
 import { SidebarToggle } from '@/widgets/app-sidebar'
 import { ScenarioDetails } from '@/widgets/scenario-details'
 import { ScenarioLibrary } from '@/widgets/scenario-library'
@@ -15,12 +16,14 @@ export const SectionPage = () => {
 
   if (!section || section.comingSoon) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 text-muted-foreground">
-        <p>{section ? `${section.title} is coming soon.` : 'Section not found.'}</p>
-        <Button variant="outline" render={<Link to="/lessons" />}>
-          All sections
-        </Button>
-      </div>
+      <EmptyState
+        message={section ? `${section.title} is coming soon.` : 'Section not found.'}
+        action={
+          <Button variant="outline" render={<Link to="/lessons" />}>
+            All sections
+          </Button>
+        }
+      />
     )
   }
 

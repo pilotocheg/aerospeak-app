@@ -1,8 +1,8 @@
-export {
-  loginWithEmail,
-  loginWithGoogle,
-  logoutCurrentUser,
-  registerWithEmail,
-  sendPasswordResetEmail,
-} from './auth-client'
-export { observeAuthState } from './auth-listener'
+export { getCurrentUserDisplayName } from './get-current-user-display-name'
+export { loginWithEmail } from './login-with-email'
+export { loginWithGoogle } from './login-with-google'
+export { logoutCurrentUser } from './logout-current-user'
+export { observeAuthState } from './observe-auth-state'
+export { registerWithEmail } from './register-with-email'
+export { sendPasswordResetEmail } from './send-password-reset-email'
+export { signInWithGoogleIdToken } from './sign-in-with-google-id-token'

@@ -3,7 +3,10 @@ import { Link } from '@tanstack/react-router'
 
 import { useUser } from '@/features/auth/model/selectors'
 import { sections } from '@/shared/content'
+
 import { Button } from '@/shared/ui/button'
+import { SectionTitle } from '@/shared/ui/section-title'
+import { Skeleton } from '@/shared/ui/skeleton'
 import { SidebarToggle } from '@/widgets/app-sidebar'
 import { SectionCard } from '@/widgets/section-cards'
 
@@ -22,10 +25,6 @@ export const LessonsHomePage = () => {
     ...getUserProfileQueryOptions(user?.id ?? ''),
     enabled: Boolean(user),
   })
-
-  if (progressQuery.isPending || packsQuery.isPending) {
-    return <div>Loading…</div>
-  }
 
   const progress = progressQuery.data
   const totals = progress?.totals
@@ -46,59 +45,98 @@ export const LessonsHomePage = () => {
       <div className="flex items-center gap-2 px-2 pt-2 lg:hidden">
         <SidebarToggle />
       </div>
-      <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
-        {/* Greeting + current status */}
-        <div className="rounded-lg border border-border bg-card p-6">
-          <section className="space-y-3">
-            <h1 className="text-lg font-semibold">{profile ? `Hi, ${profile.name}` : 'Welcome'}</h1>
-            <p className="text-sm text-muted-foreground">
-              {practiced === total && total > 0
-                ? 'You have completed all scenarios. Great job!'
-                : practiced > 0
-                  ? `You have practiced ${practiced} of ${total} scenarios.`
-                  : 'Start with the first scenario to practice radio communication.'}
-            </p>
-          </section>
-        </div>
 
-        {/* Continue course recommendation */}
-        {nextScenario && section && (
+      {progressQuery.isPending || packsQuery.isPending ? (
+        <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
+          {/* Skeleton: greeting card */}
+          <div className="rounded-lg border border-border bg-card p-6">
+            <section className="space-y-3">
+              <Skeleton className="h-6 w-1/3" />
+              <Skeleton className="h-4 w-3/4" />
+            </section>
+          </div>
+
+          {/* Skeleton: continue course card */}
           <div className="rounded-lg border border-border bg-card p-6">
             <section>
               <div className="flex flex-col gap-3 md:flex-row md:items-center">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-muted-foreground uppercase tracking-wider">Continue course - Next</p>
-                  <p className="text-lg font-semibold truncate">{nextScenario.title}</p>
-                  <p className="text-xs text-muted-foreground">{nextScenario.objective}</p>
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-6 w-1/2" />
+                  <Skeleton className="h-3 w-2/3" />
                 </div>
-                <Button
-                  render={
-                    <Link
-                      to="/lessons/$sectionId"
-                      params={{ sectionId: section.id }}
-                      search={{ scenario: String(nextScenario.id) }}
-                      className="w-full"
-                    />
-                  }
-                >
-                  Start
-                </Button>
+                <Skeleton className="h-10 w-24" />
               </div>
             </section>
           </div>
-        )}
 
-        <section className="space-y-3">
-          <h2 className="text-center text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-            Training plan
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {sections.map((section) => (
-              <SectionCard key={section.id} section={section} />
-            ))}
+          {/* Skeleton: training plan */}
+          <section className="space-y-3">
+            <SectionTitle as="h2" className="text-center">
+              Training plan
+            </SectionTitle>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Skeleton key={i} className="h-48 rounded-xl" />
+              ))}
+            </div>
+          </section>
+        </div>
+      ) : (
+        <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
+          {/* Greeting + current status */}
+          <div className="rounded-lg border border-border bg-card p-6">
+            <section className="space-y-3">
+              <h1 className="text-lg font-semibold">{profile ? `Hi, ${profile.name}` : 'Welcome'}</h1>
+              <p className="text-sm text-muted-foreground">
+                {practiced === total && total > 0
+                  ? 'You have completed all scenarios. Great job!'
+                  : practiced > 0
+                    ? `You have practiced ${practiced} of ${total} scenarios.`
+                    : 'Start with the first scenario to practice radio communication.'}
+              </p>
+            </section>
           </div>
-        </section>
-      </div>
+
+          {/* Continue course recommendation */}
+          {nextScenario && section && (
+            <div className="rounded-lg border border-border bg-card p-6">
+              <section>
+                <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-muted-foreground uppercase tracking-wider">Continue course - Next</p>
+                    <p className="text-lg font-semibold truncate">{nextScenario.title}</p>
+                    <p className="text-xs text-muted-foreground">{nextScenario.objective}</p>
+                  </div>
+                  <Button
+                    render={
+                      <Link
+                        to="/lessons/$sectionId"
+                        params={{ sectionId: section.id }}
+                        search={{ scenario: String(nextScenario.id) }}
+                        className="w-full"
+                      />
+                    }
+                  >
+                    Start
+                  </Button>
+                </div>
+              </section>
+            </div>
+          )}
+
+          <section className="space-y-3">
+            <SectionTitle as="h2" className="text-center">
+              Training plan
+            </SectionTitle>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {sections.map((section) => (
+                <SectionCard key={section.id} section={section} />
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   )
 }

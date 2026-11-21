@@ -1,7 +1,7 @@
 import { QueryClient } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 
-import { useAuthSession } from '@/features/auth/lib/use-auth-session'
+import { useAuthSession } from '@/features/auth'
 
 import { ThemeProvider } from './providers/theme-provider'
 import { QueryProvider } from './providers/query-provider'

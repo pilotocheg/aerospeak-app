@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
-import { scenarioQueryOptions } from '../api/scenario-queries'
+import { scenarioQueryOptions } from '../api/scenario-query-options'
 
 /**
  * A scenario in a variant (aerodrome, weather, aircraft) picked at random once per mount:
@@ -12,12 +12,13 @@ export const useRandomScenarioVariant = (scenarioId: string) => {
   const [pick] = useState(Math.random)
   const base = useQuery(scenarioQueryOptions(scenarioId))
   const variants = base.data?.variants ?? []
-  const variant = variants.length > 1 ? variants[Math.floor(pick * variants.length)] : undefined
-  const picked = useQuery({ ...scenarioQueryOptions(scenarioId, variant), enabled: Boolean(variant) })
+  const hasVariants = variants.length > 1
+  const variant = hasVariants ? variants[Math.floor(pick * variants.length)] : undefined
+  const picked = useQuery({ ...scenarioQueryOptions(scenarioId, variant), enabled: hasVariants })
 
   return {
-    scenario: variant ? picked.data : base.data,
-    isPending: base.isPending || (Boolean(variant) && picked.isPending),
+    scenario: hasVariants ? picked.data : base.data,
+    isPending: base.isPending || (hasVariants && picked.isPending),
     isError: base.isError || picked.isError,
   }
 }

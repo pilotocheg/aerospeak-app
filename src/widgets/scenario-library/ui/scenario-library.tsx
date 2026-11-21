@@ -33,7 +33,8 @@ export const ScenarioLibrary = ({ sectionId, selectedScenarioId }: ScenarioLibra
   }
 
   const packs = getSectionPacks(sectionId, data)
-  const selectedPackId = packs.find((pack) => pack.scenarios.some((s) => s.id === selectedScenarioId))?.id
+  const selectedPack = packs.find(({ scenarios }) => scenarios.some((scenario) => scenario.id === selectedScenarioId))
+  const selectedPackId = selectedPack?.id
   const defaultOpenId = selectedPackId ?? packs[0]?.id
 
   return (

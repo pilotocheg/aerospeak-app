@@ -1,36 +1,31 @@
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { cn } from 'cn'
 import { House, LogOut, Moon, Sun, ChartBar } from 'lucide-react'
-import { toast } from 'sonner'
 
-import { useLogout } from '@/features/auth/model/actions'
-import { useUser } from '@/features/auth/model/selectors'
+import { useLogoutToLogin, useUser } from '@/features/auth'
 import { sections } from '@/shared/content'
 import { useTheme, useToggleTheme } from '@/shared/lib/theme'
 import { Button } from '@/shared/ui/button'
 import { Logo } from '@/shared/ui/logo'
+import { SectionTitle } from '@/shared/ui/section-title'
 
 import { useCloseSidebar } from '../model/actions'
 import { useIsSidebarOpen } from '../model/selectors'
 import { SidebarSectionLink } from './sidebar-section-link'
 
 export const AppSidebar = () => {
-  const navigate = useNavigate()
   const isOpen = useIsSidebarOpen()
   const close = useCloseSidebar()
   const user = useUser()
-  const logout = useLogout()
+  const logoutToLogin = useLogoutToLogin()
   const theme = useTheme()
   const toggleTheme = useToggleTheme()
+  const userName = user?.name ?? 'Pilot'
+  const userInitial = userName.at(0) ?? 'P'
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     close()
-    try {
-      await logout()
-      await navigate({ to: '/login', replace: true })
-    } catch {
-      toast.error('Failed to log out. Please try again.')
-    }
+    void logoutToLogin()
   }
 
   return (
@@ -58,9 +53,9 @@ export const AppSidebar = () => {
             <House className="size-4" />
             Home
           </Link>
-          <p className="px-3 pt-5 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          <SectionTitle as="p" className="px-3 pt-5 pb-1">
             Training plan
-          </p>
+          </SectionTitle>
           {sections.map((section) => (
             <SidebarSectionLink key={section.id} section={section} onNavigate={close} />
           ))}
@@ -79,9 +74,9 @@ export const AppSidebar = () => {
 
         <div className="flex items-center gap-2 border-t p-3">
           <span className="flex size-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground uppercase">
-            {user?.name.at(0) ?? 'P'}
+            {userInitial}
           </span>
-          <span className="flex-1 truncate text-sm">{user?.name ?? 'Pilot'}</span>
+          <span className="flex-1 truncate text-sm">{userName}</span>
           <Button variant="ghost" size="icon-sm" aria-label="Toggle color theme" onClick={toggleTheme}>
             {theme === 'dark' ? <Sun /> : <Moon />}
           </Button>

@@ -1,4 +1,6 @@
+import { isMissedCritical } from '@/entities/attempt'
 import type { ScenarioDto } from '@/shared/api'
+import { average } from '@/shared/lib/math'
 
 import type { StepAttempt } from './practice-store'
 
@@ -21,25 +23,20 @@ export const buildSummary = (scenario: ScenarioDto, attemptsByStep: Record<strin
 
   const lastAttempts = perStep.map((attempts) => attempts.at(-1)).filter((a) => a !== undefined)
   const missedCritical = [
-    ...new Set(
-      lastAttempts.flatMap((attempt) =>
-        attempt.result.elements.filter((e) => e.critical && e.status === 'missed').map((e) => e.label),
-      ),
-    ),
+    ...new Set(lastAttempts.flatMap((attempt) => attempt.result.elements.filter(isMissedCritical).map((e) => e.label))),
   ]
 
   return {
-    scenarioScore: Math.round(best.reduce((sum, score) => sum + score, 0) / Math.max(1, best.length)),
+    scenarioScore: Math.round(average(best)),
     phrasesRecorded: all.length,
     successfulPhrases: all.filter((a) => a.result.success).length,
     bestPhraseScore: Math.max(0, ...all.map((a) => a.result.score)),
     missedCritical,
     retryImprovement: retried.length
       ? Math.round(
-          retried.reduce(
-            (sum, attempts) => sum + Math.max(...attempts.map((a) => a.result.score)) - attempts[0].result.score,
-            0,
-          ) / retried.length,
+          average(
+            retried.map((attempts) => Math.max(...attempts.map((a) => a.result.score)) - attempts[0].result.score),
+          ),
         )
       : null,
   }

@@ -56,6 +56,24 @@ before calling the work done.
 - No nested ternaries in JSX: compute the value above the return or use a lookup object.
 - Comments say why, not what. Remove comments that restate the code.
 
+## 5. Readable over compact
+
+- Name intermediate values instead of nesting calls: `const authHeaders = await getAuthHeaders()`
+  then loop over `Object.entries(authHeaders)`, not `Object.entries(await getAuthHeaders())`.
+  Destructure a result before using one field: `const { scenarioScore } = buildSummary(...)`.
+- A hook that returns a function names it first, then returns it:
+  `const completePractice = (...) => { ... }; return completePractice`, not `return (...) => { ... }`.
+- No chained property access (`a.b.c`) in components: destructure the object once
+  (`const { atcPlayback, player } = practice`) or pass the object to the child that needs it.
+- Split a hook that returns many unrelated values into smaller hooks (state of one dialog,
+  step navigation, ATC playback) and compose them.
+- Group related files of a segment in subfolders by purpose: `shared/lib/math/`,
+  `features/auth/model/form/`, `features/auth/model/requests/`, `practice-player/ui/charts/`.
+- Memoize only where it is really needed. The React Compiler already caches components, JSX
+  and derived values (a heavy chart re-renders only when its props change). Add `memo`,
+  `useMemo` or `useCallback` only when the React Profiler shows a re-render the compiler does
+  not prevent, and say why in a comment.
+
 ## Before calling it done
 
 1. Re-read the diff with the rules above and fix what breaks them.
