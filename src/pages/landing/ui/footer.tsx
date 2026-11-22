@@ -2,8 +2,6 @@ import { Link } from '@tanstack/react-router'
 
 import { Logo } from '@/shared/ui/logo'
 
-const FOOTER_LINKS = [{ label: "FAQ's", href: '#' }]
-
 const LEGAL_LINKS = [
   { label: 'Terms and conditions', to: '/terms-and-conditions' },
   { label: 'Privacy policy', to: '/privacy-policy' },
@@ -19,11 +17,6 @@ export const Footer = () => (
         </Link>
 
         <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2">
-          {FOOTER_LINKS.map(({ label, href }) => (
-            <a key={label} href={href} className="hover:text-foreground">
-              {label}
-            </a>
-          ))}
           {LEGAL_LINKS.map(({ label, to }) => (
             <Link key={label} to={to} className="hover:text-foreground">
               {label}
