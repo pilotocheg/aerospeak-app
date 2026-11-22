@@ -9,13 +9,11 @@ import { Button } from '@/shared/ui/button'
 import { Logo } from '@/shared/ui/logo'
 import { SectionTitle } from '@/shared/ui/section-title'
 
-import { useCloseSidebar } from '../model/actions'
-import { useIsSidebarOpen } from '../model/selectors'
+import { useSidebarDrawer } from '../model/use-sidebar-drawer'
 import { SidebarSectionLink } from './sidebar-section-link'
 
 export const AppSidebar = () => {
-  const isOpen = useIsSidebarOpen()
-  const close = useCloseSidebar()
+  const { drawerRef, isOpen, isModal, isHidden, close } = useSidebarDrawer()
   const user = useUser()
   const logoutToLogin = useLogoutToLogin()
   const theme = useTheme()
@@ -32,6 +30,11 @@ export const AppSidebar = () => {
     <>
       {isOpen && <div className="fixed inset-0 z-40 bg-black/60 lg:hidden" onClick={close} aria-hidden />}
       <aside
+        ref={drawerRef}
+        inert={isHidden}
+        role={isModal ? 'dialog' : undefined}
+        aria-modal={isModal || undefined}
+        aria-label={isModal ? 'Navigation' : undefined}
         className={cn(
           'fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col border-r bg-card transition-transform lg:static lg:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full',
@@ -73,10 +76,17 @@ export const AppSidebar = () => {
         </nav>
 
         <div className="flex items-center gap-2 border-t p-3">
-          <span className="flex size-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground uppercase">
-            {userInitial}
-          </span>
-          <span className="flex-1 truncate text-sm">{userName}</span>
+          <Link
+            to="/profile"
+            onClick={close}
+            aria-label="Open profile"
+            className="-m-1 flex min-w-0 flex-1 items-center gap-2 rounded-md p-1 transition hover:bg-muted/60"
+          >
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground uppercase">
+              {userInitial}
+            </span>
+            <span className="flex-1 truncate text-sm">{userName}</span>
+          </Link>
           <Button variant="ghost" size="icon-sm" aria-label="Toggle color theme" onClick={toggleTheme}>
             {theme === 'dark' ? <Sun /> : <Moon />}
           </Button>

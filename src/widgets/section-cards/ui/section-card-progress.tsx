@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 
 import type { SectionProgress } from '@/features/section-progress'
 import { Button } from '@/shared/ui/button'
+import { Progress } from '@/shared/ui/progress'
 import { Skeleton } from '@/shared/ui/skeleton'
 
 type SectionCardProgressProps = {
@@ -23,21 +24,22 @@ export const SectionCardProgress = ({ sectionId, progress }: SectionCardProgress
     )
   }
 
+  const { completionPercent, practiced, total } = progress
+  const progressText = `${practiced} of ${total} scenarios practiced`
+
   return (
     <>
       <div className="space-y-1">
-        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-          <div className="h-full bg-primary transition-all" style={{ width: `${progress.completionPercent}%` }} />
-        </div>
-        <p className="text-xs tracking-wide text-muted-foreground uppercase">
-          {progress.practiced}/{progress.total} scenarios
+        <Progress value={completionPercent} aria-label="Section progress" getAriaValueText={() => progressText} />
+        <p className="text-xs tracking-wide text-muted-foreground uppercase" aria-hidden>
+          {practiced}/{total} scenarios
         </p>
       </div>
       <Button
         className="self-center px-8"
         render={<Link to="/lessons/$sectionId" params={{ sectionId }} search={{}} />}
       >
-        {progress.practiced ? 'Continue' : 'Start'}
+        {practiced ? 'Continue' : 'Start'}
       </Button>
     </>
   )
