@@ -10,33 +10,22 @@ import { Skeleton } from '@/shared/ui/skeleton'
 import { SidebarToggle } from '@/widgets/app-sidebar'
 import { SectionCard } from '@/widgets/section-cards'
 
-import { useUserProgress } from '@/entities/progress'
+import { useHomeProgress } from '@/entities/progress'
 import { packsQueryOptions } from '@/entities/scenario'
 import { getUserProfileQueryOptions } from '@/entities/user'
 import { findSectionByPackId } from '@/entities/section'
 
 export const LessonsHomePage = () => {
   const user = useUser()
-  const progressQuery = useUserProgress()
   const packsQuery = useQuery(packsQueryOptions())
   const { data: packs = [] } = packsQuery
+
+  const { practiced, total, nextScenario, isPending } = useHomeProgress(packs, packsQuery.isPending)
 
   const { data: profile } = useQuery({
     ...getUserProfileQueryOptions(user?.id ?? ''),
     enabled: Boolean(user),
   })
-
-  const progress = progressQuery.data
-  const totals = progress?.totals
-  const practiced = totals?.practicedScenarios ?? 0
-  const total = totals?.totalScenarios ?? 0
-  const practicedScenarios = new Set(progress?.scenarios.map((s) => s.scenarioId) ?? [])
-
-  /** Find the first unpracticed scenario across packs ordered by `order`. */
-  const nextScenario = [...packs]
-    .sort((a, b) => a.order - b.order)
-    .flatMap((pack) => pack.scenarios)
-    .find((scenario) => !practicedScenarios.has(scenario.id))
 
   const section = findSectionByPackId(nextScenario?.packId ?? '')
 
@@ -46,7 +35,7 @@ export const LessonsHomePage = () => {
         <SidebarToggle />
       </div>
 
-      {progressQuery.isPending || packsQuery.isPending ? (
+      {isPending ? (
         <div className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:px-6">
           {/* Skeleton: greeting card */}
           <div className="rounded-lg border border-border bg-card p-6">
