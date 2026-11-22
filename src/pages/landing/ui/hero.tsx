@@ -16,10 +16,7 @@ export const Hero = () => (
       </p>
       <div className="mt-2 flex flex-wrap justify-center gap-3 lg:justify-start">
         <Button size="lg" className="px-8" render={<Link to="/lessons" />}>
-          Start training
-        </Button>
-        <Button size="lg" variant="outline" render={<Link to="/register" />}>
-          Create account
+          Start practice
         </Button>
       </div>
     </div>
