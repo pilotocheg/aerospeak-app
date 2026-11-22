@@ -3,7 +3,7 @@ import { deleteUser } from 'firebase/auth'
 
 import { auth } from '@/shared/lib/firebase'
 
-const ALREADY_DELETED_CODES = ['auth/user-not-found', 'auth/user-token-expired']
+const ALREADY_DELETED_CODES = ['auth/user-not-found']
 
 export const deleteCurrentFirebaseUser = async () => {
   const user = auth.currentUser
@@ -14,7 +14,6 @@ export const deleteCurrentFirebaseUser = async () => {
   try {
     await deleteUser(user)
   } catch (error) {
-    // The Firebase user may already be gone.
     if (error instanceof FirebaseError && ALREADY_DELETED_CODES.includes(error.code)) {
       return
     }

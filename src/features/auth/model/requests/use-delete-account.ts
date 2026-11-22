@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { meKeys } from '@/entities/user'
 import { apiClient } from '@/shared/api'
 
-import { deleteCurrentFirebaseUser, reauthenticateCurrentUser } from '../../api'
+import { deleteCurrentFirebaseUser, reauthenticateCurrentUser, logoutCurrentUser } from '../../api'
 import { useAuthStore } from '../auth-store'
 
 type DeleteAccountInput = {
@@ -25,12 +25,17 @@ export const useDeleteAccount = () => {
         throw new Error('Could not delete account')
       }
 
-      // Clear the user first so the terms dialog does not flash for the now empty profile.
       clearAuthenticatedUser()
       if (user) {
         queryClient.removeQueries({ queryKey: meKeys.profile(user.id) })
       }
-      await deleteCurrentFirebaseUser()
+      try {
+        await deleteCurrentFirebaseUser()
+        return { firebaseUserDeleted: true }
+      } catch {
+        await logoutCurrentUser()
+        return { firebaseUserDeleted: false }
+      }
     },
   })
 }

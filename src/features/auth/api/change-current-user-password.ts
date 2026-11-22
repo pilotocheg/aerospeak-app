@@ -6,7 +6,8 @@ import { reauthenticateCurrentUser } from './reauthenticate-current-user'
 
 export const changeCurrentUserPassword = async (currentPassword: string, newPassword: string) => {
   await reauthenticateCurrentUser(currentPassword)
-  if (auth.currentUser) {
-    await updatePassword(auth.currentUser, newPassword)
+  if (!auth.currentUser) {
+    throw new Error('User is not authenticated')
   }
+  await updatePassword(auth.currentUser, newPassword)
 }

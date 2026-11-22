@@ -40,7 +40,9 @@ export const DeleteAccountDialog = () => {
             />
           </Field>
         ) : (
-          <p className="text-sm text-muted-foreground">You will be asked to confirm with your Google account.</p>
+          <p className="text-sm text-muted-foreground">
+            If you signed in a while ago, sign in with Google again first, then delete the account.
+          </p>
         )}
         <DialogFooter>
           <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>

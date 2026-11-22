@@ -15,11 +15,17 @@ export const useChangeUsername = () => {
 
   return useMutation({
     mutationFn: async ({ username }: ChangeUsernameInput) => {
+      const previousName = useAuthStore.getState().user?.name
+
+      await changeCurrentUserUsername(username)
+
       const { error } = await apiClient.PATCH('/me', { body: { name: username } })
       if (error) {
+        if (previousName) {
+          await changeCurrentUserUsername(previousName).catch(() => undefined)
+        }
         throw new Error('Could not update username')
       }
-      await changeCurrentUserUsername(username)
     },
     onSuccess: (_, { username }) => {
       const { user, setAuthenticatedUser } = useAuthStore.getState()

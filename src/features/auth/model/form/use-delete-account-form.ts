@@ -17,6 +17,9 @@ export const useDeleteAccountForm = () => {
   const canDelete = !isDeleting && (!needsPassword || password.length > 0)
 
   const onOpenChange = (open: boolean) => {
+    if (isDeleting && !open) {
+      return
+    }
     setIsOpen(open)
     if (!open) {
       setPassword('')
@@ -25,8 +28,12 @@ export const useDeleteAccountForm = () => {
 
   const onDelete = async () => {
     try {
-      await deleteAccount.mutateAsync({ password })
-      toast.success('Your account has been deleted')
+      const { firebaseUserDeleted } = await deleteAccount.mutateAsync({ password })
+      if (firebaseUserDeleted) {
+        toast.success('Your account has been deleted')
+      } else {
+        toast.warning('Your data was deleted, but we could not remove your sign-in. Sign in again to finish.')
+      }
       await navigate({ to: '/', replace: true })
     } catch (error) {
       toast.error(getReauthErrorMessage(error, 'Failed to delete the account. Please try again'))
