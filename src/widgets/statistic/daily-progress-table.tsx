@@ -1,30 +1,15 @@
 import { cn } from 'cn'
 
+import { formatDate, isToday } from '@/shared/lib/format'
 import { Button } from '@/shared/ui/button'
 import { Badge } from '@/shared/ui/badge'
 import { Card, CardContent } from '@/shared/ui/card'
 import { RefreshCw } from 'lucide-react'
 
-type DailyItem = { date: string; attempts: number; successful: number; averageScore: number }
-
-/* Parse a `YYYY-MM-DD` calendar date as a local date, not UTC midnight. */
-function parseCalendarDate(date: string) {
-  const [year, month, day] = date.split('-').map(Number)
-  return new Date(year, month - 1, day)
-}
-
-function formatDay(date: string) {
-  return parseCalendarDate(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-}
-
-function isToday(date: string) {
-  const d = parseCalendarDate(date)
-  const today = new Date()
-  return d.toDateString() === today.toDateString()
-}
+import type { DailyProgressItem } from '@/entities/progress/lib/daily-progress'
 
 type DailyProgressTableProps = {
-  items: DailyItem[]
+  items: DailyProgressItem[]
   onRetry: () => void
 }
 
@@ -83,7 +68,7 @@ export const DailyProgressTable = ({ items, onRetry }: DailyProgressTableProps) 
                   >
                     <td className="p-3">
                       <p className={cn('font-medium', today ? 'font-semibold' : '')}>
-                        {formatDay(day.date)}
+                        {formatDate(day.date)}
                         {today ? ' (today)' : ''}
                       </p>
                       <p className="text-xs text-muted-foreground">

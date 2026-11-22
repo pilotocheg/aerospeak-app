@@ -1,44 +1,11 @@
-import { useCallback, useEffect, useRef } from 'react'
 import { Activity, Clock, Target, TrendingUp } from 'lucide-react'
-import { toast } from 'sonner'
 
-import { useUserDailyProgress, useUserProgress } from '@/entities/progress'
+import { useUserProgressSummary } from '@/entities/progress'
 import { DailyProgressTable, StatCard, StatisticError, StatisticSkeleton } from '@/widgets/statistic'
 import { SidebarToggle } from '@/widgets/app-sidebar'
 
-const EMPTY_TOTALS = {
-  practicedScenarios: 0,
-  totalScenarios: 0,
-  attempts: 0,
-  successfulPhrases: 0,
-  successfulPhrasesLast7Days: 0,
-}
-
 export const StatisticPage = () => {
-  const errorToasted = useRef(false)
-
-  const progressQuery = useUserProgress()
-  const dailyQuery = useUserDailyProgress()
-
-  useEffect(() => {
-    const hasError = progressQuery.isError || dailyQuery.isError
-    if (hasError && !errorToasted.current) {
-      errorToasted.current = true
-      toast.error('Could not load statistics')
-    }
-    if (!hasError) {
-      errorToasted.current = false
-    }
-  }, [progressQuery.isError, dailyQuery.isError])
-
-  const isPending = progressQuery.isPending || dailyQuery.isPending
-  const isError = progressQuery.isError || dailyQuery.isError
-
-  const refetch = useCallback(() => {
-    progressQuery.refetch()
-    dailyQuery.refetch()
-    errorToasted.current = false
-  }, [progressQuery, dailyQuery])
+  const { totals, items, avgScore, practiceRate, latestUpdate, isPending, isError, refetch } = useUserProgressSummary()
 
   if (isPending) {
     return <StatisticSkeleton />
@@ -47,16 +14,6 @@ export const StatisticPage = () => {
   if (isError) {
     return <StatisticError onRetry={refetch} />
   }
-
-  const progress = progressQuery.data
-  const items = dailyQuery.data ?? []
-  const totals = progress?.totals ?? EMPTY_TOTALS
-  const avgScore =
-    items.length > 0 ? Math.round(items.reduce((sum, day) => sum + day.averageScore, 0) / items.length) : 0
-  const practiceRate =
-    totals.totalScenarios > 0 ? Math.round((totals.practicedScenarios / totals.totalScenarios) * 100) : 0
-
-  const latestUpdate = Math.max(progressQuery.dataUpdatedAt ?? 0, dailyQuery.dataUpdatedAt ?? 0)
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
