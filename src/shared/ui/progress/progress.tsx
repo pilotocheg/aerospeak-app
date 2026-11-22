@@ -1,9 +1,16 @@
 import { Progress as ProgressPrimitive } from '@base-ui/react/progress'
 import { cn } from 'cn'
 
-type ProgressProps = ProgressPrimitive.Root.Props & { indicatorClassName?: string }
+type ProgressProps = ProgressPrimitive.Root.Props & { trackClassName?: string; indicatorClassName?: string }
 
-export const Progress = ({ className, indicatorClassName, children, value, ...props }: ProgressProps) => (
+export const Progress = ({
+  className,
+  trackClassName,
+  indicatorClassName,
+  children,
+  value,
+  ...props
+}: ProgressProps) => (
   <ProgressPrimitive.Root
     value={value}
     data-slot="progress"
@@ -13,7 +20,7 @@ export const Progress = ({ className, indicatorClassName, children, value, ...pr
     {children}
     <ProgressPrimitive.Track
       data-slot="progress-track"
-      className="relative flex h-1.5 w-full items-center overflow-x-hidden rounded-full bg-muted"
+      className={cn('relative flex h-1.5 w-full items-center overflow-x-hidden rounded-full bg-muted', trackClassName)}
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"

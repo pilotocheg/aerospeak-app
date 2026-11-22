@@ -1,6 +1,7 @@
 import { cn } from 'cn'
 
 import type { RecorderStatus } from '../model/use-recorder'
+import { PttAnnouncement } from './ptt-announcement'
 import { PttIcon } from './ptt-icon'
 import { PttLabel } from './ptt-label'
 
@@ -21,7 +22,6 @@ export const PttButton = ({ status, elapsedMs, disabled, busy, onToggle }: PttBu
       <button
         type="button"
         aria-label={isRecording ? 'Stop recording' : 'Start recording'}
-        aria-pressed={isRecording}
         disabled={disabled || isBusy}
         onClick={onToggle}
         onContextMenu={(event) => event.preventDefault()}
@@ -35,6 +35,7 @@ export const PttButton = ({ status, elapsedMs, disabled, busy, onToggle }: PttBu
       <span className={cn('text-xs tabular-nums', isRecording ? 'text-red-400' : 'text-muted-foreground')}>
         <PttLabel isRecording={isRecording} isBusy={isBusy} disabled={disabled} elapsedMs={elapsedMs} />
       </span>
+      <PttAnnouncement isRecording={isRecording} isBusy={isBusy} />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 # Staged files: eslint --fix + prettier (config in package.json "lint-staged")
 npx lint-staged
-# Whole project: types and Storybook story tests (headless Chromium)
+# Whole project: types, unit tests and Storybook story tests (headless Chromium)
 npm run typecheck
+npm run test:unit
 npm run test:stories
