@@ -4,7 +4,10 @@ import { Logo } from '@/shared/ui/logo'
 
 const FOOTER_LINKS = [{ label: "FAQ's", href: '#' }]
 
-const LEGAL_LINKS = [{ label: 'Privacy policy', to: '/privacy-policy' }] as const
+const LEGAL_LINKS = [
+  { label: 'Terms and conditions', to: '/terms-and-conditions' },
+  { label: 'Privacy policy', to: '/privacy-policy' },
+] as const
 
 export const Footer = () => (
   <footer className="border-t border-foreground/10">

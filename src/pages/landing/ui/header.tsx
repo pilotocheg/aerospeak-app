@@ -9,11 +9,6 @@ export const Header = () => (
       <Logo className="size-9" />
       <span className="hidden sm:inline">AeroSpeak</span>
     </Link>
-    <nav aria-label="Account" className="flex items-center gap-2">
-      <Button variant="ghost" render={<Link to="/login" />}>
-        Log in
-      </Button>
-      <Button render={<Link to="/register" />}>Sign up</Button>
-    </nav>
+    <Button render={<Link to="/lessons" />}>Start practice</Button>
   </header>
 )

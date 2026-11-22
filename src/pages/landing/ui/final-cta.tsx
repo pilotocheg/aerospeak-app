@@ -11,7 +11,7 @@ export const FinalCta = () => (
       A few minutes of practice is enough to notice what you keep forgetting to say.
     </p>
     <Button size="lg" className="px-8" render={<Link to="/lessons" />}>
-      Start training
+      Start practice
     </Button>
   </section>
 )
