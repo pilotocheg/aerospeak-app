@@ -4,7 +4,7 @@ export const StatisticSkeleton = () => (
   <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
     <div className="mx-auto max-w-6xl space-y-8">
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold animate-pulse">Your statistics</h2>
+        <h1 className="text-lg font-semibold animate-pulse">Your statistics</h1>
         <p className="text-sm text-muted-foreground animate-pulse">Training progress over the last 30 days</p>
       </section>
       <section>

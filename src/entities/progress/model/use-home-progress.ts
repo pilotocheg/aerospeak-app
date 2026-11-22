@@ -1,13 +1,12 @@
 import type { PracticePackDto } from '@/shared/api'
-import { useUserProgress } from '@/entities/progress'
-import { computePracticedStats, findNextScenario } from '@/entities/progress/lib/home-progress'
+import { useAllProgress } from '@/entities/progress'
+import { computeLocalPracticedStats, findNextScenario } from '@/entities/progress/lib'
 
 /** Derives home-page progress data: practiced/total stats and the next unpracticed scenario. */
 export const useHomeProgress = (packs: PracticePackDto[], packsIsPending: boolean) => {
-  const progressQuery = useUserProgress()
-  const progress = progressQuery.data
-
-  const { practiced, total, practicedScenarioIds } = computePracticedStats(progress)
+  const progress = useAllProgress()
+  const totalScenarios = packs.reduce((sum, pack) => sum + pack.scenarios.length, 0)
+  const { practiced, total, practicedScenarioIds } = computeLocalPracticedStats(progress, totalScenarios)
   const nextScenario = findNextScenario(packs, practicedScenarioIds)
 
   return {
@@ -15,6 +14,6 @@ export const useHomeProgress = (packs: PracticePackDto[], packsIsPending: boolea
     total,
     practicedScenarioIds,
     nextScenario,
-    isPending: progressQuery.isPending || packsIsPending,
+    isPending: packsIsPending,
   }
 }

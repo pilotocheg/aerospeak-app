@@ -1,3 +1,5 @@
 export { formatDuration } from './format-duration'
 export { formatTime } from './format-time'
-export { formatDate, isToday, parseCalendarDate } from './format-date'
+export { formatDate } from './format-date'
+export { isToday } from './is-today'
+export { parseCalendarDate } from './parse-calendar-date'

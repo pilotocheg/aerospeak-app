@@ -1,11 +1,15 @@
 import { Activity, Clock, Target, TrendingUp } from 'lucide-react'
 
+import { useUser } from '@/features/auth'
 import { useUserProgressSummary } from '@/entities/progress'
 import { DailyProgressTable, StatCard, StatisticError, StatisticSkeleton } from '@/widgets/statistic'
 import { SidebarToggle } from '@/widgets/app-sidebar'
 
 export const StatisticPage = () => {
-  const { totals, items, avgScore, practiceRate, latestUpdate, isPending, isError, refetch } = useUserProgressSummary()
+  const user = useUser()
+  const uid = user?.id ?? ''
+  const { totals, items, avgScore, practiceRate, latestUpdate, isPending, isError, refetch } =
+    useUserProgressSummary(uid)
 
   if (isPending) {
     return <StatisticSkeleton />
@@ -22,7 +26,7 @@ export const StatisticPage = () => {
       </div>
       <div className="mx-auto max-w-6xl space-y-8">
         <section className="space-y-2">
-          <h2 className="text-lg font-semibold">Your statistics</h2>
+          <h1 className="text-lg font-semibold">Your statistics</h1>
           <p className="text-sm text-muted-foreground">Training progress over the last 30 days</p>
         </section>
 

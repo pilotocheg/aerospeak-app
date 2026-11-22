@@ -6,7 +6,7 @@ import { Badge } from '@/shared/ui/badge'
 import { Card, CardContent } from '@/shared/ui/card'
 import { RefreshCw } from 'lucide-react'
 
-import type { DailyProgressItem } from '@/entities/progress/lib/daily-progress'
+import type { DailyProgressItem } from '@/entities/progress/lib/daily-progress-item'
 
 type DailyProgressTableProps = {
   items: DailyProgressItem[]
