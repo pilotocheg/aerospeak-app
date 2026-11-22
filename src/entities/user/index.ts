@@ -1,7 +1,1 @@
-export {
-  getUserProfileQueryOptions,
-  meKeys,
-  useDeleteUserAccountMutation,
-  useGrantVoiceConsentMutation,
-  useRegisterUserProfileMutation,
-} from './api'
+export { getUserProfileQueryOptions, meKeys, useGrantVoiceConsentMutation, useRegisterUserProfileMutation } from './api'

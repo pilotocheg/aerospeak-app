@@ -16,6 +16,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
+import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppLessonsIndexRouteImport } from './routes/_app/lessons/index'
 import { Route as AppLessonsSectionIdRouteImport } from './routes/_app/lessons/$sectionId'
 import { Route as AppPracticeScenarioIdRouteImport } from './routes/_app/practice/$scenarioId'
@@ -54,6 +55,11 @@ const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
   path: '/terms-and-conditions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppLessonsIndexRoute = AppLessonsIndexRouteImport.update({
   id: '/lessons/',
   path: '/lessons/',
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/profile': typeof AppProfileRoute
   '/lessons/$sectionId': typeof AppLessonsSectionIdRoute
   '/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
   '/lessons/': typeof AppLessonsIndexRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/profile': typeof AppProfileRoute
   '/lessons/$sectionId': typeof AppLessonsSectionIdRoute
   '/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
   '/lessons': typeof AppLessonsIndexRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/_app/profile': typeof AppProfileRoute
   '/_app/lessons/$sectionId': typeof AppLessonsSectionIdRoute
   '/_app/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
   '/_app/lessons/': typeof AppLessonsIndexRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/register'
     | '/terms-and-conditions'
+    | '/profile'
     | '/lessons/$sectionId'
     | '/practice/$scenarioId'
     | '/lessons/'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/register'
     | '/terms-and-conditions'
+    | '/profile'
     | '/lessons/$sectionId'
     | '/practice/$scenarioId'
     | '/lessons'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/register'
     | '/terms-and-conditions'
+    | '/_app/profile'
     | '/_app/lessons/$sectionId'
     | '/_app/practice/$scenarioId'
     | '/_app/lessons/'
@@ -203,6 +215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsAndConditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/profile': {
+      id: '/_app/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/lessons/': {
       id: '/_app/lessons/'
       path: '/lessons'
@@ -228,12 +247,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppProfileRoute: typeof AppProfileRoute
   AppLessonsSectionIdRoute: typeof AppLessonsSectionIdRoute
   AppPracticeScenarioIdRoute: typeof AppPracticeScenarioIdRoute
   AppLessonsIndexRoute: typeof AppLessonsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppProfileRoute: AppProfileRoute,
   AppLessonsSectionIdRoute: AppLessonsSectionIdRoute,
   AppPracticeScenarioIdRoute: AppPracticeScenarioIdRoute,
   AppLessonsIndexRoute: AppLessonsIndexRoute,

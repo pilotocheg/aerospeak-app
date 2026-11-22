@@ -65,10 +65,17 @@ export const AppSidebar = () => {
         </nav>
 
         <div className="flex items-center gap-2 border-t p-3">
-          <span className="flex size-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground uppercase">
-            {userInitial}
-          </span>
-          <span className="flex-1 truncate text-sm">{userName}</span>
+          <Link
+            to="/profile"
+            onClick={close}
+            aria-label="Open profile"
+            className="-m-1 flex min-w-0 flex-1 items-center gap-2 rounded-md p-1 transition hover:bg-muted/60"
+          >
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground uppercase">
+              {userInitial}
+            </span>
+            <span className="flex-1 truncate text-sm">{userName}</span>
+          </Link>
           <Button variant="ghost" size="icon-sm" aria-label="Toggle color theme" onClick={toggleTheme}>
             {theme === 'dark' ? <Sun /> : <Moon />}
           </Button>

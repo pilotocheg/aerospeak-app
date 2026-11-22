@@ -1,0 +1,38 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import { meKeys } from '@/entities/user'
+import { apiClient } from '@/shared/api'
+
+import { changeCurrentUserUsername } from '../../api'
+import { useAuthStore } from '../auth-store'
+
+type ChangeUsernameInput = {
+  username: string
+}
+
+export const useChangeUsername = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ username }: ChangeUsernameInput) => {
+      const previousName = useAuthStore.getState().user?.name
+
+      await changeCurrentUserUsername(username)
+
+      const { error } = await apiClient.PATCH('/me', { body: { name: username } })
+      if (error) {
+        if (previousName) {
+          await changeCurrentUserUsername(previousName).catch(() => undefined)
+        }
+        throw new Error('Could not update username')
+      }
+    },
+    onSuccess: (_, { username }) => {
+      const { user, setAuthenticatedUser } = useAuthStore.getState()
+      if (user) {
+        setAuthenticatedUser({ ...user, name: username })
+      }
+      void queryClient.invalidateQueries({ queryKey: meKeys.all })
+    },
+  })
+}
