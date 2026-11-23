@@ -4,7 +4,6 @@ import { toast } from 'sonner'
 import { ProfileRequiredError, SttFailedError, submitAttempt } from '@/entities/attempt'
 import { getAtcTransmission } from '@/entities/scenario'
 import { meKeys } from '@/entities/user'
-import { progressKeys } from '@/entities/progress'
 import { useCurrentUserProfile } from '@/features/auth'
 import { useAddAttempt } from '@/features/practice-session'
 import { TooShortError, useRecorder, type Recording } from '@/features/record-transmission'
@@ -59,8 +58,6 @@ export const usePracticeAttempt = ({ scenario, step, player, onScored }: UsePrac
       onSuccess: (result) => {
         addAttempt(step.id, { result, recordingUrl: url })
         onScored()
-        // Practice may change totals / daily progress: refetch so the UI doesn't show stale stats.
-        void queryClient.invalidateQueries({ queryKey: progressKeys.all })
         const { isCorrection, audio } = getAtcTransmission(step, result)
         if (isCorrection && audio) {
           void player.play(audio)
