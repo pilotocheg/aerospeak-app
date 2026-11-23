@@ -29,7 +29,14 @@ export const ScoreRing = ({ value, label, size = 56, className }: ScoreRingProps
       style={{ width: size, height: size }}
     >
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" strokeWidth={stroke} className="stroke-muted" />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          strokeWidth={stroke}
+          className="stroke-foreground/15"
+        />
         {value !== null && (
           <circle
             cx={size / 2}
