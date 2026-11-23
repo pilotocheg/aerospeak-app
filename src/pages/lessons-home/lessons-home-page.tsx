@@ -21,8 +21,6 @@ export const LessonsHomePage = () => {
 
   const { data: profile } = useCurrentUserProfile()
 
-  console.log(profile)
-
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
       <div className="flex items-center gap-2 px-2 pt-2 lg:hidden">
