@@ -17,7 +17,7 @@ export const PracticeHeader = ({ sectionId, title, stepIndex, stepCount, onHelp 
       variant="ghost"
       size="icon"
       aria-label="Close practice"
-      render={sectionId ? <Link to="/lessons/$sectionId" params={{ sectionId }} search={{}} /> : <Link to="/lessons" />}
+      render={sectionId ? <Link to="/lessons/$sectionId" params={{ sectionId }} /> : <Link to="/lessons" />}
     >
       <X />
     </Button>

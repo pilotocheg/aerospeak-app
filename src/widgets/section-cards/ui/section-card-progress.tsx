@@ -35,7 +35,7 @@ export const SectionCardProgress = ({ sectionId, progress }: SectionCardProgress
           {practiced}/{total} scenarios
         </p>
       </div>
-      <Button className="self-end px-8" render={<Link to="/lessons/$sectionId" params={{ sectionId }} search={{}} />}>
+      <Button className="self-end px-8" render={<Link to="/lessons/$sectionId" params={{ sectionId }} />}>
         {practiced ? 'Continue' : 'Start'}
       </Button>
     </>

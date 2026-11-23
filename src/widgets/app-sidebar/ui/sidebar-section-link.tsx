@@ -29,7 +29,6 @@ export const SidebarSectionLink = ({ section, onNavigate }: SidebarSectionLinkPr
     <Link
       to="/lessons/$sectionId"
       params={{ sectionId: section.id }}
-      search={{}}
       onClick={onNavigate}
       className={`${itemClass} hover:bg-muted/60`}
       activeProps={{ className: 'bg-primary text-primary-foreground hover:bg-primary' }}

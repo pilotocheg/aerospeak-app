@@ -43,7 +43,7 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
           <Button
             variant="ghost"
             size="icon-sm"
-            render={<Link to="/lessons/$sectionId" params={{ sectionId }} search={{}} />}
+            render={<Link to="/lessons/$sectionId" params={{ sectionId }} />}
             aria-label="Back to scenarios"
           >
             <ArrowLeft />
