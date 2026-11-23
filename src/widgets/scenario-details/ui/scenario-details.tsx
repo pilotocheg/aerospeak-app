@@ -2,10 +2,9 @@ import { Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 
 import { useScenarioProgress } from '@/entities/progress'
-import { useRandomScenarioVariant } from '@/entities/scenario'
+import { DifficultyBadge, useRandomScenarioVariant } from '@/entities/scenario'
 import { formatDuration } from '@/shared/lib/format'
 import { roundedAverage } from '@/shared/lib/math'
-import { Badge } from '@/shared/ui/badge'
 import { Button } from '@/shared/ui/button'
 import { ScoreRing } from '@/shared/ui/score-ring'
 import { SectionTitle } from '@/shared/ui/section-title'
@@ -50,9 +49,7 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
             <ArrowLeft />
           </Button>
           <h1 className="flex-1 truncate text-lg font-semibold">{title}</h1>
-          <Badge variant="outline" className="capitalize">
-            {difficulty}
-          </Badge>
+          <DifficultyBadge difficulty={difficulty} />
         </div>
 
         <div className="mt-4 grid grid-cols-4 gap-2">

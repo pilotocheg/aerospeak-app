@@ -24,6 +24,7 @@ export const ChangePasswordForm = () => {
           id="currentPassword"
           label="Current password"
           autoComplete="current-password"
+          placeholder="Enter your current password"
           error={errors.currentPassword}
           inputProps={register('currentPassword')}
         />
@@ -31,6 +32,7 @@ export const ChangePasswordForm = () => {
           id="newPassword"
           label="New password"
           autoComplete="new-password"
+          placeholder="At least 8 characters"
           error={errors.newPassword}
           inputProps={register('newPassword')}
         />
@@ -38,6 +40,7 @@ export const ChangePasswordForm = () => {
           id="confirmPassword"
           label="Repeat new password"
           autoComplete="new-password"
+          placeholder="Repeat the new password"
           error={errors.confirmPassword}
           inputProps={register('confirmPassword')}
         />

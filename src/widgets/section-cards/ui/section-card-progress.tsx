@@ -19,7 +19,7 @@ export const SectionCardProgress = ({ sectionId, progress }: SectionCardProgress
           <Skeleton className="h-1.5 w-full rounded-full" />
           <Skeleton className="h-3 w-20" />
         </div>
-        <Skeleton className="h-9 w-28 self-center" />
+        <Skeleton className="h-9 w-28 self-end" />
       </>
     )
   }
@@ -35,10 +35,7 @@ export const SectionCardProgress = ({ sectionId, progress }: SectionCardProgress
           {practiced}/{total} scenarios
         </p>
       </div>
-      <Button
-        className="self-center px-8"
-        render={<Link to="/lessons/$sectionId" params={{ sectionId }} search={{}} />}
-      >
+      <Button className="self-end px-8" render={<Link to="/lessons/$sectionId" params={{ sectionId }} search={{}} />}>
         {practiced ? 'Continue' : 'Start'}
       </Button>
     </>
