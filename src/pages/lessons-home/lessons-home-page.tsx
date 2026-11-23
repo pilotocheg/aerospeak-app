@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useUser } from '@/features/auth'
+import { useCurrentUserProfile } from '@/features/auth'
 import { sections } from '@/shared/content'
 
 import { SectionTitle } from '@/shared/ui/section-title'
@@ -12,19 +12,16 @@ import { ContinueCourseCard } from './ui/continue-course-card'
 
 import { useHomeProgress } from '@/entities/progress'
 import { packsQueryOptions } from '@/entities/scenario'
-import { getUserProfileQueryOptions } from '@/entities/user'
 
 export const LessonsHomePage = () => {
-  const user = useUser()
   const packsQuery = useQuery(packsQueryOptions())
   const { data: packs = [] } = packsQuery
 
   const { practiced, total, nextScenario, section } = useHomeProgress(packs, packsQuery.isPending)
 
-  const { data: profile } = useQuery({
-    ...getUserProfileQueryOptions(user?.id ?? ''),
-    enabled: Boolean(user),
-  })
+  const { data: profile } = useCurrentUserProfile()
+
+  console.log(profile)
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
