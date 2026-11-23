@@ -7,7 +7,7 @@ import { AppSidebar } from '@/widgets/app-sidebar'
 export const AppLayout = () => (
   <div className="flex h-dvh overflow-hidden">
     <AppSidebar />
-    <main className="flex min-w-0 flex-1 flex-col p-4 lg:p-6">
+    <main className="flex min-w-0 flex-1 flex-col">
       <Outlet />
     </main>
     <TermsGate />

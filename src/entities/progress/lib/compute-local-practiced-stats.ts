@@ -1,19 +1,23 @@
-import type { ScenarioProgress } from '@/entities/progress'
+import { roundedAverage } from '@/shared/lib/math'
+
+import type { ScenarioProgress } from '../model/progress-store'
 import type { PracticedStats } from './practiced-stats'
 
-/** Compute practiced/total counts and practiced scenario ids from the local progress store. */
+/**
+ * Practiced/total counts and the average best score over the given scenarios.
+ * Progress of scenarios that are not in the list (removed or renamed in the backend) is ignored.
+ */
 export const computeLocalPracticedStats = (
   progress: Record<string, ScenarioProgress>,
-  totalScenarios: number,
+  scenarioIds: string[],
 ): PracticedStats => {
-  const practicedScenarioIds = new Set(
-    Object.entries(progress)
-      .filter(([, p]) => p.attempts > 0)
-      .map(([id]) => id),
-  )
+  const practicedIds = scenarioIds.filter((id) => (progress[id]?.attempts ?? 0) > 0)
+  const bestScores = practicedIds.map((id) => progress[id].bestScore)
+
   return {
-    practiced: practicedScenarioIds.size,
-    total: totalScenarios,
-    practicedScenarioIds,
+    practiced: practicedIds.length,
+    total: scenarioIds.length,
+    practicedScenarioIds: new Set(practicedIds),
+    averageBest: roundedAverage(bestScores),
   }
 }

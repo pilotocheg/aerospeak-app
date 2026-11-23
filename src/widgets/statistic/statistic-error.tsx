@@ -8,21 +8,17 @@ type StatisticErrorProps = {
 }
 
 export const StatisticError = ({ onRetry }: StatisticErrorProps) => (
-  <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
-    <div className="mx-auto max-w-6xl space-y-8">
-      <Card className="text-center">
-        <CardHeader>
-          <AlertCircle className="mx-auto h-8 w-8 text-destructive mb-3" />
-          <CardTitle>Could not load statistics</CardTitle>
-          <CardDescription>We couldn't fetch your progress. Please try again.</CardDescription>
-        </CardHeader>
-        <CardFooter>
-          <Button onClick={onRetry}>
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Retry
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
-  </div>
+  <Card className="text-center">
+    <CardHeader>
+      <AlertCircle className="mx-auto h-8 w-8 text-destructive mb-3" />
+      <CardTitle>Could not load statistics</CardTitle>
+      <CardDescription>We couldn't fetch your progress. Please try again.</CardDescription>
+    </CardHeader>
+    <CardFooter>
+      <Button onClick={onRetry}>
+        <RefreshCw className="mr-2 h-4 w-4" />
+        Retry
+      </Button>
+    </CardFooter>
+  </Card>
 )

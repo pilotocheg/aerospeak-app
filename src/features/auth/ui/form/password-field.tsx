@@ -7,14 +7,22 @@ type PasswordFieldProps = {
   id: string
   label: string
   autoComplete: 'current-password' | 'new-password'
+  placeholder?: string
   error?: FormFieldError
   inputProps: UseFormRegisterReturn
 }
 
-export const PasswordField = ({ id, label, autoComplete, error, inputProps }: PasswordFieldProps) => (
+export const PasswordField = ({ id, label, autoComplete, placeholder, error, inputProps }: PasswordFieldProps) => (
   <Field data-invalid={!!error}>
     <FieldLabel htmlFor={id}>{label}</FieldLabel>
-    <Input id={id} type="password" autoComplete={autoComplete} aria-invalid={!!error} {...inputProps} />
+    <Input
+      id={id}
+      type="password"
+      autoComplete={autoComplete}
+      placeholder={placeholder}
+      aria-invalid={!!error}
+      {...inputProps}
+    />
     <FieldError errors={[error]} />
   </Field>
 )

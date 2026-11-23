@@ -8,6 +8,7 @@ import { useTheme, useToggleTheme } from '@/shared/lib/theme'
 import { Button } from '@/shared/ui/button'
 import { Logo } from '@/shared/ui/logo'
 import { SectionTitle } from '@/shared/ui/section-title'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 
 import { useSidebarDrawer } from '../model/use-sidebar-drawer'
 import { SidebarSectionLink } from './sidebar-section-link'
@@ -20,6 +21,7 @@ export const AppSidebar = () => {
   const toggleTheme = useToggleTheme()
   const userName = user?.name ?? 'Pilot'
   const userInitial = userName.at(0) ?? 'P'
+  const themeLabel = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
 
   const handleLogout = () => {
     close()
@@ -36,7 +38,7 @@ export const AppSidebar = () => {
         aria-modal={isModal || undefined}
         aria-label={isModal ? 'Navigation' : undefined}
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col border-r bg-card transition-transform lg:static lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-50 flex w-72 shrink-0 flex-col border-r bg-card transition-transform lg:static lg:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
@@ -76,23 +78,40 @@ export const AppSidebar = () => {
         </nav>
 
         <div className="flex items-center gap-2 border-t p-3">
-          <Link
-            to="/profile"
-            onClick={close}
-            aria-label="Open profile"
-            className="-m-1 flex min-w-0 flex-1 items-center gap-2 rounded-md p-1 transition hover:bg-muted/60"
-          >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground uppercase">
-              {userInitial}
-            </span>
-            <span className="flex-1 truncate text-sm">{userName}</span>
-          </Link>
-          <Button variant="ghost" size="icon-sm" aria-label="Toggle color theme" onClick={toggleTheme}>
-            {theme === 'dark' ? <Sun /> : <Moon />}
-          </Button>
-          <Button variant="ghost" size="icon-sm" aria-label="Logout" onClick={handleLogout}>
-            <LogOut />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Link
+                  to="/profile"
+                  onClick={close}
+                  aria-label="Open profile"
+                  className="-m-1 flex min-w-0 flex-1 items-center gap-2 rounded-md p-1 transition hover:bg-muted/60"
+                />
+              }
+            >
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground uppercase">
+                {userInitial}
+              </span>
+              <span className="flex-1 truncate text-sm">{userName}</span>
+            </TooltipTrigger>
+            <TooltipContent>Profile</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger
+              render={<Button variant="ghost" size="icon-sm" aria-label={themeLabel} onClick={toggleTheme} />}
+            >
+              {theme === 'dark' ? <Sun /> : <Moon />}
+            </TooltipTrigger>
+            <TooltipContent>{themeLabel}</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger
+              render={<Button variant="ghost" size="icon-sm" aria-label="Log out" onClick={handleLogout} />}
+            >
+              <LogOut />
+            </TooltipTrigger>
+            <TooltipContent>Log out</TooltipContent>
+          </Tooltip>
         </div>
       </aside>
     </>

@@ -1,14 +1,47 @@
+import { useState } from 'react'
+
 import type { SectionProgress } from '@/features/section-progress'
 import { ScoreRing } from '@/shared/ui/score-ring'
 import { Skeleton } from '@/shared/ui/skeleton'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 
 type SectionCardScoreProps = {
   progress: SectionProgress
 }
 
-export const SectionCardScore = ({ progress }: SectionCardScoreProps) =>
-  progress.isPending ? (
-    <Skeleton className="size-9 rounded-full bg-black/20" />
-  ) : (
-    <ScoreRing value={progress.averageBest} size={36} className="rounded-full bg-black/20" />
+const getScoreHint = (averageBest: number | null) =>
+  averageBest === null
+    ? 'No scores yet: practice a scenario to see your average'
+    : `Average best score of practiced scenarios: ${averageBest}%`
+
+export const SectionCardScore = ({ progress }: SectionCardScoreProps) => {
+  const { isPending, averageBest } = progress
+  // Controlled so a tap opens the hint too: Base UI tooltips open only on hover and keyboard focus.
+  const [isHintOpen, setIsHintOpen] = useState(false)
+
+  if (isPending) {
+    return <Skeleton className="size-9 rounded-full bg-black/20" />
+  }
+
+  const scoreHint = getScoreHint(averageBest)
+
+  return (
+    <Tooltip open={isHintOpen} onOpenChange={setIsHintOpen}>
+      <TooltipTrigger
+        closeOnClick={false}
+        onClick={() => setIsHintOpen(true)}
+        render={
+          <span
+            tabIndex={0}
+            role="img"
+            aria-label={scoreHint}
+            className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground"
+          />
+        }
+      >
+        <ScoreRing value={averageBest} size={36} className="rounded-full bg-black/20" />
+      </TooltipTrigger>
+      <TooltipContent>{scoreHint}</TooltipContent>
+    </Tooltip>
   )
+}
