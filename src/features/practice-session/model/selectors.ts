@@ -4,6 +4,8 @@ export const usePracticeScenarioId = () => usePracticeStore((state) => state.sce
 
 export const useRunId = () => usePracticeStore((state) => state.runId)
 
+export const useSessionId = () => usePracticeStore((state) => state.sessionId)
+
 export const useStepIndex = () => usePracticeStore((state) => state.stepIndex)
 
 export const useIsFinished = () => usePracticeStore((state) => state.isFinished)
