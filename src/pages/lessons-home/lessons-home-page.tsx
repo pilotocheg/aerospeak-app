@@ -1,34 +1,30 @@
 import { useQuery } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
 
 import { useUser } from '@/features/auth'
 import { sections } from '@/shared/content'
 
-import { Button } from '@/shared/ui/button'
 import { SectionTitle } from '@/shared/ui/section-title'
-import { Skeleton } from '@/shared/ui/skeleton'
 import { SidebarToggle } from '@/widgets/app-sidebar'
 import { SectionCard } from '@/widgets/section-cards'
+
+import { GreetingCard } from './ui/greeting-card'
+import { ContinueCourseCard } from './ui/continue-course-card'
 
 import { useHomeProgress } from '@/entities/progress'
 import { packsQueryOptions } from '@/entities/scenario'
 import { getUserProfileQueryOptions } from '@/entities/user'
-import { findSectionByPackId } from '@/entities/section'
 
 export const LessonsHomePage = () => {
   const user = useUser()
   const packsQuery = useQuery(packsQueryOptions())
   const { data: packs = [] } = packsQuery
-  const packsIsPending = packsQuery.isPending
 
-  const { practiced, total, nextScenario } = useHomeProgress(packs, packsIsPending)
+  const { practiced, total, nextScenario, section } = useHomeProgress(packs, packsQuery.isPending)
 
   const { data: profile } = useQuery({
     ...getUserProfileQueryOptions(user?.id ?? ''),
     enabled: Boolean(user),
   })
-
-  const section = findSectionByPackId(nextScenario?.packId ?? '')
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
@@ -36,76 +32,17 @@ export const LessonsHomePage = () => {
         <SidebarToggle />
       </div>
 
-      {/* Greeting + current status (skeleton while packs load) */}
-      <div className="rounded-lg border border-border bg-card p-6">
-        <section className="space-y-3">
-          {packsIsPending ? (
-            <>
-              <Skeleton className="h-6 w-1/3" />
-              <Skeleton className="h-4 w-3/4" />
-            </>
-          ) : (
-            <>
-              <h1 className="text-lg font-semibold">{profile ? `Hi, ${profile.name}` : 'Welcome'}</h1>
-              <p className="text-sm text-muted-foreground">
-                {practiced === total && total > 0
-                  ? 'You have completed all scenarios. Great job!'
-                  : practiced > 0
-                    ? `You have practiced ${practiced} of ${total} scenarios.`
-                    : 'Start with the first scenario to practice radio communication.'}
-              </p>
-            </>
-          )}
-        </section>
-      </div>
+      <GreetingCard
+        packsIsPending={packsQuery.isPending}
+        profileName={profile?.name}
+        practiced={practiced}
+        total={total}
+      />
 
-      {/* Continue course recommendation (skeleton while packs load) */}
-      {packsIsPending ? (
-        <div className="rounded-lg border border-border bg-card p-6">
-          <section>
-            <div className="flex flex-col gap-3 md:flex-row md:items-center">
-              <div className="flex-1 min-w-0">
-                <Skeleton className="h-4 w-1/3" />
-                <Skeleton className="h-6 w-1/2" />
-                <Skeleton className="h-3 w-2/3" />
-              </div>
-              <Skeleton className="h-10 w-24" />
-            </div>
-          </section>
-        </div>
-      ) : (
-        nextScenario &&
-        section && (
-          <div className="rounded-lg border border-border bg-card p-6">
-            <section>
-              <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-muted-foreground uppercase tracking-wider truncate">
-                    Continue course - Next
-                  </p>
-                  <p className="text-lg font-semibold truncate">{nextScenario.title}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{nextScenario.objective}</p>
-                </div>
-                <Button
-                  render={
-                    <Link
-                      to="/lessons/$sectionId"
-                      params={{ sectionId: section.id }}
-                      search={{ scenario: String(nextScenario.id) }}
-                      className="w-full md:w-auto"
-                    />
-                  }
-                >
-                  Start
-                </Button>
-              </div>
-            </section>
-          </div>
-        )
-      )}
+      <ContinueCourseCard packsIsPending={packsQuery.isPending} nextScenario={nextScenario} section={section} />
 
       {/* Training plan — always rendered; each SectionCard handles its own loading state */}
-      <section className="space-y-3">
+      <section className="space-y-3 px-4 py-6 sm:px-6">
         <SectionTitle as="h2" className="text-center">
           Training plan
         </SectionTitle>
