@@ -5,7 +5,7 @@ import { ProfileRequiredError, SttFailedError, submitAttempt } from '@/entities/
 import { getAtcTransmission } from '@/entities/scenario'
 import { meKeys } from '@/entities/user'
 import { useCurrentUserProfile } from '@/features/auth'
-import { useAddAttempt } from '@/features/practice-session'
+import { useAddAttempt, usePracticeSessionId } from '@/features/practice-session'
 import { TooShortError, useRecorder, type Recording } from '@/features/record-transmission'
 import type { ScenarioDto, ScenarioStepDto } from '@/shared/api'
 import type { AudioPlayer } from '@/shared/lib/audio'
@@ -36,6 +36,7 @@ const toastError = (error: Error) => {
 export const usePracticeAttempt = ({ scenario, step, player, onScored }: UsePracticeAttemptOptions) => {
   const queryClient = useQueryClient()
   const addAttempt = useAddAttempt()
+  const practiceSessionId = usePracticeSessionId() ?? undefined
   // Recording needs a finished registration; TermsGate asks for it while the profile is missing.
   const { data: profile } = useCurrentUserProfile()
 
@@ -52,7 +53,13 @@ export const usePracticeAttempt = ({ scenario, step, player, onScored }: UsePrac
 
   const submit = (recording: Recording) => {
     const { blob, url } = recording
-    const attempt = { scenarioId: scenario.id, stepId: step.id, variant: scenario.variant, audio: blob }
+    const attempt = {
+      scenarioId: scenario.id,
+      stepId: step.id,
+      practiceSessionId,
+      variant: scenario.variant,
+      audio: blob,
+    }
 
     mutation.mutate(attempt, {
       onSuccess: (result) => {
