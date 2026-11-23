@@ -11,6 +11,8 @@ export const StatisticPage = () => {
   const { totals, items, avgScore, practiceRate, latestUpdate, isPending, isError, refetch } =
     useUserProgressSummary(uid)
 
+  const updatedAt = new Date(latestUpdate)
+
   if (isPending) {
     return <StatisticSkeleton />
   }
@@ -58,11 +60,8 @@ export const StatisticPage = () => {
         {latestUpdate > 0 && (
           <p className="text-xs text-muted-foreground text-right">
             Last updated{' '}
-            <time dateTime={new Date(latestUpdate).toISOString()}>
-              {new Date(latestUpdate).toLocaleTimeString(undefined, {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+            <time dateTime={updatedAt.toISOString()}>
+              {updatedAt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
             </time>
           </p>
         )}
