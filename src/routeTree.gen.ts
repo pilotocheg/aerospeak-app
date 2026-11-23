@@ -17,6 +17,7 @@ import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
+import { Route as AppStatisticRouteImport } from './routes/_app/statistic'
 import { Route as AppLessonsIndexRouteImport } from './routes/_app/lessons/index'
 import { Route as AppLessonsSectionIdRouteImport } from './routes/_app/lessons/$sectionId'
 import { Route as AppPracticeScenarioIdRouteImport } from './routes/_app/practice/$scenarioId'
@@ -60,6 +61,11 @@ const AppProfileRoute = AppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
+const AppStatisticRoute = AppStatisticRouteImport.update({
+  id: '/statistic',
+  path: '/statistic',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppLessonsIndexRoute = AppLessonsIndexRouteImport.update({
   id: '/lessons/',
   path: '/lessons/',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/profile': typeof AppProfileRoute
+  '/statistic': typeof AppStatisticRoute
   '/lessons/$sectionId': typeof AppLessonsSectionIdRoute
   '/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
   '/lessons/': typeof AppLessonsIndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/profile': typeof AppProfileRoute
+  '/statistic': typeof AppStatisticRoute
   '/lessons/$sectionId': typeof AppLessonsSectionIdRoute
   '/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
   '/lessons': typeof AppLessonsIndexRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/_app/profile': typeof AppProfileRoute
+  '/_app/statistic': typeof AppStatisticRoute
   '/_app/lessons/$sectionId': typeof AppLessonsSectionIdRoute
   '/_app/practice/$scenarioId': typeof AppPracticeScenarioIdRoute
   '/_app/lessons/': typeof AppLessonsIndexRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/terms-and-conditions'
     | '/profile'
+    | '/statistic'
     | '/lessons/$sectionId'
     | '/practice/$scenarioId'
     | '/lessons/'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/terms-and-conditions'
     | '/profile'
+    | '/statistic'
     | '/lessons/$sectionId'
     | '/practice/$scenarioId'
     | '/lessons'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/terms-and-conditions'
     | '/_app/profile'
+    | '/_app/statistic'
     | '/_app/lessons/$sectionId'
     | '/_app/practice/$scenarioId'
     | '/_app/lessons/'
@@ -222,6 +234,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/statistic': {
+      id: '/_app/statistic'
+      path: '/statistic'
+      fullPath: '/statistic'
+      preLoaderRoute: typeof AppStatisticRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/lessons/': {
       id: '/_app/lessons/'
       path: '/lessons'
@@ -248,6 +267,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
+  AppStatisticRoute: typeof AppStatisticRoute
   AppLessonsSectionIdRoute: typeof AppLessonsSectionIdRoute
   AppPracticeScenarioIdRoute: typeof AppPracticeScenarioIdRoute
   AppLessonsIndexRoute: typeof AppLessonsIndexRoute
@@ -255,6 +275,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
+  AppStatisticRoute: AppStatisticRoute,
   AppLessonsSectionIdRoute: AppLessonsSectionIdRoute,
   AppPracticeScenarioIdRoute: AppPracticeScenarioIdRoute,
   AppLessonsIndexRoute: AppLessonsIndexRoute,
