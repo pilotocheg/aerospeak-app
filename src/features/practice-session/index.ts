@@ -1,6 +1,6 @@
 export { useAddAttempt, useFinishPractice, useGoToStep, useStartPractice } from './model/actions'
 export type { StepAttempt } from './model/practice-store'
-export { useAttemptsByStep, useIsFinished, useRunId, useSessionId, useStepIndex } from './model/selectors'
+export { useAttemptsByStep, useIsFinished, usePracticeSessionId, useRunId, useStepIndex } from './model/selectors'
 export { useCompletePractice } from './model/use-complete-practice'
 export { usePracticeRun } from './model/use-practice-run'
 export type { PracticeSummary } from './model/summary'

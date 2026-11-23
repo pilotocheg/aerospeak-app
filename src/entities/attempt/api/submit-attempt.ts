@@ -5,8 +5,8 @@ import { ProfileRequiredError, RateLimitedError, SttFailedError } from './attemp
 export type SubmitAttemptInput = {
   scenarioId: string
   stepId: string
-  /** One pass through the scenario: the same id for every attempt of that run. */
-  sessionId?: string
+  /** One pass through the scenario: the same id for every attempt of that run. The API calls it `sessionId`. */
+  practiceSessionId?: string
   /** Variant key of the scenario (`ScenarioDto.variant`), so the backend scores the same text. */
   variant?: string
   audio: Blob
@@ -42,9 +42,9 @@ const toAttemptFormData = ({ audio, scenarioId, stepId, sessionId, variant }: Cr
 }
 
 /** Sends the recording to the backend, which transcribes and scores it. */
-export const submitAttempt = async ({ scenarioId, stepId, sessionId, variant, audio }: SubmitAttemptInput) => {
+export const submitAttempt = async ({ scenarioId, stepId, practiceSessionId, variant, audio }: SubmitAttemptInput) => {
   const { data: result, response } = await apiClient.POST('/attempts', {
-    body: { audio, scenarioId, stepId, sessionId, variant },
+    body: { audio, scenarioId, stepId, sessionId: practiceSessionId, variant },
     bodySerializer: toAttemptFormData,
   })
 

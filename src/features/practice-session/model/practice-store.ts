@@ -11,8 +11,11 @@ type PracticeState = {
   scenarioId: string | null
   /** Increments on every start, so effects can react to a restart of the same scenario. */
   runId: number
-  /** Sent with every attempt of the run: the backend counts a scenario as practiced by its completed runs. */
-  sessionId: string | null
+  /**
+   * Id of this run (one pass through the scenario), sent as `sessionId` with every attempt of the run.
+   * The backend counts a scenario as practiced by its completed runs. Not the user's sign-in session.
+   */
+  practiceSessionId: string | null
   stepIndex: number
   attemptsByStep: Record<string, StepAttempt[]>
   isFinished: boolean
@@ -31,7 +34,7 @@ const revokeRecordings = (attemptsByStep: Record<string, StepAttempt[]>) =>
 export const usePracticeStore = create<PracticeState>()((set, get) => ({
   scenarioId: null,
   runId: 0,
-  sessionId: null,
+  practiceSessionId: null,
   stepIndex: 0,
   attemptsByStep: {},
   isFinished: false,
@@ -41,7 +44,7 @@ export const usePracticeStore = create<PracticeState>()((set, get) => ({
     set((state) => ({
       scenarioId,
       runId: state.runId + 1,
-      sessionId: crypto.randomUUID(),
+      practiceSessionId: crypto.randomUUID(),
       stepIndex: 0,
       attemptsByStep: {},
       isFinished: false,
