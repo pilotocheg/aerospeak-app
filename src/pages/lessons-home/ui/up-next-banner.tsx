@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { Play } from 'lucide-react'
 
+import { SectionIcon } from '@/entities/section'
 import type { ScenarioSummaryDto } from '@/shared/api'
 import type { Section } from '@/shared/content'
 import { Button } from '@/shared/ui/button'
@@ -34,7 +34,7 @@ export const UpNextBanner = ({ packsIsPending, practiced, nextScenario, section 
       className="flex flex-col gap-4 rounded-xl bg-primary p-5 text-primary-foreground sm:flex-row sm:items-center"
     >
       <span className="hidden size-11 shrink-0 items-center justify-center rounded-full bg-black/20 sm:flex">
-        <Play className="size-5" aria-hidden />
+        <SectionIcon name={section.icon} className="size-5" aria-hidden />
       </span>
       <div className="min-w-0 flex-1">
         <p className="text-xs font-medium tracking-wider uppercase opacity-80">
@@ -44,8 +44,7 @@ export const UpNextBanner = ({ packsIsPending, practiced, nextScenario, section 
         <p className="line-clamp-2 text-sm opacity-80">{objective}</p>
       </div>
       <Button
-        variant="secondary"
-        className="px-8"
+        className="bg-primary-foreground px-8 text-primary hover:bg-primary-foreground/90"
         render={<Link to="/lessons/$sectionId" params={{ sectionId: section.id }} search={{ scenario: id }} />}
       >
         {actionLabel}
