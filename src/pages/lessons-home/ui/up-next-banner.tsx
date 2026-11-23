@@ -1,14 +1,16 @@
 import { Link } from '@tanstack/react-router'
 import { Play } from 'lucide-react'
 
+import type { ScenarioSummaryDto } from '@/shared/api'
+import type { Section } from '@/shared/content'
 import { Button } from '@/shared/ui/button'
 import { Skeleton } from '@/shared/ui/skeleton'
 
 type UpNextBannerProps = {
   packsIsPending: boolean
   practiced: number
-  nextScenario: { id: string; title: string; objective: string; packId: string } | undefined
-  section: { id: string; title: string } | undefined
+  nextScenario: ScenarioSummaryDto | undefined
+  section: Section | undefined
 }
 
 /** The next scenario to practice: "Start here" before the first attempt, "Continue" after. */
@@ -44,7 +46,7 @@ export const UpNextBanner = ({ packsIsPending, practiced, nextScenario, section 
       <Button
         variant="secondary"
         className="px-8"
-        render={<Link to="/lessons/$sectionId" params={{ sectionId: section.id }} search={{ scenario: String(id) }} />}
+        render={<Link to="/lessons/$sectionId" params={{ sectionId: section.id }} search={{ scenario: id }} />}
       >
         {actionLabel}
       </Button>

@@ -1,23 +1,33 @@
 import { Link } from '@tanstack/react-router'
 
-import { useSectionProgress } from '@/features/section-progress'
 import { ScoreRing } from '@/shared/ui/score-ring'
 import { Skeleton } from '@/shared/ui/skeleton'
 
 import { StatusMetric } from './status-metric'
 
+type HomeStatsProps = {
+  isPending: boolean
+  practiced: number
+  total: number
+  averageBest: number | null
+}
+
 const ringPlaceholder = <Skeleton className="size-14 rounded-full" />
 
+const getCompletionPercent = (practiced: number, total: number) => (total ? Math.round((practiced / total) * 100) : 0)
+
 /** Overall progress at a glance, with a link to the full statistics page. */
-export const HomeStats = () => {
-  const { total, practiced, completionPercent, averageBest, isPending } = useSectionProgress()
-  const roundedCompletion = Math.round(completionPercent)
+export const HomeStats = ({ isPending, practiced, total, averageBest }: HomeStatsProps) => {
+  const completionPercent = getCompletionPercent(practiced, total)
 
   return (
-    <section aria-label="Your progress" className="flex flex-col rounded-xl bg-card p-5 ring-1 ring-foreground/10">
+    <section
+      aria-label="Your progress"
+      className="flex flex-col rounded-xl bg-card p-5 ring-1 ring-foreground/10 lg:only:col-span-full"
+    >
       <div className="flex flex-1 items-center justify-around gap-4">
         <StatusMetric label="Progress" isPending={isPending} placeholder={ringPlaceholder}>
-          <ScoreRing value={roundedCompletion} size={56} />
+          <ScoreRing value={completionPercent} size={56} />
         </StatusMetric>
         <StatusMetric label="Practiced" isPending={isPending} placeholder={<Skeleton className="h-14 w-14" />}>
           <span className="flex h-14 items-center text-2xl font-bold tabular-nums">

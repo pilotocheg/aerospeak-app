@@ -16,7 +16,7 @@ export const LessonsHomePage = () => {
   const packsQuery = useQuery(packsQueryOptions())
   const { data: packs = [], isPending: packsIsPending } = packsQuery
 
-  const { practiced, total, nextScenario, section } = useHomeProgress(packs, packsIsPending)
+  const { practiced, total, averageBest, nextScenario, section } = useHomeProgress(packs, packsIsPending)
 
   const { data: profile } = useCurrentUserProfile()
 
@@ -36,7 +36,7 @@ export const LessonsHomePage = () => {
               nextScenario={nextScenario}
               section={section}
             />
-            <HomeStats />
+            <HomeStats isPending={packsIsPending} practiced={practiced} total={total} averageBest={averageBest} />
           </div>
         </div>
 

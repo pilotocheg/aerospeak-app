@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import type { SectionProgress } from '@/features/section-progress'
 import { ScoreRing } from '@/shared/ui/score-ring'
 import { Skeleton } from '@/shared/ui/skeleton'
@@ -14,6 +16,8 @@ const getScoreHint = (averageBest: number | null) =>
 
 export const SectionCardScore = ({ progress }: SectionCardScoreProps) => {
   const { isPending, averageBest } = progress
+  // Controlled so a tap opens the hint too: Base UI tooltips open only on hover and keyboard focus.
+  const [isHintOpen, setIsHintOpen] = useState(false)
 
   if (isPending) {
     return <Skeleton className="size-9 rounded-full bg-black/20" />
@@ -22,8 +26,10 @@ export const SectionCardScore = ({ progress }: SectionCardScoreProps) => {
   const scoreHint = getScoreHint(averageBest)
 
   return (
-    <Tooltip>
+    <Tooltip open={isHintOpen} onOpenChange={setIsHintOpen}>
       <TooltipTrigger
+        closeOnClick={false}
+        onClick={() => setIsHintOpen(true)}
         render={
           <span
             tabIndex={0}

@@ -22,8 +22,8 @@ export const Greeting = ({ packsIsPending, profileName, practiced, total }: Gree
   if (packsIsPending) {
     return (
       <div className="space-y-2">
-        <Skeleton className="h-8 w-56" />
-        <Skeleton className="h-4 w-80" />
+        <Skeleton className="h-8 w-full max-w-56" />
+        <Skeleton className="h-4 w-full max-w-80" />
       </div>
     )
   }
