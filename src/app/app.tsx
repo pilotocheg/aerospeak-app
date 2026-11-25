@@ -1,6 +1,7 @@
 import { QueryClient } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 
+import { progressKeys } from '@/entities/progress'
 import { useAuthSession } from '@/features/auth'
 import { TooltipProvider } from '@/shared/ui/tooltip'
 
@@ -11,8 +12,11 @@ import { createAppRouter } from './providers/router'
 const queryClient = new QueryClient()
 const router = createAppRouter(queryClient)
 
+// Progress is persisted in this browser: drop it on any sign-out so the next person here never loads it.
+const clearAccountProgress = () => queryClient.removeQueries({ queryKey: progressKeys.all })
+
 export const App = () => {
-  useAuthSession()
+  useAuthSession({ onSignOut: clearAccountProgress })
 
   return (
     <QueryProvider client={queryClient}>

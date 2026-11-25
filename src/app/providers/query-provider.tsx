@@ -26,9 +26,12 @@ export const QueryProvider = ({ client, children }: PropsWithChildren<{ client: 
       persister,
       maxAge: SCENARIO_CACHE_MS,
       buster: BUSTER,
+      // Restored queries outlive the client's 5-minute gcTime until a page observes them with its own.
+      hydrateOptions: { defaultOptions: { queries: { gcTime: SCENARIO_CACHE_MS } } },
       dehydrateOptions: {
         shouldDehydrateQuery: ({ state, queryKey }) =>
-          state.status === 'success' && PERSISTED_ROOT_KEYS.has(queryKey[0]),
+          // Data, not status: a failed background refetch keeps its data, which stays worth restoring.
+          state.data !== undefined && PERSISTED_ROOT_KEYS.has(queryKey[0]),
       },
     }}
   >

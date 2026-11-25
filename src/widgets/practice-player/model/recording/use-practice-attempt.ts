@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 import { ProfileRequiredError, SttFailedError, submitAttempt } from '@/entities/attempt'
+import { progressKeys } from '@/entities/progress'
 import { getAtcTransmission } from '@/entities/scenario'
 import { meKeys } from '@/entities/user'
 import { useCurrentUserProfile } from '@/features/auth'
@@ -42,6 +43,11 @@ export const usePracticeAttempt = ({ scenario, step, player, onScored }: UsePrac
 
   const mutation = useMutation({
     mutationFn: submitAttempt,
+    onSuccess: () => {
+      // The scored attempt may complete the run even if the user never presses Finish: mark progress
+      // stale so home refetches it on the next visit, without a request per attempt now.
+      void queryClient.invalidateQueries({ queryKey: progressKeys.all, refetchType: 'none' })
+    },
     onError: (error) => {
       if (error instanceof ProfileRequiredError) {
         // The cached profile is out of date: refetching it brings back TermsGate.
