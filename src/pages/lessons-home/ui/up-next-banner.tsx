@@ -7,19 +7,21 @@ import { Button } from '@/shared/ui/button'
 import { Skeleton } from '@/shared/ui/skeleton'
 
 type UpNextBannerProps = {
-  packsIsPending: boolean
+  isPending: boolean
+  /** Without the account progress the next scenario is unknown: no banner. */
+  isError: boolean
   practiced: number
   nextScenario: ScenarioSummaryDto | undefined
   section: Section | undefined
 }
 
 /** The next scenario to practice: "Start here" before the first attempt, "Continue" after. */
-export const UpNextBanner = ({ packsIsPending, practiced, nextScenario, section }: UpNextBannerProps) => {
-  if (packsIsPending) {
+export const UpNextBanner = ({ isPending, isError, practiced, nextScenario, section }: UpNextBannerProps) => {
+  if (isPending) {
     return <Skeleton className="h-28 rounded-xl" />
   }
 
-  if (!nextScenario || !section) {
+  if (isError || !nextScenario || !section) {
     return null
   }
 

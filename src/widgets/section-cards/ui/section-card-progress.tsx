@@ -24,7 +24,22 @@ export const SectionCardProgress = ({ sectionId, progress }: SectionCardProgress
     )
   }
 
-  const { completionPercent, practiced, total } = progress
+  const { completionPercent, practiced, total, isError } = progress
+  const openButton = (label: string) => (
+    <Button className="self-end px-8" render={<Link to="/lessons/$sectionId" params={{ sectionId }} />}>
+      {label}
+    </Button>
+  )
+
+  if (isError) {
+    return (
+      <>
+        <p className="text-xs text-muted-foreground">Progress unavailable</p>
+        {openButton('Open')}
+      </>
+    )
+  }
+
   const progressText = `${practiced} of ${total} scenarios practiced`
 
   return (
@@ -35,9 +50,7 @@ export const SectionCardProgress = ({ sectionId, progress }: SectionCardProgress
           {practiced}/{total} scenarios
         </p>
       </div>
-      <Button className="self-end px-8" render={<Link to="/lessons/$sectionId" params={{ sectionId }} />}>
-        {practiced ? 'Continue' : 'Start'}
-      </Button>
+      {openButton(practiced ? 'Continue' : 'Start')}
     </>
   )
 }

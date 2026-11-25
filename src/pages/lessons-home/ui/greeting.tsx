@@ -1,7 +1,9 @@
 import { Skeleton } from '@/shared/ui/skeleton'
 
 type GreetingProps = {
-  packsIsPending: boolean
+  isPending: boolean
+  /** The account progress could not be loaded: no status line about it. */
+  isError: boolean
   profileName: string | null | undefined
   practiced: number
   total: number
@@ -18,8 +20,8 @@ const getStatusMessage = (practiced: number, total: number) => {
 }
 
 /** Page heading: greeting and a one-line status. */
-export const Greeting = ({ packsIsPending, profileName, practiced, total }: GreetingProps) => {
-  if (packsIsPending) {
+export const Greeting = ({ isPending, isError, profileName, practiced, total }: GreetingProps) => {
+  if (isPending) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-8 w-full max-w-56" />
@@ -29,7 +31,7 @@ export const Greeting = ({ packsIsPending, profileName, practiced, total }: Gree
   }
 
   const title = profileName ? `Hi, ${profileName}` : 'Welcome'
-  const statusMessage = getStatusMessage(practiced, total)
+  const statusMessage = isError ? 'Pick a section to practice.' : getStatusMessage(practiced, total)
 
   return (
     <div className="space-y-1">

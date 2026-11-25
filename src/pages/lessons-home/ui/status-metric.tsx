@@ -4,7 +4,7 @@ import { cn } from 'cn'
 type StatusMetricProps = {
   label: string
   isPending: boolean
-  /** Skeleton shown while the packs load. */
+  /** Skeleton shown while the packs and the progress load. */
   placeholder: ReactNode
   className?: string
   children: ReactNode

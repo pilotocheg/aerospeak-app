@@ -15,12 +15,16 @@ const getScoreHint = (averageBest: number | null) =>
     : `Average best score of practiced scenarios: ${averageBest}%`
 
 export const SectionCardScore = ({ progress }: SectionCardScoreProps) => {
-  const { isPending, averageBest } = progress
+  const { isPending, isError, averageBest } = progress
   // Controlled so a tap opens the hint too: Base UI tooltips open only on hover and keyboard focus.
   const [isHintOpen, setIsHintOpen] = useState(false)
 
   if (isPending) {
     return <Skeleton className="size-9 rounded-full bg-black/20" />
+  }
+
+  if (isError) {
+    return null
   }
 
   const scoreHint = getScoreHint(averageBest)

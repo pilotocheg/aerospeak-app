@@ -1,4 +1,7 @@
 export { buildAttemptResult } from './build-attempt-result'
 export { buildElementResult } from './build-element-result'
+export { buildPracticePack } from './build-practice-pack'
 export { buildScenario } from './build-scenario'
+export { buildScenarioProgress } from './build-scenario-progress'
 export { buildScenarioStep } from './build-scenario-step'
+export { buildScenarioSummary } from './build-scenario-summary'

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
+import { progressKeys } from '@/entities/progress'
 import { meKeys } from '@/entities/user'
 import { apiClient } from '@/shared/api'
 
@@ -28,6 +29,7 @@ export const useDeleteAccount = () => {
       clearAuthenticatedUser()
       if (user) {
         queryClient.removeQueries({ queryKey: meKeys.profile(user.id) })
+        queryClient.removeQueries({ queryKey: progressKeys.detail(user.id) })
       }
       try {
         await deleteCurrentFirebaseUser()

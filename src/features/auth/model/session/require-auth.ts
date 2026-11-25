@@ -1,6 +1,5 @@
 import { redirect } from '@tanstack/react-router'
 
-import { setProgressOwner } from '@/entities/progress'
 import { auth } from '@/shared/lib/firebase'
 
 export const requireAuth = async () => {
@@ -8,6 +7,4 @@ export const requireAuth = async () => {
   if (!auth.currentUser) {
     throw redirect({ to: '/login' })
   }
-  // Before any page renders, so another account's local progress never shows.
-  setProgressOwner(auth.currentUser.uid)
 }
