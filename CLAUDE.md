@@ -90,6 +90,9 @@ Imports go only downward: `pages → widgets → features → entities → share
 - Forms: React Hook Form + zod.
 - Imports have no file extension (`./config`, not `./config.ts`) unless the import does not
   resolve without it.
+- Name functions precisely: the name says what the function does or returns (`renderOpenButton`
+  for a helper that returns JSX, `computePracticedStats`, `refetchProgress`), never a noun that
+  reads like a value or a vague `get`/`handle`/`do`. Details in the `code-quality` skill, section 4.
 - Readability over compactness: name intermediate values, name the function a hook returns
   before returning it, destructure instead of chained property access (`a.b.c`), and group
   related files of a segment in subfolders (`model/form/`, `lib/math/`). Details in the

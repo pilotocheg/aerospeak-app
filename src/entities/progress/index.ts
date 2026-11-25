@@ -5,7 +5,6 @@ export { useHomeProgress } from './model/use-home-progress'
 export { usePracticedStats } from './model/use-practiced-stats'
 export { useScenarioProgress } from './model/use-scenario-progress'
 export { getUserTimezone, FALLBACK_TIMEZONE } from './model/get-user-timezone'
-export { clearLegacyProgress } from './lib/clear-legacy-progress'
 export {
   getDailyProgress,
   getDailyProgressQueryOptions,

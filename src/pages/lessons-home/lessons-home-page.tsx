@@ -15,7 +15,7 @@ import { UpNextBanner } from './ui/up-next-banner'
 export const LessonsHomePage = () => {
   const uid = useUserId()
   const { data: packs = [], isPending: packsIsPending } = useQuery(packsQueryOptions())
-  const { practiced, total, averageBest, nextScenario, section, isPending, isError, retry } = useHomeProgress(
+  const { practiced, total, averageBest, nextScenario, section, isPending, isError, refetchProgress } = useHomeProgress(
     uid,
     packs,
     packsIsPending,
@@ -49,7 +49,7 @@ export const LessonsHomePage = () => {
             <HomeStats
               isPending={isPending}
               isError={isError}
-              onRetry={retry}
+              onRetry={refetchProgress}
               practiced={practiced}
               total={total}
               averageBest={averageBest}

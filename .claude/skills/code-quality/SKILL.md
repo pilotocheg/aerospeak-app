@@ -53,6 +53,17 @@ before calling the work done.
   or holds two unrelated pieces of state.
 - Name booleans as questions (`isPlaying`, `hasCorrection`), handlers as `handle<Event>`
   inside components and as verbs in hooks (`retry`, `play`).
+- Name every function precisely: the name says what it does or returns, so a reader never
+  has to open it to know. The prefix says the kind of function, the rest says its object:
+  - `render<Thing>` for a helper that returns JSX (`renderOpenButton`, not `openButton`,
+    which reads like a value);
+  - `get`/`compute`/`find`/`build` + what it returns for derived values
+    (`computePracticedStats`, not `getStats`);
+  - a verb + its object for actions (`refetchProgress`, `clearAccountProgress`, not `retry`
+    or `clear` when the hook or file does more than one thing);
+  - `is`/`has` for predicates (`isProgressUnavailable`).
+
+  A bare verb (`retry`, `play`) is fine only where its object is obvious from the hook's name.
 - No nested ternaries in JSX: compute the value above the return or use a lookup object.
 - Comments say why, not what. Remove comments that restate the code.
 

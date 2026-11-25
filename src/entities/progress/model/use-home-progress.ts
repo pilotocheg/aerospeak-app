@@ -18,7 +18,7 @@ export const useHomeProgress = (uid: string, packs: PracticePackDto[], packsIsPe
   const nextScenario = findNextScenario(sectionPacks, practicedScenarioIds)
   const section = nextScenario ? findSectionByPackId(nextScenario.packId) : undefined
 
-  const retry = () => {
+  const refetchProgress = () => {
     void refetch()
   }
 
@@ -30,6 +30,6 @@ export const useHomeProgress = (uid: string, packs: PracticePackDto[], packsIsPe
     section,
     isPending: packsIsPending || isPending,
     isError,
-    retry,
+    refetchProgress,
   }
 }
