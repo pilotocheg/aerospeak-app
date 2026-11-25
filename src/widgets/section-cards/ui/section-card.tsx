@@ -1,6 +1,7 @@
 import { cn } from 'cn'
 
 import { SectionIcon } from '@/entities/section'
+import { useUserId } from '@/features/auth'
 import { useSectionProgress } from '@/features/section-progress'
 import type { Section } from '@/shared/content'
 
@@ -12,7 +13,8 @@ type SectionCardProps = {
 }
 
 export const SectionCard = ({ section }: SectionCardProps) => {
-  const progress = useSectionProgress(section.id)
+  const uid = useUserId()
+  const progress = useSectionProgress(uid, section.id)
 
   return (
     <article

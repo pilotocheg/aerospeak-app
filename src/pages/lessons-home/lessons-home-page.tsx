@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useHomeProgress } from '@/entities/progress'
 import { packsQueryOptions } from '@/entities/scenario'
-import { useCurrentUserProfile } from '@/features/auth'
+import { useCurrentUserProfile, useUserId } from '@/features/auth'
 import { sections } from '@/shared/content'
 import { SectionTitle } from '@/shared/ui/section-title'
 import { SidebarToggle } from '@/widgets/app-sidebar'
@@ -13,10 +13,13 @@ import { HomeStats } from './ui/home-stats'
 import { UpNextBanner } from './ui/up-next-banner'
 
 export const LessonsHomePage = () => {
-  const packsQuery = useQuery(packsQueryOptions())
-  const { data: packs = [], isPending: packsIsPending } = packsQuery
-
-  const { practiced, total, averageBest, nextScenario, section } = useHomeProgress(packs, packsIsPending)
+  const uid = useUserId()
+  const { data: packs = [], isPending: packsIsPending } = useQuery(packsQueryOptions())
+  const { practiced, total, averageBest, nextScenario, section, isPending, isError, refetchProgress } = useHomeProgress(
+    uid,
+    packs,
+    packsIsPending,
+  )
 
   const { data: profile } = useCurrentUserProfile()
 
@@ -28,15 +31,29 @@ export const LessonsHomePage = () => {
 
       <div className="space-y-8 px-4 py-6 sm:px-6">
         <div className="space-y-4">
-          <Greeting packsIsPending={packsIsPending} profileName={profile?.name} practiced={practiced} total={total} />
+          <Greeting
+            isPending={isPending}
+            isError={isError}
+            profileName={profile?.name}
+            practiced={practiced}
+            total={total}
+          />
           <div className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
             <UpNextBanner
-              packsIsPending={packsIsPending}
+              isPending={isPending}
+              isError={isError}
               practiced={practiced}
               nextScenario={nextScenario}
               section={section}
             />
-            <HomeStats isPending={packsIsPending} practiced={practiced} total={total} averageBest={averageBest} />
+            <HomeStats
+              isPending={isPending}
+              isError={isError}
+              onRetry={refetchProgress}
+              practiced={practiced}
+              total={total}
+              averageBest={averageBest}
+            />
           </div>
         </div>
 

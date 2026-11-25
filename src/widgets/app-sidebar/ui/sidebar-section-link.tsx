@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 
 import { SectionIcon } from '@/entities/section'
+import { useUserId } from '@/features/auth'
 import { useSectionProgress } from '@/features/section-progress'
 import type { Section } from '@/shared/content'
 import { Progress } from '@/shared/ui/progress'
@@ -13,7 +14,8 @@ type SidebarSectionLinkProps = {
 const itemClass = 'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition'
 
 export const SidebarSectionLink = ({ section, onNavigate }: SidebarSectionLinkProps) => {
-  const { completionPercent } = useSectionProgress(section.id)
+  const uid = useUserId()
+  const { completionPercent } = useSectionProgress(uid, section.id)
 
   if (section.comingSoon) {
     return (

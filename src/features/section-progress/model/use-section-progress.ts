@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useAllProgress } from '@/entities/progress'
+import { usePracticedStats } from '@/entities/progress'
 import { packsQueryOptions } from '@/entities/scenario'
 import { getSection } from '@/entities/section'
-import { roundedAverage } from '@/shared/lib/math'
 
 export type SectionProgress = {
   total: number
@@ -12,37 +11,29 @@ export type SectionProgress = {
   completionPercent: number
   /** Mean best score over practiced scenarios, null before the first one. */
   averageBest: number | null
-  /** True until packs are loaded (from the network or the persisted cache). */
+  /** True until packs (network or persisted cache) and the account progress are loaded. */
   isPending: boolean
+  /** The account progress could not be loaded. */
+  isError: boolean
 }
 
-const summarize = (
-  scenarioIds: string[],
-  progress: ReturnType<typeof useAllProgress>,
-): Omit<SectionProgress, 'isPending'> => {
-  const bestScores = scenarioIds.map((id) => progress[id]?.bestScore)
-  const practicedBestScores = bestScores.filter((score) => score !== undefined)
-  const total = scenarioIds.length
-  const practiced = practicedBestScores.length
-
-  return {
-    total,
-    practiced,
-    completionPercent: total ? (practiced / total) * 100 : 0,
-    averageBest: roundedAverage(practicedBestScores),
-  }
-}
-
-/** Progress of one section, or of all sections when sectionId is omitted. */
-export const useSectionProgress = (sectionId?: string): SectionProgress => {
-  const { data: packs = [], isPending } = useQuery(packsQueryOptions())
-  const progress = useAllProgress()
+/** The account's progress in one section, or in all sections when sectionId is omitted. */
+export const useSectionProgress = (uid: string, sectionId?: string): SectionProgress => {
+  const { data: packs = [], isPending: packsIsPending } = useQuery(packsQueryOptions())
   const section = sectionId ? getSection(sectionId) : undefined
   const allPackIds = packs.map((pack) => pack.id)
   const packIds = sectionId ? (section?.packIds ?? []) : allPackIds
   const sectionPacks = packs.filter((pack) => packIds.includes(pack.id))
   const scenarioIds = sectionPacks.flatMap(({ scenarios }) => scenarios.map((scenario) => scenario.id))
-  const summary = summarize(scenarioIds, progress)
+  const { practiced, total, averageBest, isPending, isError } = usePracticedStats(uid, scenarioIds)
+  const completionPercent = total ? (practiced / total) * 100 : 0
 
-  return { ...summary, isPending }
+  return {
+    total,
+    practiced,
+    completionPercent,
+    averageBest,
+    isPending: packsIsPending || isPending,
+    isError,
+  }
 }

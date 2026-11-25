@@ -2,6 +2,7 @@ import { queryOptions } from '@tanstack/react-query'
 
 import { apiClient } from '@/shared/api'
 
+import { progressCacheTimes } from './progress-cache'
 import { progressKeys } from './progress-keys'
 
 export const getProgress = async () => {
@@ -16,5 +17,5 @@ export const getProgressQueryOptions = (uid: string) =>
   queryOptions({
     queryKey: progressKeys.detail(uid),
     queryFn: getProgress,
-    staleTime: 60_000,
+    ...progressCacheTimes,
   })

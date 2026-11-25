@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import { useScenarioProgress } from '@/entities/progress'
 import { DifficultyBadge, useRandomScenarioVariant } from '@/entities/scenario'
+import { useUserId } from '@/features/auth'
 import { formatDuration } from '@/shared/lib/format'
 import { roundedAverage } from '@/shared/lib/math'
 import { Button } from '@/shared/ui/button'
@@ -21,7 +22,8 @@ type ScenarioDetailsProps = {
 export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps) => {
   // Each visit picks one variant (aerodrome, weather, aircraft); practice runs the same one.
   const { scenario, isPending, isError } = useRandomScenarioVariant(scenarioId)
-  const progress = useScenarioProgress(scenarioId)
+  const uid = useUserId()
+  const { progress, isPending: progressIsPending } = useScenarioProgress(uid, scenarioId)
 
   if (isPending) {
     return <ScenarioDetailsSkeleton />
@@ -34,7 +36,9 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
   const { id, title, difficulty, estimatedDurationSec, objective, steps, briefing, phraseologyNote, variant } = scenario
   const stepCount = steps.length
   const transmissionsLabel = stepCount === 1 ? 'transmission' : 'transmissions'
+  const runs = progress?.runs ?? 0
   const averageScore = roundedAverage(progress?.scores ?? [])
+  const bestScore = progress?.bestScore ?? null
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -53,17 +57,17 @@ export const ScenarioDetails = ({ sectionId, scenarioId }: ScenarioDetailsProps)
         </div>
 
         <div className="mt-4 grid grid-cols-4 gap-2">
-          <Stat label="Attempts">
-            <ScoreRing value={null} label={String(progress?.attempts ?? 0)} size={56} />
+          <Stat label="Attempts" isPending={progressIsPending}>
+            <ScoreRing value={null} label={String(runs)} size={56} />
           </Stat>
           <Stat label="Duration">
             <span className="text-lg font-semibold">{formatDuration(estimatedDurationSec)}</span>
           </Stat>
-          <Stat label="Avg score">
+          <Stat label="Avg score" isPending={progressIsPending}>
             <ScoreRing value={averageScore} size={56} />
           </Stat>
-          <Stat label="Best score">
-            <ScoreRing value={progress?.bestScore ?? null} size={56} />
+          <Stat label="Best score" isPending={progressIsPending}>
+            <ScoreRing value={bestScore} size={56} />
           </Stat>
         </div>
       </div>

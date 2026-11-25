@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { cn } from 'cn'
 
 import { useScenarioProgress } from '@/entities/progress'
+import { useUserId } from '@/features/auth'
 import type { ScenarioSummaryDto } from '@/shared/api'
 import { ScoreRing } from '@/shared/ui/score-ring'
 
@@ -13,7 +14,9 @@ type ScenarioRowProps = {
 }
 
 export const ScenarioRow = ({ scenario, sectionId, index, isSelected }: ScenarioRowProps) => {
-  const progress = useScenarioProgress(scenario.id)
+  const uid = useUserId()
+  const { progress } = useScenarioProgress(uid, scenario.id)
+  const bestScore = progress?.bestScore ?? null
 
   return (
     <Link
@@ -25,7 +28,7 @@ export const ScenarioRow = ({ scenario, sectionId, index, isSelected }: Scenario
         isSelected ? 'border-primary bg-primary/10' : 'border-transparent hover:bg-muted/50',
       )}
     >
-      <ScoreRing value={progress ? progress.bestScore : null} size={40} />
+      <ScoreRing value={bestScore} size={40} />
       <div className="min-w-0">
         <p className="text-sm font-medium">
           {index + 1}. {scenario.title}

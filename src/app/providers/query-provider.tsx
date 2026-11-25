@@ -4,11 +4,15 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 
+import { progressKeys } from '@/entities/progress'
 import { SCENARIO_CACHE_MS, scenarioKeys } from '@/entities/scenario'
 
-// Packs and scenarios survive reloads, so lessons render at once while the backend wakes up;
-// stale entries are refetched in the background. Bump BUSTER when the cached DTO shape changes.
+// Packs, scenarios and the account progress (keyed by uid) survive reloads, so lessons and progress
+// render at once while the backend wakes up; stale entries are refetched in the background.
+// Bump BUSTER when a cached DTO shape changes.
 const BUSTER = 'scenarios-v1'
+
+const PERSISTED_ROOT_KEYS = new Set<unknown>([scenarioKeys.all[0], progressKeys.all[0]])
 
 const persister = createSyncStoragePersister({
   storage: typeof window === 'undefined' ? undefined : window.localStorage,
@@ -22,9 +26,12 @@ export const QueryProvider = ({ client, children }: PropsWithChildren<{ client: 
       persister,
       maxAge: SCENARIO_CACHE_MS,
       buster: BUSTER,
+      // Restored queries outlive the client's 5-minute gcTime until a page observes them with its own.
+      hydrateOptions: { defaultOptions: { queries: { gcTime: SCENARIO_CACHE_MS } } },
       dehydrateOptions: {
         shouldDehydrateQuery: ({ state, queryKey }) =>
-          state.status === 'success' && queryKey[0] === scenarioKeys.all[0],
+          // Data, not status: a failed background refetch keeps its data, which stays worth restoring.
+          state.data !== undefined && PERSISTED_ROOT_KEYS.has(queryKey[0]),
       },
     }}
   >

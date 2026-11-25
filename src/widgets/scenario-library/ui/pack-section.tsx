@@ -1,7 +1,8 @@
 import { ChevronRight } from 'lucide-react'
 import { cn } from 'cn'
 
-import { useAllProgress } from '@/entities/progress'
+import { usePracticedStats } from '@/entities/progress'
+import { useUserId } from '@/features/auth'
 import type { PracticePackDto } from '@/shared/api'
 
 import { ScenarioRow } from './scenario-row'
@@ -15,10 +16,12 @@ type PackSectionProps = {
 }
 
 export const PackSection = ({ pack, sectionId, isOpen, selectedScenarioId, onToggle }: PackSectionProps) => {
-  const progress = useAllProgress()
+  const uid = useUserId()
   const { title, scenarios, recommendedForBeginners } = pack
-  const scenarioCount = scenarios.length
-  const practiced = scenarios.filter((scenario) => progress[scenario.id]).length
+  const scenarioIds = scenarios.map(({ id }) => id)
+  const { practiced, total: scenarioCount, isPending, isError } = usePracticedStats(uid, scenarioIds)
+  const hasProgress = !isPending && !isError
+  const countText = hasProgress ? `${practiced}/${scenarioCount} practiced` : `${scenarioCount} scenarios`
 
   return (
     <section className="border-b">
@@ -31,9 +34,7 @@ export const PackSection = ({ pack, sectionId, isOpen, selectedScenarioId, onTog
         <ChevronRight className={cn('size-4 shrink-0 text-brand transition-transform', isOpen && 'rotate-90')} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold">{title}</p>
-          <p className="text-xs text-muted-foreground">
-            {scenarioCount ? `${practiced}/${scenarioCount} practiced` : 'Coming soon'}
-          </p>
+          <p className="text-xs text-muted-foreground">{scenarioCount ? countText : 'Coming soon'}</p>
         </div>
         {recommendedForBeginners && (
           <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium text-brand uppercase">
