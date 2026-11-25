@@ -6,6 +6,8 @@ type ScoreRingProps = {
   label?: string
   size?: number
   className?: string
+  /** Stroke class of the empty track, for rings on a coloured background. */
+  trackClassName?: string
 }
 
 const colorFor = (value: number) =>
@@ -17,7 +19,13 @@ const colorFor = (value: number) =>
         ? 'stroke-amber-500'
         : 'stroke-red-500'
 
-export const ScoreRing = ({ value, label, size = 56, className }: ScoreRingProps) => {
+export const ScoreRing = ({
+  value,
+  label,
+  size = 56,
+  className,
+  trackClassName = 'stroke-foreground/15',
+}: ScoreRingProps) => {
   const stroke = Math.max(3, size / 14)
   const radius = (size - stroke) / 2
   const circumference = 2 * Math.PI * radius
@@ -29,14 +37,7 @@ export const ScoreRing = ({ value, label, size = 56, className }: ScoreRingProps
       style={{ width: size, height: size }}
     >
       <svg width={size} height={size} className="-rotate-90">
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          strokeWidth={stroke}
-          className="stroke-foreground/15"
-        />
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" strokeWidth={stroke} className={trackClassName} />
         {value !== null && (
           <circle
             cx={size / 2}
