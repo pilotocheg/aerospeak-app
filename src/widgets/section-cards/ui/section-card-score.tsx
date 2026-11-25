@@ -39,7 +39,12 @@ export const SectionCardScore = ({ progress }: SectionCardScoreProps) => {
           />
         }
       >
-        <ScoreRing value={averageBest} size={36} className="rounded-full bg-black/20" />
+        <ScoreRing
+          value={averageBest}
+          size={36}
+          className="rounded-full bg-black/20"
+          trackClassName="stroke-primary-foreground/35"
+        />
       </TooltipTrigger>
       <TooltipContent>{scoreHint}</TooltipContent>
     </Tooltip>
