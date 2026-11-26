@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
 import { observeAuthState } from '../../api'
+import { setAnalyticsUserId } from '@/shared/lib/firebase/analytics'
 import { useSetUser } from '../actions'
 import type { User } from '../types'
 
@@ -17,6 +18,9 @@ export const useAuthSession = ({ onSignOut }: UseAuthSessionOptions) => {
     const handleAuthChange = (user: User | null) => {
       if (!user) {
         onSignOut()
+        setAnalyticsUserId(null)
+      } else {
+        setAnalyticsUserId(user.id)
       }
       setUser(user)
     }
