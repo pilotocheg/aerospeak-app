@@ -26,4 +26,12 @@ describe('useConsentStore', () => {
 
     expect(useConsentStore.getState().consent).toBe('denied')
   })
+
+  it('asks again after the choice is reset', () => {
+    useConsentStore.getState().denyConsent()
+
+    useConsentStore.getState().resetConsent()
+
+    expect(useConsentStore.getState().consent).toBeNull()
+  })
 })

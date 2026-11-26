@@ -52,7 +52,7 @@ const PRIVACY_SECTIONS: LegalSection[] = [
     paragraphs: [
       'Essential storage: AeroSpeak keeps your sign-in session (Firebase Authentication, in IndexedDB) and, in LocalStorage, your theme, your analytics choice and a cache of scenarios and your progress so pages load fast. The cached progress is removed when you sign out. Google Sign-In sets a "g_state" cookie that remembers whether you closed its sign-in prompt. This storage is needed for the service and needs no consent.',
       'Analytics cookies: Google Analytics sets cookies whose names start with "_ga" only after you choose "Allow" in the cookie banner. If you choose "Decline", no analytics data is collected.',
-      'You can change your choice at any time under Profile → Analytics. Turning analytics off stops collection and deletes the "_ga" cookies. Clearing this site’s data in your browser also resets your choice.',
+      'You can change your choice at any time under Profile → Analytics, or with the "Cookie settings" link at the bottom of the home page. Turning analytics off stops collection and deletes the "_ga" cookies. Clearing this site’s data in your browser also resets your choice.',
     ],
   },
   {
