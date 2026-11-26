@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
+import { CookieSettingsButton } from '@/features/analytics-consent'
 import { Logo } from '@/shared/ui/logo'
 
 const LEGAL_LINKS = [
@@ -22,6 +23,7 @@ export const Footer = () => (
               {label}
             </Link>
           ))}
+          <CookieSettingsButton className="cursor-pointer hover:text-foreground" />
         </nav>
       </div>
 

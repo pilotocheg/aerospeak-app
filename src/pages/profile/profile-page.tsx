@@ -1,5 +1,6 @@
 import { LogOut } from 'lucide-react'
 
+import { AnalyticsConsentSetting } from '@/features/analytics-consent'
 import {
   ChangePasswordForm,
   ChangeUsernameDialog,
@@ -47,6 +48,10 @@ export const ProfilePage = () => {
 
         <ProfileSection title="Password">
           <ChangePasswordForm />
+        </ProfileSection>
+
+        <ProfileSection title="Analytics">
+          <AnalyticsConsentSetting />
         </ProfileSection>
 
         <ProfileSection title="Session">

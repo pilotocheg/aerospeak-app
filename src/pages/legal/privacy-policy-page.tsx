@@ -5,70 +5,89 @@ const PRIVACY_SECTIONS: LegalSection[] = [
     heading: '1. Overview and Data Controller',
     paragraphs: [
       'This Privacy Policy describes how AeroSpeak ("we", "our", or "us") collects, uses, and protects your personal information when you use our web application.',
-      'AeroSpeak is designed as an interactive web-based simulator for student pilots and aviation professionals to practice ICAO-standard radiotelephony communications.',
+      'AeroSpeak is an interactive web-based simulator for student pilots and aviation professionals to practice ICAO-standard radiotelephony communications.',
+      'The data controller is Viacheslav Dmytriiev, contact: slavutich.org@gmail.com.',
     ],
   },
   {
     heading: '2. Information We Collect',
     paragraphs: [
-      'Account & Profile Data: Email address, username, password hash, and basic profile parameters when you create an account.',
-      'Voice & Audio Inputs: Short audio snippets and speech recordings transmitted during interactive scenario practice to perform Speech-to-Text (STT) conversion and evaluate your radiotelephony responses.',
-      'Training Progress & Scenario Data: History of completed scenarios, scoring results, phraseology evaluation logs, accuracy feedback, and learning stats.',
-      'Technical & Device Data: IP address, browser type, operating system version, time zone, and session timestamps collected automatically to maintain system performance and security.',
+      'Account & Profile Data: your email address and username, and your name and email from Google when you sign in with Google. Passwords are handled by Firebase Authentication (Google); we never see or store them.',
+      'Terms Acceptance: the date and time you accepted these terms and this policy.',
+      'Voice Recordings: short recordings of your radio calls, sent during practice for Speech-to-Text (STT) conversion. We do not store them (see section 5).',
+      'Training Progress: the transcript of each attempt, its score and feedback, the scenarios you completed and your practice statistics.',
+      'Usage Analytics (only with your consent): pages visited, device and browser type, approximate location derived from your IP address, and a pseudonymous ID of your account, collected through Google Analytics for Firebase.',
+      'Technical Data: IP address, browser type and request timestamps, recorded in the server logs of our hosting providers to keep the service running and secure.',
     ],
   },
   {
     heading: '3. Purpose and Legal Basis for Processing',
     paragraphs: [
-      'We process your data based on the following legal grounds under the General Data Protection Regulation (GDPR):',
-      '• Performance of Contract: To process voice inputs, evaluate phraseology accuracy against ICAO standards, and provide interactive feedback.',
-      '• Legitimate Interests: To optimize speech recognition models, improve simulation scenarios, maintain platform security, and analyze performance bugs.',
-      '• Legal Compliance: To adhere to statutory record-keeping and technical data protection requirements.',
+      'We process your data on the following legal grounds under the General Data Protection Regulation (GDPR):',
+      '• Performance of Contract (Art. 6(1)(b)): to create your account, transcribe your radio calls, score them against ICAO phraseology and keep your training progress.',
+      '• Consent (Art. 6(1)(a)): to collect usage analytics. You can withdraw consent at any time without affecting the service.',
+      '• Legitimate Interests (Art. 6(1)(f)): to keep the platform secure, prevent abuse and fix errors, using technical data and server logs.',
     ],
   },
   {
-    heading: '4. Voice Data Processing and Third Parties',
+    heading: '4. Service Providers',
     paragraphs: [
-      'Audio recordings captured during practice sessions are processed solely for phrase verification and speech recognition.',
-      'We do not sell your personal data or audio files. Data may be shared with trusted infrastructure providers (e.g., cloud hosting, Speech-to-Text AI APIs) strictly bound by data processing agreements and security standards.',
+      'We do not sell your personal data. We share it only with providers that run parts of the service for us, under their data processing terms:',
+      '• Google (Firebase Authentication, Google Sign-In, Google Analytics for Firebase): sign-in and, with your consent, usage analytics.',
+      '• Deepgram: Speech-to-Text conversion of your recordings.',
+      '• Neon: the database that holds your account and training progress, hosted in the EU (Frankfurt).',
+      '• Render and Vercel: hosting of the AeroSpeak server and web application.',
+      'Some of these providers are based in the United States. Transfers outside the European Economic Area rely on the EU–US Data Privacy Framework or the European Commission’s Standard Contractual Clauses.',
     ],
   },
   {
-    heading: '5. Cookies and Web Storage',
+    heading: '5. Voice Recordings',
     paragraphs: [
-      'AeroSpeak uses essential cookies and browser storage (such as LocalStorage and SessionStorage) to maintain active login sessions, save application preferences, and preserve practice state.',
-      'Analytics cookies may be used with your consent to gather aggregated statistics on app usage and improve user navigation.',
+      'A recording is sent to our server when you finish a radio call. The server keeps it in memory only while it is transcribed and scored, and never writes it to disk or to the database.',
+      'We keep the resulting transcript and score as part of your training progress.',
     ],
   },
   {
-    heading: '6. Data Retention and Security',
+    heading: '6. Cookies and Browser Storage',
     paragraphs: [
-      'Personal data and progress history are stored for as long as your account remains active or as needed to provide our training services.',
-      'Audio samples processed for automated feedback are held strictly for the duration required to parse and evaluate the response, after which they are purged or anonymized.',
-      'We apply technical and organizational measures (including HTTPS encryption, access controls, and hashed storage) to safeguard your information.',
+      'Essential storage: AeroSpeak keeps your sign-in session (Firebase Authentication, in IndexedDB) and, in LocalStorage, your theme, your analytics choice and a cache of scenarios and your progress so pages load fast. The cached progress is removed when you sign out. Google Sign-In sets a "g_state" cookie that remembers whether you closed its sign-in prompt. This storage is needed for the service and needs no consent.',
+      'Analytics cookies: Google Analytics sets cookies whose names start with "_ga" only after you choose "Allow" in the cookie banner. If you choose "Decline", no analytics data is collected.',
+      'You can change your choice at any time under Profile → Analytics, or with the "Cookie settings" link at the bottom of the home page. Turning analytics off stops collection and deletes the "_ga" cookies. Clearing this site’s data in your browser also resets your choice.',
     ],
   },
   {
-    heading: '7. Your Rights under GDPR',
+    heading: '7. Data Retention and Security',
     paragraphs: [
-      'If you are located in the European Economic Area (EEA), you have the right to:',
-      '• Access, rectify, or request deletion of your personal data.',
-      '• Request restriction or object to the processing of your data.',
-      '• Export your account and training progress data in a portable format.',
-      '• Withdraw consent for non-essential cookies at any time.',
+      'Account data and training progress are kept while your account exists. Deleting your account under Profile → Delete account removes your profile and progress permanently.',
+      'Voice recordings are not retained (see section 5).',
+      'Analytics data is kept by Google Analytics for the retention period set in our analytics property, no longer than 14 months.',
+      'We protect your data with HTTPS encryption, token-based authentication and restricted access to our systems.',
     ],
   },
   {
-    heading: '8. Minors',
+    heading: '8. Your Rights under GDPR',
+    paragraphs: [
+      'You have the right to:',
+      '• Access your personal data and receive a copy of it in a portable format.',
+      '• Rectify inaccurate data (you can change your username and password in your profile).',
+      '• Request deletion of your data (you can delete your account in your profile).',
+      '• Request restriction of, or object to, the processing of your data.',
+      '• Withdraw your consent to analytics at any time.',
+      '• Lodge a complaint with a data protection supervisory authority.',
+      'To exercise a right that is not available in your profile, email slavutich.org@gmail.com.',
+    ],
+  },
+  {
+    heading: '9. Minors',
     paragraphs: [
       'AeroSpeak is intended for flight students and aviation trainees aged 18 and older. We do not knowingly collect personal information from individuals under 18 years of age.',
     ],
   },
   {
-    heading: '9. Changes and Contact',
+    heading: '10. Changes and Contact',
     paragraphs: [
-      'We may update this Privacy Policy periodically to reflect changes in our training features, infrastructure, or regulatory obligations.',
-      'If you have questions regarding this policy or wish to exercise your data protection rights, please contact the AeroSpeak team through our official support channels.',
+      'We may update this Privacy Policy to reflect changes in our training features, service providers, or legal obligations. The date at the top shows the latest version.',
+      'For questions about this policy or your data, contact Viacheslav Dmytriiev at slavutich.org@gmail.com.',
     ],
   },
 ]
@@ -76,8 +95,8 @@ const PRIVACY_SECTIONS: LegalSection[] = [
 export const PrivacyPolicyPage = () => (
   <LegalDocument
     title="Privacy Policy"
-    subtitle="How AeroSpeak handles personal information, audio inputs, and training data."
-    lastUpdated="2026-10-21"
+    subtitle="How AeroSpeak handles personal information, voice recordings, analytics, and training data."
+    lastUpdated="2026-11-26"
     sections={PRIVACY_SECTIONS}
   />
 )

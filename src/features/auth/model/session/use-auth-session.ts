@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 
+import { setAnalyticsUserId } from '@/shared/lib/firebase'
+
 import { observeAuthState } from '../../api'
-import { setAnalyticsUserId } from '@/shared/lib/firebase/analytics'
 import { useSetUser } from '../actions'
 import type { User } from '../types'
 
@@ -10,7 +11,7 @@ type UseAuthSessionOptions = {
   onSignOut: () => void
 }
 
-/** Mirrors the Firebase auth state into the auth store for the app's lifetime. */
+/** Mirrors the Firebase auth state into the auth store (and the analytics user id) for the app's lifetime. */
 export const useAuthSession = ({ onSignOut }: UseAuthSessionOptions) => {
   const setUser = useSetUser()
 
@@ -18,10 +19,9 @@ export const useAuthSession = ({ onSignOut }: UseAuthSessionOptions) => {
     const handleAuthChange = (user: User | null) => {
       if (!user) {
         onSignOut()
-        setAnalyticsUserId(null)
-      } else {
-        setAnalyticsUserId(user.id)
       }
+      const analyticsUserId = user?.id ?? null
+      void setAnalyticsUserId(analyticsUserId)
       setUser(user)
     }
 

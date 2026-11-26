@@ -30,6 +30,15 @@
         "set -a; . ./.env; export FIREBASE_PROJECT_ID=\"${FIREBASE_PROJECT_ID:-${VITE_FIREBASE_AUTH_DOMAIN%%.*}}\"; exec npm --prefix ../goit--apstone-project-AeroSpeak-BE run start:dev"
       ],
       "port": 3000
+    },
+    {
+      "name": "web-prod-preview",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "set -a; . ./.env; export VITE_FIREBASE_PROJECT_ID=\"${VITE_FIREBASE_PROJECT_ID:-${VITE_FIREBASE_AUTH_DOMAIN%%.*}}\"; npm run build && exec npx vite preview --port 4173 --strictPort"
+      ],
+      "port": 4173
     }
   ]
 }
