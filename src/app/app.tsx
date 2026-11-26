@@ -1,12 +1,11 @@
-import { useEffect } from 'react'
 import { QueryClient } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 
 import { progressKeys } from '@/entities/progress'
+import { useAnalyticsConsentSync } from '@/features/analytics-consent'
 import { useAuthSession } from '@/features/auth'
 import { TooltipProvider } from '@/shared/ui/tooltip'
 
-import { logPageView } from '@/shared/lib/firebase/analytics'
 import { ThemeProvider } from './providers/theme-provider'
 import { QueryProvider } from './providers/query-provider'
 import { createAppRouter } from './providers/router'
@@ -19,17 +18,7 @@ const clearAccountProgress = () => queryClient.removeQueries({ queryKey: progres
 
 export const App = () => {
   useAuthSession({ onSignOut: clearAccountProgress })
-
-  // Track page views on navigation (production only; no-op in dev / when analytics is disabled)
-  useEffect(() => {
-    logPageView(router.state.location.pathname)
-
-    const unsubscribe = router.subscribe('onResolved', () => {
-      logPageView(router.state.location.pathname)
-    })
-
-    return unsubscribe
-  }, [])
+  useAnalyticsConsentSync()
 
   return (
     <QueryProvider client={queryClient}>

@@ -1,1 +1,5 @@
-export { auth } from './firebase'
+export { app, auth } from './firebase'
+export { isAnalyticsConfigured } from './analytics/is-analytics-configured'
+export { setAnalyticsUserId } from './analytics/set-analytics-user-id'
+export { startAnalytics } from './analytics/start-analytics'
+export { stopAnalytics } from './analytics/stop-analytics'

@@ -26,16 +26,17 @@ const TERMS_SECTIONS: LegalSection[] = [
   {
     heading: '4. User Accounts and Security',
     paragraphs: [
-      'To access certain training features and track scenario progress, you must create an account using secure credentials.',
+      'To practice scenarios and track your progress, you must create an account with an email address and password, or sign in with Google. You must be at least 18 years old to create an account.',
       'You are entirely responsible for maintaining the confidentiality of your account details and password. We are not liable for any loss or damage arising from your failure to protect your credentials.',
       'We reserve the right to suspend or block access to accounts in the event of suspected abuse, unauthorized multi-device sharing, or security breaches.',
+      'You can delete your account at any time under Profile → Delete account. This removes your profile and training progress permanently.',
     ],
   },
   {
     heading: '5. Acceptable Use and Voice Submissions',
     paragraphs: [
       'When using voice input and simulation features, you agree not to transmit unlawful, harmful, offensive, or misleading content, nor attempt to disrupt or overload platform infrastructure.',
-      'Voice recordings and text inputs submitted during practice sessions are processed automatically to evaluate phraseology accuracy and provide interactive feedback as outlined in our Privacy Policy.',
+      'Voice recordings submitted during practice are transcribed and scored automatically to provide feedback. Recordings are not stored; transcripts and scores are kept as your training progress, as described in our Privacy Policy.',
     ],
   },
   {
@@ -52,9 +53,10 @@ const TERMS_SECTIONS: LegalSection[] = [
     ],
   },
   {
-    heading: '8. Changes and Updates to Terms',
+    heading: '8. Changes, Updates and Contact',
     paragraphs: [
       'We reserve the right to modify or replace these Terms and Conditions at any time. Continued use of the platform after any revisions indicates your acceptance of the updated terms.',
+      'For questions about these terms, contact Viacheslav Dmytriiev at slavutich.org@gmail.com.',
     ],
   },
   {
@@ -69,7 +71,7 @@ export const TermsAndConditionsPage = () => (
   <LegalDocument
     title="Terms and Conditions"
     subtitle="Please review these terms before using AeroSpeak training scenarios and platform features."
-    lastUpdated="2026-10-21"
+    lastUpdated="2026-11-26"
     sections={TERMS_SECTIONS}
   />
 )
